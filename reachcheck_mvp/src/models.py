@@ -29,7 +29,8 @@ class AIEngineStatus:
 @dataclass
 class ConsistencyResult:
     field_name: str  # Name, Address, Phone
-    is_match: bool
+    status: str      # Match, Mismatch, Missing
+    evidence: Dict[str, str] # {'google': 'val', 'naver': 'val'}
     details: str
 
 @dataclass

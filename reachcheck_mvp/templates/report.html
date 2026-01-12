@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <title>ReachCheck Report</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
-        
+
         @page {
             size: A4;
             margin: 0;
         }
-        
+
         body {
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
@@ -18,7 +19,7 @@
             background: #f5f5f5;
             color: #333;
         }
-        
+
         .page {
             width: 210mm;
             height: 297mm;
@@ -28,9 +29,13 @@
             page-break-after: always;
             position: relative;
         }
-        
-        h1, h2, h3 { margin: 0 0 10px 0; }
-        
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 10px 0;
+        }
+
         .header {
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
@@ -39,17 +44,43 @@
             justify-content: space-between;
             align-items: flex-end;
         }
-        
-        .header h1 { font-size: 24px; font-weight: 700; color: #1a1a1a; }
-        .header .date { font-size: 12px; color: #666; }
-        
-        .section { margin-bottom: 20px; }
-        .section-title { font-size: 18px; font-weight: 700; border-left: 5px solid #0052cc; padding-left: 10px; margin-bottom: 15px; }
-        
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header .date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            border-left: 5px solid #0052cc;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
         /* Summary Box */
-        .summary-box { background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .summary-text { font-size: 16px; line-height: 1.6; }
-        
+        .summary-box {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
         /* Status Badges */
         .status-badge {
             display: inline-block;
@@ -59,20 +90,59 @@
             font-size: 12px;
             color: white;
         }
-        .bg-green { background-color: #28a745; }
-        .bg-yellow { background-color: #ffc107; color: #333; }
-        .bg-red { background-color: #dc3545; }
-        
+
+        .bg-green {
+            background-color: #28a745;
+        }
+
+        .bg-yellow {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .bg-red {
+            background-color: #dc3545;
+        }
+
         /* Grid */
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-        .card h4 { font-size: 14px; margin-bottom: 10px; color: #555; }
-        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .card h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
         /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
-        th { background: #f9f9f9; width: 30%; }
-        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f9f9f9;
+            width: 30%;
+        }
+
         /* Page 3 Priorities */
         .priority-item {
             background: #fff;
@@ -82,9 +152,20 @@
             margin-bottom: 15px;
             border-radius: 4px;
         }
-        .priority-rank { font-size: 12px; color: #0052cc; font-weight: bold; margin-bottom: 5px; }
-        .priority-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
-        
+
+        .priority-rank {
+            font-size: 12px;
+            color: #0052cc;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .priority-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
         /* Page 4 Quote */
         .quote-box {
             background: #f8f9fa;
@@ -109,6 +190,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Page 1: Summary -->
@@ -117,7 +199,7 @@
             <h1>[{{ data.store.name }}] AI·Search Exposure Diagnosis Summary</h1>
             <span class="date">{{ data.date }}</span>
         </div>
-        
+
         <div class="summary-box">
             <p class="summary-text">
                 {{ data.analysis.map_summary }}<br>
@@ -126,20 +208,21 @@
                 failing to provide a consistent impression to customers.
             </p>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Map Channel Status</div>
             <div class="grid-3">
                 {% for channel in data.analysis.map_statuses %}
                 <div class="card">
                     <h4>{{ channel.channel_name }}</h4>
-                    <span class="status-badge bg-{{ channel.color.value }}">{{ 'Normal' if channel.color.value == 'green' else 'Issue Found' }}</span>
+                    <span class="status-badge bg-{{ channel.color.value }}">{{ 'Normal' if channel.color.value ==
+                        'green' else 'Issue Found' }}</span>
                     <p style="font-size: 12px; margin-top: 5px; color: #666;">{{ channel.status_text }}</p>
                 </div>
                 {% endfor %}
             </div>
         </div>
-        
+
         <div class="section">
             <div class="section-title">AI Engine Exposure Summary</div>
             <table>
@@ -159,16 +242,34 @@
                 {% endfor %}
             </table>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Store Info Consistency</div>
             <table>
                 {% for item in data.analysis.consistency_results %}
                 <tr>
-                    <th>{{ item.field_name }}</th>
+                    <th style="vertical-align: top;">{{ item.field_name }}</th>
                     <td>
-                        {{ 'Match' if item.is_match else 'Mismatch' }} 
-                        ({{ item.details }})
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            {% if item.status == 'Match' %}
+                            <span style="color: green;">✔ Match</span>
+                            {% elif item.status == 'Mismatch' %}
+                            <span style="color: red;">✘ Mismatch</span>
+                            {% elif item.status == 'INSUFFICIENT_DATA' %}
+                            <span style="color: #ffc107; color: #856404;">⚠ Verification Unavailable</span>
+                            {% else %}
+                            <span style="color: gray;">? {{ item.status }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            {% for src, val in item.evidence.items() %}
+                            <span style="margin-right: 10px;">
+                                <strong>{{ src|title }}:</strong> {{ val }}
+                            </span><br>
+                            {% endfor %}
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -184,7 +285,7 @@
             <h1>What AI Says About You</h1>
             <span class="date">{{ data.date }}</span>
         </div>
-        
+
         <div class="section">
             <div class="section-title">AI Response Analysis</div>
             {% for engine, responses in data.analysis.ai_responses.items() %}
@@ -199,7 +300,7 @@
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="footer">Page 2 / 4</div>
     </div>
 
@@ -209,7 +310,7 @@
             <h1>What To Fix (Top Priorities)</h1>
             <span class="date">{{ data.date }}</span>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Core Improvements</div>
             {% for imp in data.analysis.improvements %}
@@ -223,7 +324,7 @@
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="summary-box" style="background: #fff3cd;">
             <p class="summary-text">
                 <strong>Key Insight:</strong><br>
@@ -240,19 +341,21 @@
             <h1>Ready-to-use AI Sentences</h1>
             <span class="date">{{ data.date }}</span>
         </div>
-        
+
         <div class="section">
             <div class="section-title">AI One-Liner Introduction</div>
             <div class="quote-box">
                 "{{ data.analysis.ai_intro_sentence }}"
             </div>
             <p style="font-size: 13px; color: #666;">
-                This sentence is optimized for AI understanding of your business's core value. Use this in your map descriptions.
+                This sentence is optimized for AI understanding of your business's core value. Use this in your map
+                descriptions.
             </p>
         </div>
-        
+
         <div class="footer">Page 4 / 4</div>
     </div>
 
 </body>
+
 </html>

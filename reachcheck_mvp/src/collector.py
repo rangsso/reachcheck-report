@@ -11,25 +11,150 @@ from models import (
 
 load_dotenv()
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+NAVER_CLIENT_ID = os.getenv("NAVER_CLIENT_ID")
+NAVER_CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET")
+KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY")
+
+from comparator import compare_data
+from normalizer import normalize_name, normalize_address, normalize_phone
 
 class DataCollector:
     def collect(self, store_name: str, place_id: str = None) -> StoreInfo:
-        # If real place_id is provided and API key exists, fetch real data
+        google_data = {}
+        naver_data = {}
+        kakao_data = {}
+
+        # 1. Google Data
         if place_id and not place_id.startswith("PID-") and GOOGLE_MAPS_API_KEY:
              try:
                  print(f"[-] Fetching details for Place ID: {place_id}")
-                 return self.fetch_google_details(place_id, store_name)
+                 store_info = self.fetch_google_details(place_id, store_name)
+                 google_data = {
+                     "name": store_info.name,
+                     "address": store_info.address,
+                     "phone": store_info.phone
+                 }
              except Exception as e:
-                 print(f"[!] Google API failed: {e}. Falling back to mock.")
+                 print(f"[!] Google API failed: {e}. Fallback to mock.")
+                 # Fallback mock obj
+                 store_info = StoreInfo(
+                    name=store_name,
+                    address=f"Seoul, Gangnam-gu, Yeoksam-dong 123-45",
+                    phone="02-1234-5678",
+                    category="Cafe/Restaurant",
+                    place_id=place_id
+                )
+        else:
+             # Mock
+             store_info = StoreInfo(
+                name=store_name,
+                address=f"Seoul, Gangnam-gu, Yeoksam-dong 123-45",
+                phone="02-1234-5678",
+                category="Cafe/Restaurant",
+                place_id=place_id if place_id else f"PID-{random.randint(10000, 99999)}"
+            )
+             google_data = {"name": store_info.name, "address": store_info.address, "phone": store_info.phone}
+
+        # 2. Naver Search
+        if NAVER_CLIENT_ID and NAVER_CLIENT_SECRET:
+            try:
+                naver_data = self.fetch_naver_search(store_name)
+            except Exception as e:
+                print(f"[!] Naver API failed: {e}")
+
+        # 3. Kakao Search
+        if KAKAO_REST_API_KEY:
+            try:
+                kakao_data = self.fetch_kakao_search(store_name)
+            except Exception as e:
+                print(f"[!] Kakao API failed: {e}")
         
-        # Mocking store basic info
-        return StoreInfo(
-            name=store_name,
-            address=f"Seoul, Gangnam-gu, Yeoksam-dong 123-45",
-            phone="02-1234-5678",
-            category="Cafe/Restaurant",
-            place_id=place_id if place_id else f"PID-{random.randint(10000, 99999)}"
-        )
+        
+        # LOGGING (New Requirement: 1-A)
+        self._log_source_data("GOOGLE", google_data)
+        self._log_source_data("NAVER", naver_data)
+        self._log_source_data("KAKAO", kakao_data)
+        
+        self.collected_sources = {
+            "google": google_data,
+            "naver": naver_data,
+            "kakao": kakao_data
+        }
+
+        return store_info
+    
+    def _log_source_data(self, source_name: str, data: dict):
+        raw_name = data.get("name", "")
+        raw_addr = data.get("address", "")
+        raw_phone = data.get("phone", "")
+        
+        norm_name = normalize_name(str(raw_name) if raw_name else "")
+        norm_addr = normalize_address(str(raw_addr) if raw_addr else "")
+        norm_phone = normalize_phone(str(raw_phone) if raw_phone else "")
+        
+        print(f"[COLLECT][{source_name}] raw: name={raw_name}, address={raw_addr}, phone={raw_phone}")
+        print(f"[COLLECT][{source_name}] norm: name={norm_name}, address={norm_addr}, phone={norm_phone}")
+
+    
+    def fetch_naver_search(self, query: str) -> dict:
+        url = "https://openapi.naver.com/v1/search/local.json"
+        headers = {
+            "X-Naver-Client-Id": NAVER_CLIENT_ID,
+            "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
+        }
+        params = {"query": query, "display": 5, "sort": "random"} # Fetch 5 to filter
+        try:
+            resp = requests.get(url, headers=headers, params=params, timeout=5)
+            data = resp.json()
+            items = data.get("items", [])
+            
+            # Simple validation: query should be part of name or vice-versa
+            # Logic: verify coverage
+            norm_q = query.replace(" ", "")
+            
+            for item in items:
+                name = item.get('title').replace('<b>', '').replace('</b>', '')
+                norm_n = name.replace(" ", "")
+                
+                # Loose check
+                print(f"[DEBUG] Check: '{norm_q}' in '{norm_n}'?")
+                if norm_q in norm_n or norm_n in norm_q:
+                     return {
+                        "name": name,
+                        "address": item.get("roadAddress") or item.get("address"),
+                        "phone": item.get("telephone") or "" 
+                    }
+        except Exception as e:
+            print(f"[!] Naver search error: {e}")
+            
+        return {}
+
+    def fetch_kakao_search(self, query: str) -> dict:
+        url = "https://dapi.kakao.com/v2/local/search/keyword.json"
+        headers = {"Authorization": f"KakaoAK {KAKAO_REST_API_KEY}"}
+        params = {"query": query, "size": 5}
+        try:
+            resp = requests.get(url, headers=headers, params=params, timeout=5)
+            data = resp.json()
+            docs = data.get("documents", [])
+            
+            norm_q = query.replace(" ", "")
+            
+            for d in docs:
+                name = d.get('place_name')
+                norm_n = name.replace(" ", "")
+                
+                if norm_q in norm_n or norm_n in norm_q:
+                    return {
+                        "name": name,
+                        "address": d.get("road_address_name") or d.get("address_name"),
+                        "phone": d.get("phone")
+                    }
+        except Exception as e:
+             print(f"[!] Kakao search error: {e}")
+             
+        return {}
+
 
     def fetch_google_details(self, place_id: str, store_name_fallback: str) -> StoreInfo:
         url = "https://maps.googleapis.com/maps/api/place/details/json"
@@ -61,6 +186,17 @@ class DataCollector:
 
 
     def mock_analysis(self, store_info: StoreInfo) -> AnalysisResult:
+        # Use real consistency check if available
+        if hasattr(self, 'collected_sources') and any(self.collected_sources.values()):
+            consistency_results = compare_data(self.collected_sources)
+        else:
+             # Fallback mock consistency
+            consistency_results = [
+                ConsistencyResult("Name", "Match", {"google": store_info.name}, "Matches"),
+                ConsistencyResult("Address", "Match", {"google": store_info.address}, "Matches"),
+                ConsistencyResult("Phone", "Mismatch", {"google": "010-0000-0000", "naver": "02-1234-5678"}, "Mismatch found")
+            ]
+
         # Mock Map Status
         map_channels = ["Naver", "Kakao", "Google"]
         map_statuses = []
@@ -141,12 +277,8 @@ class DataCollector:
         ai_summary = "AI recognition is stable." if ai_mention_rate >= 50 else "Stable recognition failed."
 
         # Consistency
-        consistency_results = [
-            ConsistencyResult("Name", True, "Matches"),
-            ConsistencyResult("Address", True, "Matches"),
-            ConsistencyResult("Phone", random.choice([True, False]), "Mismatch found")
-        ]
-
+        # Handled above
+        
         # Risks / Opportunities
         risks = ["Low AI mention rate in ChatGPT", "Incorrect phone number on Kakao Map"]
         opportunities = ["High review rating", "Detailed menu descriptions available"]

@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <title>ReachCheck Report</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
-        
+
         @page {
             size: A4;
             margin: 0;
         }
-        
+
         body {
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
@@ -18,7 +19,7 @@
             background: #f5f5f5;
             color: #333;
         }
-        
+
         .page {
             width: 210mm;
             height: 297mm;
@@ -28,9 +29,13 @@
             page-break-after: always;
             position: relative;
         }
-        
-        h1, h2, h3 { margin: 0 0 10px 0; }
-        
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 10px 0;
+        }
+
         .header {
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
@@ -39,17 +44,43 @@
             justify-content: space-between;
             align-items: flex-end;
         }
-        
-        .header h1 { font-size: 24px; font-weight: 700; color: #1a1a1a; }
-        .header .date { font-size: 12px; color: #666; }
-        
-        .section { margin-bottom: 20px; }
-        .section-title { font-size: 18px; font-weight: 700; border-left: 5px solid #0052cc; padding-left: 10px; margin-bottom: 15px; }
-        
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header .date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            border-left: 5px solid #0052cc;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
         /* Summary Box */
-        .summary-box { background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .summary-text { font-size: 16px; line-height: 1.6; }
-        
+        .summary-box {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
         /* Status Badges */
         .status-badge {
             display: inline-block;
@@ -59,20 +90,59 @@
             font-size: 12px;
             color: white;
         }
-        .bg-green { background-color: #28a745; }
-        .bg-yellow { background-color: #ffc107; color: #333; }
-        .bg-red { background-color: #dc3545; }
-        
+
+        .bg-green {
+            background-color: #28a745;
+        }
+
+        .bg-yellow {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .bg-red {
+            background-color: #dc3545;
+        }
+
         /* Grid */
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-        .card h4 { font-size: 14px; margin-bottom: 10px; color: #555; }
-        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .card h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
         /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
-        th { background: #f9f9f9; width: 30%; }
-        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f9f9f9;
+            width: 30%;
+        }
+
         /* Page 3 Priorities */
         .priority-item {
             background: #fff;
@@ -82,9 +152,20 @@
             margin-bottom: 15px;
             border-radius: 4px;
         }
-        .priority-rank { font-size: 12px; color: #0052cc; font-weight: bold; margin-bottom: 5px; }
-        .priority-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
-        
+
+        .priority-rank {
+            font-size: 12px;
+            color: #0052cc;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .priority-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
         /* Page 4 Quote */
         .quote-box {
             background: #f8f9fa;
@@ -109,6 +190,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Page 1: Summary -->
@@ -117,7 +199,7 @@
             <h1>[팬팬] AI·Search Exposure Diagnosis Summary</h1>
             <span class="date">2026.01.12</span>
         </div>
-        
+
         <div class="summary-box">
             <p class="summary-text">
                 Map information is largely inaccurate.<br>
@@ -126,7 +208,7 @@
                 failing to provide a consistent impression to customers.
             </p>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Map Channel Status</div>
             <div class="grid-3">
@@ -139,19 +221,19 @@
                 
                 <div class="card">
                     <h4>Kakao</h4>
-                    <span class="status-badge bg-green">Normal</span>
-                    <p style="font-size: 12px; margin-top: 5px; color: #666;">All information matches.</p>
+                    <span class="status-badge bg-yellow">Issue Found</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Phone number or hours mismatch.</p>
                 </div>
                 
                 <div class="card">
                     <h4>Google</h4>
-                    <span class="status-badge bg-red">Issue Found</span>
-                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Phone number or hours mismatch.</p>
+                    <span class="status-badge bg-green">Normal</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">All information matches.</p>
                 </div>
                 
             </div>
         </div>
-        
+
         <div class="section">
             <div class="section-title">AI Engine Exposure Summary</div>
             <table>
@@ -164,60 +246,120 @@
                 
                 <tr>
                     <td>ChatGPT</td>
-                    <td><span class="status-badge bg-green">Stable recognition</span></td>
-                    <td>86%</td>
-                    <td>Reflects reviews/assets well</td>
+                    <td><span class="status-badge bg-red">Failed to recognize</span></td>
+                    <td>7%</td>
+                    <td>Not recognized as a candidate</td>
                 </tr>
                 
                 <tr>
                     <td>Gemini</td>
-                    <td><span class="status-badge bg-yellow">Unstable recognition</span></td>
-                    <td>38%</td>
-                    <td>Insufficient differentiation</td>
+                    <td><span class="status-badge bg-red">Failed to recognize</span></td>
+                    <td>3%</td>
+                    <td>Not recognized as a candidate</td>
                 </tr>
                 
                 <tr>
                     <td>Claude</td>
-                    <td><span class="status-badge bg-yellow">Unstable recognition</span></td>
-                    <td>25%</td>
-                    <td>Insufficient differentiation</td>
+                    <td><span class="status-badge bg-green">Stable recognition</span></td>
+                    <td>89%</td>
+                    <td>Reflects reviews/assets well</td>
                 </tr>
                 
                 <tr>
                     <td>Perplexity</td>
-                    <td><span class="status-badge bg-yellow">Unstable recognition</span></td>
-                    <td>27%</td>
-                    <td>Insufficient differentiation</td>
+                    <td><span class="status-badge bg-green">Stable recognition</span></td>
+                    <td>65%</td>
+                    <td>Reflects reviews/assets well</td>
                 </tr>
                 
             </table>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Store Info Consistency</div>
             <table>
                 
                 <tr>
-                    <th>Name</th>
+                    <th style="vertical-align: top;">Name</th>
                     <td>
-                        Match 
-                        (Matches)
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            
+                            <span style="color: #ffc107; color: #856404;">⚠ Verification Unavailable</span>
+                            
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Google:</strong> 팬팬
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Naver:</strong> (Missing)
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Kakao:</strong> 팬팬(PANFAN)
+                            </span><br>
+                            
+                        </div>
                     </td>
                 </tr>
                 
                 <tr>
-                    <th>Address</th>
+                    <th style="vertical-align: top;">Address</th>
                     <td>
-                        Match 
-                        (Matches)
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            
+                            <span style="color: #ffc107; color: #856404;">⚠ Verification Unavailable</span>
+                            
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Google:</strong> 대한민국 서울특별시 영등포구 영등포로 143 1층
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Naver:</strong> (Missing)
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Kakao:</strong> 서울 영등포구 영등포로 143
+                            </span><br>
+                            
+                        </div>
                     </td>
                 </tr>
                 
                 <tr>
-                    <th>Phone</th>
+                    <th style="vertical-align: top;">Phone</th>
                     <td>
-                        Mismatch 
-                        (Mismatch found)
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            
+                            <span style="color: #ffc107; color: #856404;">⚠ Verification Unavailable</span>
+                            
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Google:</strong> 02-2135-2017
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Naver:</strong> (Missing)
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Kakao:</strong> 02-2135-2017
+                            </span><br>
+                            
+                        </div>
                     </td>
                 </tr>
                 
@@ -233,7 +375,7 @@
             <h1>What AI Says About You</h1>
             <span class="date">2026.01.12</span>
         </div>
-        
+
         <div class="section">
             <div class="section-title">AI Response Analysis</div>
             
@@ -242,17 +384,17 @@
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
                     <strong style="color: #0052cc;">Q: Recommend a good place for Establishment in this area.</strong><br>
-                    <span style="color: #333;">A: I recommend 팬팬. It is known for good ambiance.</span>
+                    <span style="color: #333;">A: I couldn't find specific details.</span>
                 </div>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
                     <strong style="color: #0052cc;">Q: Recommend a good place for Establishment in this area.</strong><br>
-                    <span style="color: #333;">A: I recommend 팬팬. It is known for good ambiance.</span>
+                    <span style="color: #333;">A: I couldn't find specific details.</span>
                 </div>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
                     <strong style="color: #0052cc;">Q: Recommend a good place for Establishment in this area.</strong><br>
-                    <span style="color: #333;">A: I recommend 팬팬. It is known for good ambiance.</span>
+                    <span style="color: #333;">A: I couldn't find specific details.</span>
                 </div>
                 
             </div>
@@ -262,17 +404,17 @@
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
                     <strong style="color: #0052cc;">Q: Recommend a good place for Establishment in this area.</strong><br>
-                    <span style="color: #333;">A: I recommend 팬팬. It is known for good ambiance.</span>
+                    <span style="color: #333;">A: I couldn't find specific details.</span>
                 </div>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
                     <strong style="color: #0052cc;">Q: Recommend a good place for Establishment in this area.</strong><br>
-                    <span style="color: #333;">A: I recommend 팬팬. It is known for good ambiance.</span>
+                    <span style="color: #333;">A: I couldn't find specific details.</span>
                 </div>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
                     <strong style="color: #0052cc;">Q: Recommend a good place for Establishment in this area.</strong><br>
-                    <span style="color: #333;">A: I recommend 팬팬. It is known for good ambiance.</span>
+                    <span style="color: #333;">A: I couldn't find specific details.</span>
                 </div>
                 
             </div>
@@ -318,7 +460,7 @@
             </div>
             
         </div>
-        
+
         <div class="footer">Page 2 / 4</div>
     </div>
 
@@ -328,7 +470,7 @@
             <h1>What To Fix (Top Priorities)</h1>
             <span class="date">2026.01.12</span>
         </div>
-        
+
         <div class="section">
             <div class="section-title">Core Improvements</div>
             
@@ -360,7 +502,7 @@
             </div>
             
         </div>
-        
+
         <div class="summary-box" style="background: #fff3cd;">
             <p class="summary-text">
                 <strong>Key Insight:</strong><br>
@@ -377,19 +519,21 @@
             <h1>Ready-to-use AI Sentences</h1>
             <span class="date">2026.01.12</span>
         </div>
-        
+
         <div class="section">
             <div class="section-title">AI One-Liner Introduction</div>
             <div class="quote-box">
                 "팬팬 is a Establishment in Gangnam known for its verified taste and service."
             </div>
             <p style="font-size: 13px; color: #666;">
-                This sentence is optimized for AI understanding of your business's core value. Use this in your map descriptions.
+                This sentence is optimized for AI understanding of your business's core value. Use this in your map
+                descriptions.
             </p>
         </div>
-        
+
         <div class="footer">Page 4 / 4</div>
     </div>
 
 </body>
+
 </html>
