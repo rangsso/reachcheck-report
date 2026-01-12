@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>ReachCheck Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 20mm;
+            box-sizing: border-box;
+            background: white;
+            page-break-after: always;
+            position: relative;
+        }
+        
+        h1, h2, h3 { margin: 0 0 10px 0; }
+        
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .header h1 { font-size: 24px; font-weight: 700; color: #1a1a1a; }
+        .header .date { font-size: 12px; color: #666; }
+        
+        .section { margin-bottom: 20px; }
+        .section-title { font-size: 18px; font-weight: 700; border-left: 5px solid #0052cc; padding-left: 10px; margin-bottom: 15px; }
+        
+        /* Summary Box */
+        .summary-box { background: #f0f7ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .summary-text { font-size: 16px; line-height: 1.6; }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+        }
+        .bg-green { background-color: #28a745; }
+        .bg-yellow { background-color: #ffc107; color: #333; }
+        .bg-red { background-color: #dc3545; }
+        
+        /* Grid */
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+        .card h4 { font-size: 14px; margin-bottom: 10px; color: #555; }
+        
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        th { background: #f9f9f9; width: 30%; }
+        
+        /* Page 3 Priorities */
+        .priority-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid #0052cc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .priority-rank { font-size: 12px; color: #0052cc; font-weight: bold; margin-bottom: 5px; }
+        .priority-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+        
+        /* Page 4 Quote */
+        .quote-box {
+            background: #f8f9fa;
+            border-left: 4px solid #333;
+            padding: 20px;
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 30px 0;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20mm;
+            left: 20mm;
+            right: 20mm;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page 1: Summary -->
+    <div class="page">
+        <div class="header">
+            <h1>[{{ data.store.name }}] AI·Search Exposure Diagnosis Summary</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+        
+        <div class="summary-box">
+            <p class="summary-text">
+                {{ data.analysis.map_summary }}<br>
+                {{ data.analysis.ai_summary }}<br><br>
+                Specifically, exposure and description consistency across AI engines varies,<br>
+                failing to provide a consistent impression to customers.
+            </p>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Map Channel Status</div>
+            <div class="grid-3">
+                {% for channel in data.analysis.map_statuses %}
+                <div class="card">
+                    <h4>{{ channel.channel_name }}</h4>
+                    <span class="status-badge bg-{{ channel.color.value }}">{{ 'Normal' if channel.color.value == 'green' else 'Issue Found' }}</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">{{ channel.status_text }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">AI Engine Exposure Summary</div>
+            <table>
+                <tr>
+                    <th>Engine</th>
+                    <th>Status</th>
+                    <th>Mention Rate</th>
+                    <th>Interpretation</th>
+                </tr>
+                {% for ai in data.analysis.ai_statuses %}
+                <tr>
+                    <td>{{ ai.engine_name }}</td>
+                    <td><span class="status-badge bg-{{ ai.color.value }}">{{ ai.summary }}</span></td>
+                    <td>{{ ai.mention_rate }}%</td>
+                    <td>{{ ai.interpretation }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Store Info Consistency</div>
+            <table>
+                {% for item in data.analysis.consistency_results %}
+                <tr>
+                    <th>{{ item.field_name }}</th>
+                    <td>
+                        {{ 'Match' if item.is_match else 'Mismatch' }} 
+                        ({{ item.details }})
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="footer">Page 1 / 4</div>
+    </div>
+
+    <!-- Page 2: AI Responses -->
+    <div class="page">
+        <div class="header">
+            <h1>What AI Says About You</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">AI Response Analysis</div>
+            {% for engine, responses in data.analysis.ai_responses.items() %}
+            <div class="card" style="margin-bottom: 15px;">
+                <h4>{{ engine }}</h4>
+                {% for resp in responses %}
+                <div style="margin-bottom: 10px; font-size: 13px;">
+                    <strong style="color: #0052cc;">Q: {{ resp.question }}</strong><br>
+                    <span style="color: #333;">A: {{ resp.answer }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="footer">Page 2 / 4</div>
+    </div>
+
+    <!-- Page 3: Improvements -->
+    <div class="page">
+        <div class="header">
+            <h1>What To Fix (Top Priorities)</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Core Improvements</div>
+            {% for imp in data.analysis.improvements %}
+            <div class="priority-item">
+                <div class="priority-rank">PRIORITY {{ loop.index }}</div>
+                <div class="priority-title">{{ imp.title }}</div>
+                <p style="font-size: 13px;">{{ imp.description }}</p>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <strong>Why Important:</strong> {{ imp.importance }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="summary-box" style="background: #fff3cd;">
+            <p class="summary-text">
+                <strong>Key Insight:</strong><br>
+                AI exposure is not just a result, but a process of creating conditions for AI to understand.
+            </p>
+        </div>
+
+        <div class="footer">Page 3 / 4</div>
+    </div>
+
+    <!-- Page 4: Preview -->
+    <div class="page">
+        <div class="header">
+            <h1>Ready-to-use AI Sentences</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">AI One-Liner Introduction</div>
+            <div class="quote-box">
+                "{{ data.analysis.ai_intro_sentence }}"
+            </div>
+            <p style="font-size: 13px; color: #666;">
+                This sentence is optimized for AI understanding of your business's core value. Use this in your map descriptions.
+            </p>
+        </div>
+        
+        <div class="footer">Page 4 / 4</div>
+    </div>
+
+</body>
+</html>
