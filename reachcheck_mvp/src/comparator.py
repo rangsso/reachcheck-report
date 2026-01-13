@@ -32,7 +32,8 @@ def compare_data(sources: Dict[str, Dict[str, Any]]) -> List[ConsistencyResult]:
         log_msg = f"[COMPARE][{key}]"
         
         # Collect values
-        missing_source_found = False
+        missing_sources = []
+        present_sources = []
         
         for source_name in required_sources:
             data = sources.get(source_name, {})
@@ -42,31 +43,63 @@ def compare_data(sources: Dict[str, Dict[str, Any]]) -> List[ConsistencyResult]:
                 evidence[source_name] = str(raw_val)
                 norm_val = normalizer(str(raw_val))
                 normalized_values[source_name] = norm_val
+                present_sources.append(source_name)
                 log_msg += f" {source_name}={norm_val}"
             else:
                 evidence[source_name] = "(Missing)"
                 normalized_values[source_name] = None
-                missing_source_found = True
+                missing_sources.append(source_name)
                 log_msg += f" {source_name}=None"
         
         print(log_msg)
 
-        # Determine status
-        # Rule (A): If ANY source is missing -> INSUFFICIENT_DATA
-        if missing_source_found:
-            status = "INSUFFICIENT_DATA"
-            details = "Some data sources are unavailable."
-        else:
-            # All sources present. Check consistency.
-            # Rule (B): Mismatch only if they differ
-            valid_norms = list(normalized_values.values())
+        # Generate Descriptive details
+        status = "Match" # Default
+        details = ""
+        
+        # Logic: Group by value
+        # value -> list of sources
+        value_groups = {}
+        for src in present_sources:
+            val = normalized_values[src]
+            if val not in value_groups:
+                value_groups[val] = []
+            value_groups[val].append(src)
             
-            if len(set(valid_norms)) == 1:
-                status = "Match"
-                details = "All sources match."
+        # Case 1: Everyone matches (All present, single group)
+        if not missing_sources and len(value_groups) == 1:
+            status = "Match"
+            details = f"{label} information matches across all maps (Google, Naver, Kakao)."
+            
+        # Case 2: Missing Data
+        elif missing_sources:
+            status = "Missing"
+            missing_str = ", ".join([s.title() for s in missing_sources])
+            
+            if len(value_groups) == 0:
+                 details = f"{label} information matches nowhere (All missing)."
+            elif len(value_groups) == 1:
+                # Rest match
+                 details = f"{label} is missing on {missing_str}, but matches on the others."
             else:
-                status = "Mismatch"
-                details = "Data differs across sources."
+                # Rest mismatch
+                 details = f"{label} is missing on {missing_str}, and differs among the others."
+
+        # Case 3: Mismatch (No missing, but multiple groups)
+        else: # len(value_groups) > 1 and not missing_sources
+            status = "Mismatch"
+            # Build description of groups
+            # e.g. "Google/Naver match, but Kakao differs."
+            
+            # Find the majority group if any
+            sorted_groups = sorted(value_groups.items(), key=lambda item: len(item[1]), reverse=True)
+            
+            descriptions = []
+            for val, srcs in sorted_groups:
+                src_names = "/".join([s.title() for s in srcs])
+                descriptions.append(f"{src_names}")
+            
+            details = f"{label} differs: {descriptions[0]} vs {descriptions[1]}."
 
         results.append(ConsistencyResult(
             field_name=label,

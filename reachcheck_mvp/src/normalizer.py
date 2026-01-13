@@ -55,3 +55,61 @@ def normalize_address(addr: str) -> str:
     # Remove spaces/punctuation
     s = re.sub(r"[\s,.]", "", s)
     return s
+
+from models import StoreSchema, PhotoData
+from typing import Dict, Any, List
+
+def normalize_store_data(
+    store_id: str, 
+    raw_google: Dict[str, Any], 
+    raw_naver: Dict[str, Any], 
+    raw_kakao: Dict[str, Any]
+) -> StoreSchema:
+    """
+    Consolidates raw data from multiple sources into a single standardized StoreSchema.
+    Priority: Google > Naver > Kakao (for MVP)
+    """
+    
+    # 1. Name
+    name = raw_google.get("name") or raw_naver.get("name") or raw_kakao.get("name") or "Unknown Store"
+    
+    # 2. Address
+    address = raw_google.get("address") or raw_naver.get("address") or raw_kakao.get("address") or ""
+    
+    # 3. Phone
+    phone = raw_google.get("phone") or raw_naver.get("phone") or raw_kakao.get("phone") or ""
+    
+    # 4. Category
+    # Google uses types list, Naver/Kakao might differ. Simplified for MVP.
+    category = "Unknown"
+    # Google (already processed in collector, but let's re-verify if possible or trust collector passed refined dict)
+    # The current collector flattens google struct slightly. Let's assume raw_google has 'category' or we extract from 'types' if preserved.
+    # We will assume collector passed 'category' in the dictionary for convenience or we stick to what we have.
+    # In collector currently: google_data = {"name": ..., "address": ..., "phone": ...} 
+    # We need to ensure collector passes 'category' too.
+    
+    category = raw_google.get("category") or raw_naver.get("category") or "General"
+
+    # 5. Geolocation (Lat/Lng) - Only Google Details provides this readily in this MVP setup
+    # If missing, default to 0.0
+    lat = raw_google.get("lat", 0.0)
+    lng = raw_google.get("lng", 0.0)
+    
+    # 6. Photos
+    photos = []
+    # Implementation detail: Photo parsing would happen here if we had raw photo data.
+    
+    return StoreSchema(
+        id=store_id,
+        name=name,
+        address=address,
+        phone=phone,
+        category=category,
+        lat=lat,
+        lng=lng,
+        hours="", # To be implemented
+        description="", # To be implemented
+        photos=photos,
+        source_url=""
+    )
+

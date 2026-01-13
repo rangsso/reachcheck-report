@@ -1,0 +1,51 @@
+{
+    "store_id": "PID-42099",
+    "timestamp": "20260113_125358",
+    "standard_info": {
+        "id": "PID-42099",
+        "name": "Test Store Extended",
+        "address": "Seoul, Mock Address",
+        "phone": "02-1234-5678",
+        "category": "General",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": ""
+    },
+    "raw_google": {
+        "name": "Test Store Extended",
+        "address": "Seoul, Mock Address",
+        "phone": "02-1234-5678",
+        "category": "General"
+    },
+    "raw_naver": {},
+    "raw_kakao": {},
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "Recommend a good place for General in Seoul, Mock.",
+                "answer": "You can try The War Memorial of Korea in Yongsan-gu, Seoul.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "What can you tell me about Test Store Extended in Seoul, Mock?",
+                "answer": "Test Store Extended in Seoul, Mock is a retail store that specializes in offering a wide range of products for testing and trying out before making a purchase. They have a variety of items available for customers to explore and experience firsthand.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "Is Test Store Extended a popular spot in Seoul, Mock? Why?",
+                "answer": "Yes, Test Store Extended is a popular spot in Seoul, Mock. It is known for its unique concept and trendy merchandise that attract many visitors.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [],
+    "search_candidates": {},
+    "errors": {
+        "Naver": "SEARCH_NO_RESULT",
+        "Kakao": "SEARCH_NO_RESULT"
+    }
+}

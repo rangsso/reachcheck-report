@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from models import ReportData
 
@@ -19,9 +20,21 @@ except ImportError:
     HAS_XHTML2PDF = False
 
 class ReportGenerator:
-    def __init__(self, template_dir="reachcheck_mvp/templates", output_dir="reachcheck_mvp/output"):
-        self.template_dir = template_dir
-        self.output_dir = output_dir
+    def __init__(self, template_dir=None, output_dir=None):
+        base_dir = Path(__file__).resolve().parent.parent # reachcheck_mvp root
+        
+        if not template_dir:
+            template_dir = base_dir / "templates"
+        
+        if not output_dir:
+            output_dir = base_dir / "output"
+            
+        self.template_dir = str(template_dir)
+        self.output_dir = str(output_dir)
+        
+        # Ensure output dir exists
+        os.makedirs(self.output_dir, exist_ok=True)
+        
         self.env = Environment(loader=FileSystemLoader(self.template_dir))
 
     def generate(self, data: ReportData, filename: str = "report.pdf"):

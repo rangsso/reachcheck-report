@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from enum import Enum
 
 class StatusColor(Enum):
@@ -40,11 +40,68 @@ class ReviewAnalysis:
 
 @dataclass
 class StoreInfo:
+    """Deprecated: Use StoreSchema instead for new logic"""
     name: str
     address: str
     phone: str
     category: str
     place_id: str
+
+@dataclass
+class PhotoData:
+    url: str
+    source: str  # google, naver, etc.
+    tags: List[str] = field(default_factory=list)
+
+@dataclass
+class StoreSchema:
+    """Standardized Store Information (Normalized)"""
+    id: str  # Unique ID (e.g. Google Place ID)
+    name: str
+    address: str
+    phone: str
+    category: str
+    lat: float
+    lng: float
+    hours: str
+    description: str
+    photos: List[PhotoData] = field(default_factory=list)
+    source_url: str = ""
+
+@dataclass
+class ChatResponse:
+    question: str
+    answer: str
+    evaluation: str
+
+@dataclass
+class SnapshotData:
+    """Raw and Normalized Data for Reproducibility"""
+    store_id: str
+    timestamp: str
+    
+    # Normalized Data
+    standard_info: StoreSchema
+    
+    # Raw API Responses
+    raw_google: Dict[str, Any] = field(default_factory=dict)
+    raw_naver: Dict[str, Any] = field(default_factory=dict)
+    raw_kakao: Dict[str, Any] = field(default_factory=dict)
+    
+    # LLM Responses
+    llm_responses: Dict[str, Any] = field(default_factory=dict)  # Engine -> Response
+
+    # Analysis Status (New)
+    missing_fields: List[str] = field(default_factory=list)
+    mismatch_fields: List[str] = field(default_factory=list)
+    
+    # Search candidates (if ambiguous)
+    search_candidates: Dict[str, List[Dict[str, str]]] = field(default_factory=dict) # channel -> list of {name, address}
+    
+    # Collection Errors
+    errors: Dict[str, str] = field(default_factory=dict) # channel -> error_code (e.g. "AUTH_ERROR", "SEARCH_NO_RESULT")
+
+
 
 @dataclass
 class AnalysisResult:

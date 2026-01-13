@@ -196,14 +196,16 @@
     <!-- Page 1: Summary -->
     <div class="page">
         <div class="header">
-            <h1>[] AI·Search Exposure Diagnosis Summary</h1>
+            <h1>[스타벅스 강남R점] AI·Search Exposure Diagnosis Summary</h1>
             <span class="date">2026.01.13</span>
         </div>
 
         <div class="summary-box">
             <p class="summary-text">
-                Basic information differs across map channels.<br>
-                Mentions and descriptions vary by AI engine. These discrepancies may lead to unstable AI recognition.<br>
+                Map information is partially correct.<br>
+                AI recognition is consistent.<br><br>
+                Specifically, exposure and description consistency across AI engines varies,<br>
+                failing to provide a consistent impression to customers.
             </p>
         </div>
 
@@ -213,105 +215,23 @@
                 
                 <div class="card">
                     <h4>Naver</h4>
-                    <span class="status-badge bg-red">Not Found</span>
-                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Not found.</p>
+                    <span class="status-badge bg-green">Normal</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Information found.</p>
                 </div>
                 
                 <div class="card">
                     <h4>Kakao</h4>
-                    <span class="status-badge bg-red">Not Found</span>
-                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Not found.</p>
+                    <span class="status-badge bg-green">Normal</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Information found.</p>
                 </div>
                 
                 <div class="card">
                     <h4>Google</h4>
-                    <span class="status-badge bg-green">Data Found</span>
+                    <span class="status-badge bg-green">Normal</span>
                     <p style="font-size: 12px; margin-top: 5px; color: #666;">Information found.</p>
                 </div>
                 
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Store Info Consistency</div>
-            <table>
-                
-                <tr>
-                    <th style="vertical-align: top; width: 20%;">Name</th>
-                    <td>
-                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
-                            Name is missing on Naver, Kakao, but matches on the others.
-                        </div>
-
-                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Google:</strong> Test Store Diagnosis
-                            </span>
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Naver:</strong> (Missing)
-                            </span>
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Kakao:</strong> (Missing)
-                            </span>
-                            
-                        </div>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <th style="vertical-align: top; width: 20%;">Address</th>
-                    <td>
-                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
-                            Address is missing on Naver, Kakao, but matches on the others.
-                        </div>
-
-                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Google:</strong> Seoul, Mock Address
-                            </span>
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Naver:</strong> (Missing)
-                            </span>
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Kakao:</strong> (Missing)
-                            </span>
-                            
-                        </div>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <th style="vertical-align: top; width: 20%;">Phone</th>
-                    <td>
-                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
-                            Phone is missing on Naver, Kakao, but matches on the others.
-                        </div>
-
-                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Google:</strong> 02-1234-5678
-                            </span>
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Naver:</strong> (Missing)
-                            </span>
-                            
-                            <span style="margin-right: 15px;">
-                                <strong>Kakao:</strong> (Missing)
-                            </span>
-                            
-                        </div>
-                    </td>
-                </tr>
-                
-            </table>
         </div>
 
         <div class="section">
@@ -320,31 +240,127 @@
                 <tr>
                     <th>Engine</th>
                     <th>Status</th>
+                    <th>Mention Rate</th>
                     <th>Interpretation</th>
                 </tr>
                 
                 <tr>
                     <td>ChatGPT</td>
                     <td><span class="status-badge bg-green">Stable recognition</span></td>
+                    <td>66.0%</td>
                     <td>Reflects reviews/assets well</td>
                 </tr>
                 
                 <tr>
                     <td>Gemini</td>
                     <td><span class="status-badge bg-red">Not Connected</span></td>
+                    <td>0.0%</td>
                     <td>-</td>
                 </tr>
                 
                 <tr>
                     <td>Claude</td>
                     <td><span class="status-badge bg-red">Not Connected</span></td>
+                    <td>0.0%</td>
                     <td>-</td>
                 </tr>
                 
                 <tr>
                     <td>Perplexity</td>
                     <td><span class="status-badge bg-red">Not Connected</span></td>
+                    <td>0.0%</td>
                     <td>-</td>
+                </tr>
+                
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Store Info Consistency</div>
+            <table>
+                
+                <tr>
+                    <th style="vertical-align: top;">Name</th>
+                    <td>
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            
+                            <span style="color: green;">✔ Match</span>
+                            
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Google:</strong> 스타벅스 강남R점
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Naver:</strong> 스타벅스 강남R점
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Kakao:</strong> 스타벅스 강남R점
+                            </span><br>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th style="vertical-align: top;">Address</th>
+                    <td>
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            
+                            <span style="color: red;">✘ Mismatch</span>
+                            
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Google:</strong> 대한민국 서울특별시 강남구 강남대로 390
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Naver:</strong> 서울특별시 강남구 강남대로 390 (역삼동)
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Kakao:</strong> 서울 강남구 강남대로 390
+                            </span><br>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th style="vertical-align: top;">Phone</th>
+                    <td>
+                        <div style="font-weight: bold; margin-bottom: 5px;">
+                            
+                            <span style="color: #ffc107; color: #856404;">⚠ Verification Unavailable</span>
+                            
+                        </div>
+
+                        <div
+                            style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Google:</strong> 1522-3232
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Naver:</strong> (Missing)
+                            </span><br>
+                            
+                            <span style="margin-right: 10px;">
+                                <strong>Kakao:</strong> 1522-3232
+                            </span><br>
+                            
+                        </div>
+                    </td>
                 </tr>
                 
             </table>
@@ -367,18 +383,18 @@
                 <h4>ChatGPT</h4>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
-                    <strong style="color: #0052cc;">Q: Recommend a good place for General in Seoul, Mock.</strong><br>
-                    <span style="color: #333;">A: I recommend visiting Gyeongbokgung Palace in Seoul for a taste of Korean history and culture.</span>
+                    <strong style="color: #0052cc;">Q: Recommend a good place for Cafe in 대한민국 서울특별시.</strong><br>
+                    <span style="color: #333;">A: I recommend visiting Cafe Onion in Seoul, South Korea. It is a popular spot known for its cozy atmosphere and great coffee.</span>
                 </div>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
-                    <strong style="color: #0052cc;">Q: What can you tell me about Test Store Diagnosis in Seoul, Mock?</strong><br>
-                    <span style="color: #333;">A: I'm sorry, but I couldn't find any information about a store called Test Store Diagnosis in Seoul, Mock. It is possible that the store does not exist or that the name is incorrect. </span>
+                    <strong style="color: #0052cc;">Q: What can you tell me about 스타벅스 강남R점 in 대한민국 서울특별시?</strong><br>
+                    <span style="color: #333;">A: 스타벅스 강남R점은 서울특별시 강남구에 위치한 스타벅스 매장입니다.</span>
                 </div>
                 
                 <div style="margin-bottom: 10px; font-size: 13px;">
-                    <strong style="color: #0052cc;">Q: Is Test Store Diagnosis a popular spot in Seoul, Mock? Why?</strong><br>
-                    <span style="color: #333;">A: No, Test Store Diagnosis is not a popular spot in Seoul.</span>
+                    <strong style="color: #0052cc;">Q: Is 스타벅스 강남R점 a popular spot in 대한민국 서울특별시? Why?</strong><br>
+                    <span style="color: #333;">A: Yes, 스타벅스 강남R점 is a popular spot in Seoul, South Korea. It is located in the trendy area of Gangnam and is known for its stylish interior, convenient location, and high-quality coffee offerings.</span>
                 </div>
                 
             </div>
@@ -462,7 +478,7 @@
         <div class="section">
             <div class="section-title">AI One-Liner Introduction</div>
             <div class="quote-box">
-                "Test Store Diagnosis is a General in Gangnam known for its verified taste and service."
+                "스타벅스 강남R점 is a Cafe in Gangnam known for its verified taste and service."
             </div>
             <p style="font-size: 13px; color: #666;">
                 This sentence is optimized for AI understanding of your business's core value. Use this in your map
