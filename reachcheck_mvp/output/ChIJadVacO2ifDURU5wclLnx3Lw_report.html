@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ReachCheck Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 20mm;
+            box-sizing: border-box;
+            background: white;
+            page-break-after: always;
+            position: relative;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .header .date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            border-left: 5px solid #0052cc;
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+        }
+
+        .bg-green {
+            background-color: #28a745;
+        }
+
+        .bg-yellow {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .bg-red {
+            background-color: #dc3545;
+        }
+
+        /* Grid */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .card h4 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f9f9f9;
+            width: 30%;
+        }
+
+        /* Page 3 Priorities */
+        .priority-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid #0052cc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .priority-rank {
+            font-size: 12px;
+            color: #0052cc;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .priority-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Page 4 Quote */
+        .quote-box {
+            background: #f8f9fa;
+            border-left: 4px solid #333;
+            padding: 20px;
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 30px 0;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20mm;
+            left: 20mm;
+            right: 20mm;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Page 1: Summary -->
+    <div class="page">
+        <div class="header">
+            <h1>[스타벅스 한국프레스센터점] AI·Search Exposure Diagnosis Summary</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="summary-box">
+            <p class="summary-text">
+                Basic information differs across map channels.<br>
+                Mentions and descriptions vary by AI engine. These discrepancies may lead to unstable AI recognition.<br>
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Map Channel Status</div>
+            <div class="grid-3">
+                
+                <div class="card">
+                    <h4>Naver</h4>
+                    <span class="status-badge bg-green">Data Found</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Information found.</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Kakao</h4>
+                    <span class="status-badge bg-green">Data Found</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Information found.</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Google</h4>
+                    <span class="status-badge bg-green">Data Found</span>
+                    <p style="font-size: 12px; margin-top: 5px; color: #666;">Information found.</p>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Store Info Consistency</div>
+            <table>
+                
+                <tr>
+                    <th style="vertical-align: top; width: 20%;">Name</th>
+                    <td>
+                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
+                            Name information matches across all maps (Google, Naver, Kakao).
+                        </div>
+
+                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Google:</strong> 스타벅스 한국프레스센터점
+                            </span>
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Naver:</strong> 스타벅스 한국프레스센터점
+                            </span>
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Kakao:</strong> 스타벅스 한국프레스센터점
+                            </span>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th style="vertical-align: top; width: 20%;">Address</th>
+                    <td>
+                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
+                            Address differs: Google/Naver vs Kakao.
+                        </div>
+
+                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Google:</strong> 대한민국 서울특별시 중구 태평로1가 25
+                            </span>
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Naver:</strong> 서울특별시 중구 태평로1가 25
+                            </span>
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Kakao:</strong> 서울 중구 세종대로 124
+                            </span>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th style="vertical-align: top; width: 20%;">Phone</th>
+                    <td>
+                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
+                            Phone is missing on Naver, but matches on the others.
+                        </div>
+
+                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Google:</strong> 1522-3232
+                            </span>
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Naver:</strong> (Missing)
+                            </span>
+                            
+                            <span style="margin-right: 15px;">
+                                <strong>Kakao:</strong> 1522-3232
+                            </span>
+                            
+                        </div>
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI Engine Exposure Summary</div>
+            <table>
+                <tr>
+                    <th>Engine</th>
+                    <th>Status</th>
+                    <th>Interpretation</th>
+                </tr>
+                
+                <tr>
+                    <td>ChatGPT</td>
+                    <td><span class="status-badge bg-green">Stable recognition</span></td>
+                    <td>Reflects reviews/assets well</td>
+                </tr>
+                
+                <tr>
+                    <td>Gemini</td>
+                    <td><span class="status-badge bg-red">Not Connected</span></td>
+                    <td>-</td>
+                </tr>
+                
+                <tr>
+                    <td>Claude</td>
+                    <td><span class="status-badge bg-red">Not Connected</span></td>
+                    <td>-</td>
+                </tr>
+                
+                <tr>
+                    <td>Perplexity</td>
+                    <td><span class="status-badge bg-red">Not Connected</span></td>
+                    <td>-</td>
+                </tr>
+                
+            </table>
+        </div>
+
+        <div class="footer">Page 1 / 4</div>
+    </div>
+
+    <!-- Page 2: AI Responses -->
+    <div class="page">
+        <div class="header">
+            <h1>What AI Says About You</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI Response Analysis</div>
+            
+            <div class="card" style="margin-bottom: 15px;">
+                <h4>ChatGPT</h4>
+                
+                <div style="margin-bottom: 10px; font-size: 13px;">
+                    <strong style="color: #0052cc;">Q: Recommend a good place for General in 서울특별시 중구.</strong><br>
+                    <span style="color: #333;">A: You can try General in Myeongdong area in 중구, 서울특별시.</span>
+                </div>
+                
+                <div style="margin-bottom: 10px; font-size: 13px;">
+                    <strong style="color: #0052cc;">Q: What can you tell me about 스타벅스 한국프레스센터점 in 서울특별시 중구?</strong><br>
+                    <span style="color: #333;">A: 스타벅스 한국프레스센터점 is located in Jung-gu, Seoul. It is a Starbucks branch near the Korea Press Foundation building, serving the usual Starbucks menu of coffee, tea, and pastries.</span>
+                </div>
+                
+                <div style="margin-bottom: 10px; font-size: 13px;">
+                    <strong style="color: #0052cc;">Q: Is 스타벅스 한국프레스센터점 a popular spot in 서울특별시 중구? Why?</strong><br>
+                    <span style="color: #333;">A: Yes, 스타벅스 한국프레스센터점 is a popular spot in 서울특별시 중구 because it is located in a central area, attracts both locals and tourists, and offers a cozy atmosphere for enjoying coffee and socializing.</span>
+                </div>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 15px;">
+                <h4>Gemini</h4>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 15px;">
+                <h4>Claude</h4>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 15px;">
+                <h4>Perplexity</h4>
+                
+            </div>
+            
+        </div>
+
+        <div class="footer">Page 2 / 4</div>
+    </div>
+
+    <!-- Page 3: Improvements -->
+    <div class="page">
+        <div class="header">
+            <h1>What To Fix (Top Priorities)</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Core Improvements</div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">PRIORITY 1</div>
+                <div class="priority-title">Unify Store Information</div>
+                <p style="font-size: 13px;">Ensure Name/Phone/Address are identical across all maps.</p>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <strong>Why Important:</strong> High
+                </div>
+            </div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">PRIORITY 2</div>
+                <div class="priority-title">Add AI-friendly Description</div>
+                <p style="font-size: 13px;">Update store introduction with structured keywords.</p>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <strong>Why Important:</strong> Medium
+                </div>
+            </div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">PRIORITY 3</div>
+                <div class="priority-title">Structure FAQs</div>
+                <p style="font-size: 13px;">Add Q&A section to map listings.</p>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <strong>Why Important:</strong> Medium
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="summary-box" style="background: #fff3cd;">
+            <p class="summary-text">
+                <strong>Key Insight:</strong><br>
+                AI exposure is not just a result, but a process of creating conditions for AI to understand.
+            </p>
+        </div>
+
+        <div class="footer">Page 3 / 4</div>
+    </div>
+
+    <!-- Page 4: Preview -->
+    <div class="page">
+        <div class="header">
+            <h1>Ready-to-use AI Sentences</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI One-Liner Introduction</div>
+            <div class="quote-box">
+                "스타벅스 한국프레스센터점 is a General in Gangnam known for its verified taste and service."
+            </div>
+            <p style="font-size: 13px; color: #666;">
+                This sentence is optimized for AI understanding of your business's core value. Use this in your map
+                descriptions.
+            </p>
+        </div>
+
+        <div class="footer">Page 4 / 4</div>
+    </div>
+
+</body>
+
+</html>

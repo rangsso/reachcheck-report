@@ -1,0 +1,174 @@
+/*!*************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[11].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[11].oneOf[12].use[3]!./app/globals.css ***!
+  \*************************************************************************************************************************************************************************************************************************************************************/
+:root {
+    --primary: #2563eb;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --text: #1e293b;
+    --border: #e2e8f0;
+}
+
+body {
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+header {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.search-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+input {
+    flex: 1 1;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+button,
+.button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+button:hover,
+.button:hover {
+    opacity: 0.9;
+}
+
+button:disabled,
+.button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    grid-gap: 1.5rem;
+    gap: 1.5rem;
+    height: 600px;
+}
+
+.candidate-list {
+    background: var(--surface);
+    border-radius: 0.5rem;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+}
+
+.candidate-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.candidate-item:hover {
+    background: #f1f5f9;
+}
+
+.candidate-item.selected {
+    background: #eff6ff;
+    border-left: 4px solid var(--primary);
+}
+
+.candidate-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.candidate-address {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.map-container {
+    background: #e2e8f0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+    min-height: 400px;
+}
+
+#kakao-map {
+    width: 100%;
+    height: 100%;
+}
+
+.analyze-bar {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-view {
+    text-align: center;
+}
+
+.report-links {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.report-frame {
+    width: 100%;
+    height: 800px;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+    z-index: 1000;
+}

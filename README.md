@@ -1,7 +1,7 @@
-# ReachCheck Report E2E
+# ReachCheck Report E2E (Naver First)
 
-Minimal E2E flow for Store Analysis.
-Search store → select from map → analyze → view report (PDF + HTML).
+Naver-centric E2E flow for Store Analysis.
+Search Naver → Select → Analyze → View Report.
 
 ## Project Structure
 
@@ -9,12 +9,9 @@ Search store → select from map → analyze → view report (PDF + HTML).
 reachcheck-report/
   reachcheck_mvp/              # Backend
     src/                       # Source code
-    snapshots/                 # JSON snapshots
-    outputs/                   # Generated reports
-  web/                         # Frontend (React + Vite)
-    src/
-    package.json
-    .env
+  web/                         # Frontend (Next.js)
+    app/
+    components/
   README.md
 ```
 
@@ -26,16 +23,14 @@ Navigate to `reachcheck_mvp`:
 
 ```bash
 cd reachcheck_mvp
-# Install Dependencies (if not already)
+# Install Dependencies
 pip install -r requirements.txt
 # Run Server
 uvicorn api:app --reload --app-dir src --port 8000
 ```
-
 - API Docs: http://localhost:8000/docs
-- Reports served at: http://localhost:8000/outputs/
 
-### 2. Frontend (Next.js)
+### 2. Frontend
 
 Navigate to `web`:
 
@@ -46,35 +41,38 @@ npm install
 # Run Development Server
 npm run dev
 ```
-
-- Open http://localhost:3000 to start the flow.
+- Open http://localhost:3000 to start.
 
 ### 3. Environment Variables
 
 **Backend (`.env`)**
-Requires Google, Naver, Kakao API Keys.
+```env
+NAVER_CLIENT_ID=your_id
+NAVER_CLIENT_SECRET=your_secret
+GOOGLE_MAPS_API_KEY=your_key
+KAKAO_REST_API_KEY=your_key
+```
 
 **Frontend (`web/.env.local`)**
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-NEXT_PUBLIC_KAKAO_MAP_KEY=YOUR_KAKAO_JS_KEY # (Optional: Defaults to REST key if using provided setup)
+NEXT_PUBLIC_NAVER_MAPS_KEY=your_ncp_key # For Map (Optional)
 ```
-*Note: The frontend currently uses the REST Key as a fallback for the JS SDK, which may work depending on key configuration. For best results, use a dedicated Javascript Key.*
 
-## E2E Flow
+## Testing
 
-1. **Search**: Enter a store name (e.g. "Starbucks Gangnam") in the search bar.
-2. **Select**: Choose a candidate from the list or click a pin on the map.
-3. **Analyze**: Click "Generate Report". This triggers data collection and analysis.
-4. **View**: Download the PDF or view the HTML report directly in the browser.
+**Naver Search (Backend Proxy)**
+```bash
+curl "http://localhost:8000/search/naver?query=스타벅스"
+```
 
-## Features
+**Generate Report**
+```bash
+curl -X POST "http://localhost:8000/report" \
+  -H "Content-Type: application/json" \
+  -d '{"store_name": "Test Store", "address": "Seoul..."}'
+```
 
-- **ReachCheck MVP Backend**:
-  - `GET /places/search`: Kakao Local Search
-  - `POST /report`: Generates snapshots and report files
-  - `STATIC /outputs`: Serves generated files
-- **React Frontend**:
-  - Kakao Maps integration
-  - Interactive Store Picker
-  - Real-time Analysis status
+## Notes
+- Frontend Map pins may not appear for Naver results due to coordinate system differences (KATECH vs WGS84). This is expected in MVP.
+- Analysis prioritizes Naver data as the source of truth.

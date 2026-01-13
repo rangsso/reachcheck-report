@@ -59,6 +59,11 @@ export default function MapView({ candidates, selectedId, onSelect }: MapViewPro
             const bounds = new window.kakao.maps.LatLngBounds();
 
             candidates.forEach(cand => {
+                // Naver Search returns KATECH (mapx, mapy) usually, which needs conversion
+                // This is a placeholder as we prioritize Search/Analysis over Map pins for MVP
+                // If lat/lng exists (e.g. from other source), use it.
+                if (!cand.lat && !cand.lng) return;
+
                 const position = new window.kakao.maps.LatLng(cand.lat, cand.lng);
                 const marker = new window.kakao.maps.Marker({
                     position: position,

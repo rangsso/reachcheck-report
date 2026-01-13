@@ -21,8 +21,13 @@ export default function AnalyzeButton({ selected }: AnalyzeButtonProps) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    place_id: selected.place_id,
-                    store_name: selected.name
+                    store_name: selected.name,
+                    address: selected.address,
+                    road_address: selected.roadAddress,
+                    tel: selected.tel,
+                    naver_link: selected.link,
+                    mapx: selected.mapx,
+                    mapy: selected.mapy
                 })
             });
 

@@ -39,7 +39,7 @@ class DataCollector:
     def __init__(self):
         self.snapshot_manager = SnapshotManager()
 
-    def collect(self, store_name: str, place_id: str = None) -> SnapshotData:
+    def collect(self, store_name: str, place_id: str = None, naver_seed: dict = None) -> SnapshotData:
         google_data = {}
         naver_data = {}
         kakao_data = {}
@@ -47,11 +47,44 @@ class DataCollector:
         errors = {}
         search_candidates = {}
 
-        # 1. Google Data
-        if not place_id:
+        # 1. Base Identity (from Naver if available)
+        if naver_seed:
+            # MVP: Use normalized Naver data as seed
+            # naver_seed comes from frontend (ReportRequest fields)
+            print(f"[-] Using Naver Seed for {store_name}")
+            naver_data = {
+                "name": naver_seed.get("store_name"),
+                "address": naver_seed.get("address") or naver_seed.get("road_address"),
+                "phone": naver_seed.get("tel"),
+                "category": "General", # or pass if available
+                "link": naver_seed.get("naver_link"),
+                "mapx": naver_seed.get("mapx"),
+                "mapy": naver_seed.get("mapy")
+            }
+            # Use link or synthesized ID
+            if not place_id:
+                place_id = f"NID-{abs(hash(store_name + str(naver_data['address'])))}"
+        
+        elif not place_id:
              place_id = f"PID-{random.randint(10000, 99999)}"
 
-        if place_id and not place_id.startswith("PID-") and GOOGLE_MAPS_API_KEY:
+        # 2. Kakao Search (Find match for Naver/Input data)
+        # Using name provided
+        if KAKAO_REST_API_KEY:
+            k_data, k_candidates, k_error = self.fetch_kakao_search_extended(store_name)
+            # Refinement: check address match if strictly needed, but for MVP best match is ok
+            if k_data:
+                kakao_data = k_data
+            if k_candidates:
+                search_candidates["Kakao"] = k_candidates
+            if k_error:
+                errors["Kakao"] = k_error
+        else:
+            errors["Kakao"] = ERR_AUTH_ERROR
+
+        # 3. Google Data (Find match or fetch by place_id if legacy flow)
+        if place_id and not place_id.startswith("PID-") and not place_id.startswith("NID-") and GOOGLE_MAPS_API_KEY:
+             # Legacy Flow: Place ID provided (Google ID)
              try:
                  print(f"[-] Fetching details for Place ID: {place_id}")
                  store_info = self.fetch_google_details(place_id, store_name)
@@ -59,19 +92,33 @@ class DataCollector:
                      "name": store_info.name,
                      "address": store_info.address,
                      "phone": store_info.phone,
-                     "category": store_info.category, # Include category
-                     "lat": 0.0, "lng": 0.0 # Placeholder
+                     "category": store_info.category,
+                     "lat": 0.0, "lng": 0.0
                  }
              except Exception as e:
                  print(f"[!] Google API failed: {e}. Fallback to mock.")
-                 errors["Google"] = ERR_UNKNOWN_ERROR # Tag Google error
-                 # Fallback mock for MVP continuity if critical
-                 google_data = {
-                     "name": store_name,
-                     "address": "Seoul, Mock Address",
-                     "phone": "02-1234-5678",
-                     "category": "General"
-                 }
+                 errors["Google"] = ERR_UNKNOWN_ERROR
+                 google_data = {"name": store_name, "address": "Seoul, Mock Address", "phone": "02-1234-5678", "category": "General"}
+        elif GOOGLE_MAPS_API_KEY:
+             # Naver Flow: Search Google Text Search with name
+             # MVP: Simple text search and take top result
+             try:
+                 # Re-use search logic (embedded here due to time constraint, or create helper)
+                 url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+                 params = {"query": store_name, "key": GOOGLE_MAPS_API_KEY, "language": "ko"}
+                 resp = requests.get(url, params=params)
+                 g_res = resp.json()
+                 if g_res.get("results"):
+                     top = g_res["results"][0]
+                     google_data = {
+                         "name": top.get("name"),
+                         "address": top.get("formatted_address"),
+                         "place_id": top.get("place_id")
+                     }
+                 else:
+                     errors["Google"] = ERR_SEARCH_NO_RESULT
+             except Exception as e:
+                 errors["Google"] = f"SEARCH_FAIL: {str(e)}"
         else:
              # Mock
              google_data = {
@@ -81,8 +128,8 @@ class DataCollector:
                  "category": "General"
              }
 
-        # 2. Naver Search
-        if NAVER_CLIENT_ID and NAVER_CLIENT_SECRET:
+        # 4. Naver Search (If not seeded, fetch it)
+        if not naver_data and NAVER_CLIENT_ID and NAVER_CLIENT_SECRET:
             n_data, n_candidates, n_error = self.fetch_naver_search_extended(store_name)
             if n_data:
                 naver_data = n_data
@@ -90,30 +137,34 @@ class DataCollector:
                 search_candidates["Naver"] = n_candidates
             if n_error:
                 errors["Naver"] = n_error
-        else:
+        elif not naver_data:
             errors["Naver"] = ERR_AUTH_ERROR
-
-        # 3. Kakao Search
-        if KAKAO_REST_API_KEY:
-            k_data, k_candidates, k_error = self.fetch_kakao_search_extended(store_name)
-            if k_data:
-                kakao_data = k_data
-            if k_candidates:
-                search_candidates["Kakao"] = k_candidates
-            if k_error:
-                errors["Kakao"] = k_error
-        else:
-            errors["Kakao"] = ERR_AUTH_ERROR
         
         # LOGGING
         self._log_source_data("GOOGLE", google_data)
         self._log_source_data("NAVER", naver_data)
         self._log_source_data("KAKAO", kakao_data)
         
-        # 4. Normalize & Snapshot
-        standard_info = normalize_store_data(place_id, google_data, naver_data, kakao_data)
+        # 5. Normalize & Snapshot
+        # Use naver_data for standard info if available (Naver-First)
+        if naver_data:
+             # Creating StoreSchema from Naver Data manually to ensure it is the standard
+             from models import StoreSchema
+             standard_info = StoreSchema(
+                 id=place_id,
+                 name=naver_data.get("name", store_name),
+                 address=naver_data.get("address", ""),
+                 phone=naver_data.get("phone", ""),
+                 category=naver_data.get("category", "General"),
+                 lat=0.0, lng=0.0, # Mapxy conversion not in MVP scope
+                 hours="",
+                 description="",
+                 source_url=naver_data.get("link", "") or naver_data.get("source_url", "")
+             )
+        else:
+             standard_info = normalize_store_data(place_id, google_data, naver_data, kakao_data)
         
-        # 5. Field Status Analysis (Missing vs Mismatch)
+        # 6. Field Status Analysis (Missing vs Mismatch)
         missing_fields = []
         if not standard_info.name: missing_fields.append("name")
         if not standard_info.address: missing_fields.append("address")
@@ -121,12 +172,12 @@ class DataCollector:
         if not standard_info.category or standard_info.category == "Unknown": missing_fields.append("category")
         
         mismatch_fields = []
-        if google_data and naver_data:
-            # Simple check for now (improve with comparator logic reuse if needed)
-            if normalize_name(google_data.get("name","")) != normalize_name(naver_data.get("name","")):
-                mismatch_fields.append("name_google_naver")
-            if normalize_name(google_data.get("phone","")) != normalize_name(naver_data.get("phone","")):
-                mismatch_fields.append("phone_google_naver")
+        # Naver vs Kakao
+        if naver_data and kakao_data:
+            if normalize_name(naver_data.get("name","")) != normalize_name(kakao_data.get("name","")):
+                mismatch_fields.append("name_naver_kakao")
+            if normalize_name(naver_data.get("phone","")) != normalize_name(kakao_data.get("phone","")):
+                mismatch_fields.append("phone_naver_kakao") # Fixed key name preference
         
         snapshot = SnapshotData(
             store_id=place_id,
