@@ -18,22 +18,35 @@
             padding: 0;
             background: #f5f5f5;
             color: #333;
+            -webkit-font-smoothing: antialiased;
         }
 
         .page {
             width: 210mm;
-            height: 297mm;
+            min-height: 297mm;
             padding: 20mm;
             box-sizing: border-box;
             background: white;
-            page-break-after: always;
+            margin: 0 auto;
             position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         h1,
         h2,
         h3 {
             margin: 0 0 10px 0;
+            word-break: keep-all;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            line-height: 1.6;
+            word-break: break-word;
+            /* Prevent overflow */
+            white-space: pre-wrap;
+            /* Visualize \n */
         }
 
         .header {
@@ -49,6 +62,7 @@
             font-size: 24px;
             font-weight: 700;
             color: #1a1a1a;
+            max-width: 80%;
         }
 
         .header .date {
@@ -57,7 +71,7 @@
         }
 
         .section {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .section-title {
@@ -66,19 +80,22 @@
             border-left: 5px solid #0052cc;
             padding-left: 10px;
             margin-bottom: 15px;
+            color: #2c3e50;
         }
 
         /* Summary Box */
         .summary-box {
-            background: #f0f7ff;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
         }
 
         .summary-text {
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #495057;
         }
 
         /* Status Badges */
@@ -87,8 +104,9 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             color: white;
+            vertical-align: middle;
         }
 
         .bg-green {
@@ -104,244 +122,439 @@
             background-color: #dc3545;
         }
 
+        .text-match {
+            color: #16a34a;
+        }
+
+        .text-mismatch {
+            color: #dc2626;
+        }
+
         /* Grid */
         .grid-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            gap: 15px;
         }
 
         .card {
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
             padding: 15px;
             border-radius: 8px;
+            background: #fff;
         }
 
         .card h4 {
             font-size: 14px;
-            margin-bottom: 10px;
-            color: #555;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
         }
 
         /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
             font-size: 13px;
         }
 
         th,
         td {
-            border: 1px solid #eee;
-            padding: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
             text-align: left;
         }
 
-        th {
-            background: #f9f9f9;
-            width: 30%;
+        /* STRICT PRINT STYLES - DO NOT MODIFY WITHOUT A4 VERIFICATION */
+        @media print {
+            @page {
+                size: A4;
+                margin: 12mm;
+                /* User requested 12mm */
+            }
+
+            /* 3) Reset HTML/Body for overflow handling */
+            html,
+            body {
+                width: auto !important;
+                height: auto !important;
+                overflow: visible !important;
+                background: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* 2) Constrain the wrapper */
+            .print-root {
+                width: 180mm;
+                max-width: 180mm;
+                margin: 0 auto;
+                padding: 0;
+                /* Fail-safe: Scale down slightly to ensure 180mm fits in any margin variance */
+                transform: scale(0.95);
+                transform-origin: top center;
+            }
+
+            /* 3) Force full width on children */
+            .page,
+            .container,
+            .card,
+            .section,
+            .summary-box,
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            /* 3.1) Safety for Tables: Force fixed layout to prevent blowout */
+            table {
+                table-layout: fixed !important;
+            }
+
+            /* Re-establish logical page separation */
+            .page {
+                padding-bottom: 20px !important;
+                page-break-after: always;
+                break-after: page;
+                /* Keep internal padding for readability if needed, but safe to reset if margins handle it */
+                padding: 0 !important;
+            }
+
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+            /* 3) Maximize images/tables */
+            img,
+            table,
+            pre,
+            code,
+            blockquote {
+                max-width: 100% !important;
+            }
+
+            /* 4) Force word breaks */
+            .card,
+            .section,
+            td,
+            p,
+            li,
+            h1,
+            h2,
+            h3,
+            h4,
+            span,
+            div,
+            th {
+                overflow-wrap: anywhere !important;
+                word-break: break-word !important;
+                white-space: normal !important;
+                /* Force wrap for badges too */
+            }
+
+            /* Specific workaround for badges to allow wrapping */
+            .status-badge,
+            .badge,
+            .pill {
+                white-space: normal !important;
+                max-width: 100% !important;
+                display: inline-block;
+            }
+
+            /* 5) Break rules */
+            .card,
+            .summary-box,
+            table,
+            tr,
+            .priority-item {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            /* 6) Hide UI */
+            button,
+            .no-print {
+                display: none !important;
+            }
         }
 
-        /* Page 3 Priorities */
-        .priority-item {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-left: 5px solid #0052cc;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
 
         .priority-rank {
-            font-size: 12px;
+            font-size: 11px;
             color: #0052cc;
-            font-weight: bold;
+            font-weight: 800;
+            letter-spacing: 0.5px;
             margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
         .priority-title {
             font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e293b;
         }
 
-        /* Page 4 Quote */
+        /* Quote */
         .quote-box {
-            background: #f8f9fa;
-            border-left: 4px solid #333;
-            padding: 20px;
+            background: #f1f5f9;
+            border-left: 4px solid #334155;
+            padding: 25px;
             font-style: italic;
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.8;
             margin: 30px 0;
+            color: #334155;
+            font-family: 'Georgia', serif;
         }
 
         .footer {
             position: absolute;
-            bottom: 20mm;
+            bottom: 15mm;
             left: 20mm;
             right: 20mm;
             text-align: center;
             font-size: 10px;
-            color: #999;
-            border-top: 1px solid #eee;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
             padding-top: 10px;
+        }
+
+        /* Action Summary */
+        .action-summary-container {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .warning-text {
+            color: #c53030;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .solution-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .solution-tag {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Page 1: Summary -->
-    <div class="page">
-        <div class="header">
-            <h1>[{{ data.store.name }}] AI·Search Exposure Diagnosis Summary</h1>
-            <span class="date">{{ data.date }}</span>
-        </div>
+    <!-- Print Root Wrapper for Strict A4 Layout -->
+    <div class="print-root">
 
-        <div class="summary-box">
-            <p class="summary-text">
-                {{ data.analysis.map_summary }}<br>
-                {{ data.analysis.ai_summary }}<br>
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Map Channel Status</div>
-            <div class="grid-3">
-                {% for channel in data.analysis.map_statuses %}
-                <div class="card">
-                    <h4>{{ channel.channel_name }}</h4>
-                    <span class="status-badge bg-{{ channel.color.value }}">{{ 'Data Found' if channel.is_registered else 'Not Found' }}</span>
-                    <p style="font-size: 12px; margin-top: 5px; color: #666;">{{ channel.status_text }}</p>
-                </div>
-                {% endfor %}
+        <!-- Page 1: Summary -->
+        <div class="page">
+            <div class="header">
+                <h1>[{{ data.store.name }}] AI·검색 노출 진단 보고서</h1>
+                <span class="date">{{ data.date }}</span>
             </div>
-        </div>
 
-        <div class="section">
-            <div class="section-title">Store Info Consistency</div>
-            <table>
-                {% for item in data.analysis.consistency_results %}
-                <tr>
-                    <th style="vertical-align: top; width: 20%;">{{ item.field_name }}</th>
-                    <td>
-                        <div style="font-weight: bold; margin-bottom: 5px; color: #333;">
-                            {{ item.details }}
+            <div class="section">
+                <div class="section-title">진단 요약</div>
+
+                {% if data.action_summary %}
+                <div class="action-summary-container">
+                    <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                        <div style="font-size: 24px;">🚨</div>
+                        <div>
+                            <div class="warning-text">{{ data.action_summary.warning }}</div>
+                            <div class="sub-text">이 문제를 방치하면 잠재 고객을 놓칠 수 있습니다.</div>
                         </div>
+                    </div>
 
-                        <div style="font-size: 11px; color: #555; background: #f9f9f9; padding: 5px; border-radius: 3px;">
-                            {% for src, val in item.evidence.items() %}
-                            <span style="margin-right: 15px;">
-                                <strong>{{ src|title }}:</strong> {{ val }}
+                    <div class="solution-box">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; color: #2d3748; margin-bottom: 4px;">🚀 오늘 바로 해결하기</div>
+                            <div style="font-size: 14px; color: #4a5568;">{{ data.action_summary.action }}</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 12px; font-size: 13px; color: #718096; padding-left: 8px;">
+                        💡 <strong>예상 효과:</strong> {{ data.action_summary.benefit }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="summary-box">
+                    <p class="summary-text">{{ data.analysis.map_summary }}</p>
+                    <div style="height: 10px;"></div>
+                    <p class="summary-text">{{ data.analysis.ai_summary }}</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">지도 채널 등록 현황</div>
+                <div class="grid-3">
+                    {% for channel in data.analysis.map_statuses %}
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4>{{ channel.channel_name }}</h4>
+                            <span class="status-badge bg-{{ channel.color.value }}">
+                                {{ '등록됨' if channel.is_registered else '미등록' }}
                             </span>
-                            {% endfor %}
                         </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+                        <p style="font-size: 12px; color: #64748b;">{{ channel.status_text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">매장 정보 일치 여부</div>
+                <table style="width: 100%;">
+                    {% for item in data.analysis.consistency_results %}
+                    <tr>
+                        <td style="width: 30%; font-weight: 500; color: #475569;">{{ item.field_name }}</td>
+                        <td style="text-align: right;">
+                            <span style="font-weight: 600;"
+                                class="{{ 'text-match' if item.status == 'Match' else 'text-mismatch' }}">{{
+                                item.details }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="footer">Page 1 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <div class="section">
-            <div class="section-title">AI Engine Exposure Summary</div>
-            <table>
-                <tr>
-                    <th>Engine</th>
-                    <th>Status</th>
-                    <th>Interpretation</th>
-                </tr>
-                {% for ai in data.analysis.ai_statuses %}
-                <tr>
-                    <td>{{ ai.engine_name }}</td>
-                    <td><span class="status-badge bg-{{ ai.color.value }}">{{ ai.summary }}</span></td>
-                    <td>{{ ai.interpretation }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
+        <!-- Page 2: AI Responses -->
+        <div class="page">
+            <div class="header">
+                <h1>AI가 바라본 우리 가게</h1>
+                <span class="date">{{ data.date }}</span>
+            </div>
 
-        <div class="footer">Page 1 / 4</div>
-    </div>
+            <div class="section">
+                <div class="section-title">AI 엔진별 상세 답변 분석</div>
+                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
+                    실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
+                </p>
 
-    <!-- Page 2: AI Responses -->
-    <div class="page">
-        <div class="header">
-            <h1>What AI Says About You</h1>
-            <span class="date">{{ data.date }}</span>
-        </div>
+                {% for engine, responses in data.analysis.ai_responses.items() %}
+                <div class="card"
+                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">{{ engine }}</h3>
 
-        <div class="section">
-            <div class="section-title">AI Response Analysis</div>
-            {% for engine, responses in data.analysis.ai_responses.items() %}
-            <div class="card" style="margin-bottom: 15px;">
-                <h4>{{ engine }}</h4>
-                {% for resp in responses %}
-                <div style="margin-bottom: 10px; font-size: 13px;">
-                    <strong style="color: #0052cc;">Q: {{ resp.question }}</strong><br>
-                    <span style="color: #333;">A: {{ resp.answer }}</span>
+                    {% for resp in responses %}
+                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. {{
+                            resp.question }}</div>
+                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                        <p style="font-size: 13px; color: #334155; margin: 0;">{{ resp.answer }}</p>
+                    </div>
+                    {% endfor %}
+
+                    {% if not responses %}
+                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
-            {% endfor %}
+
+            <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <div class="footer">Page 2 / 4</div>
-    </div>
+        <!-- Page 3: Improvements -->
+        <div class="page">
+            <div class="header">
+                <h1>우선 개선 과제 (Top 3)</h1>
+                <span class="date">{{ data.date }}</span>
+            </div>
 
-    <!-- Page 3: Improvements -->
-    <div class="page">
-        <div class="header">
-            <h1>What To Fix (Top Priorities)</h1>
-            <span class="date">{{ data.date }}</span>
+            <div class="section">
+                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                    가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
+                </p>
+
+                {% for imp in data.analysis.improvements %}
+                <div class="priority-item">
+                    <div class="priority-rank">Priority {{ loop.index }}</div>
+                    <div class="priority-title">{{ imp.title }}</div>
+                    <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">{{ imp.description }}</p>
+                    <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                        <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                        <span style="color: #475569;">{{ imp.importance }}</span>
+                        <!-- Assuming importance text is descriptive now or we map it -->
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
+                <p class="summary-text" style="color: #92400e; font-weight: 500;">
+                    <strong>💡 Insight:</strong><br>
+                    AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
+                </p>
+            </div>
+
+            <div class="footer">Page 3 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Core Improvements</div>
-            {% for imp in data.analysis.improvements %}
-            <div class="priority-item">
-                <div class="priority-rank">PRIORITY {{ loop.index }}</div>
-                <div class="priority-title">{{ imp.title }}</div>
-                <p style="font-size: 13px;">{{ imp.description }}</p>
-                <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                    <strong>Why Important:</strong> {{ imp.importance }}
+        <!-- Page 4: Preview -->
+        <div class="page">
+            <div class="header">
+                <h1>바로 사용할 수 있는 최적화 문장</h1>
+                <span class="date">{{ data.date }}</span>
+            </div>
+
+            <div class="section">
+                <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
+                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                    네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
+                </p>
+
+                <div class="quote-box">
+                    "{{ data.analysis.ai_intro_sentence }}"
+                </div>
+
+                <div style="text-align: right;">
+                    <button
+                        onclick="navigator.clipboard.writeText(`{{ data.analysis.ai_intro_sentence }}`).then(()=>alert('복사되었습니다!'))"
+                        style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
+                        문장 복사하기
+                    </button>
                 </div>
             </div>
-            {% endfor %}
+
+            <div class="footer">Page 4 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <div class="summary-box" style="background: #fff3cd;">
-            <p class="summary-text">
-                <strong>Key Insight:</strong><br>
-                AI exposure is not just a result, but a process of creating conditions for AI to understand.
-            </p>
-        </div>
-
-        <div class="footer">Page 3 / 4</div>
-    </div>
-
-    <!-- Page 4: Preview -->
-    <div class="page">
-        <div class="header">
-            <h1>Ready-to-use AI Sentences</h1>
-            <span class="date">{{ data.date }}</span>
-        </div>
-
-        <div class="section">
-            <div class="section-title">AI One-Liner Introduction</div>
-            <div class="quote-box">
-                "{{ data.analysis.ai_intro_sentence }}"
-            </div>
-            <p style="font-size: 13px; color: #666;">
-                This sentence is optimized for AI understanding of your business's core value. Use this in your map
-                descriptions.
-            </p>
-        </div>
-
-        <div class="footer">Page 4 / 4</div>
-    </div>
-
+    </div> <!-- End Print Root -->
 </body>
 
 </html>

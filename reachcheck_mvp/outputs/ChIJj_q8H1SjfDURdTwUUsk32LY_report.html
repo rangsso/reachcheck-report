@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ReachCheck Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            box-sizing: border-box;
+            background: white;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 10px 0;
+            word-break: keep-all;
+        }
+
+        p {
+            margin: 0 0 10px 0;
+            line-height: 1.6;
+            word-break: break-word;
+            /* Prevent overflow */
+            white-space: pre-wrap;
+            /* Visualize \n */
+        }
+
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            max-width: 80%;
+        }
+
+        .header .date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            border-left: 5px solid #0052cc;
+            padding-left: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #495057;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+            color: white;
+            vertical-align: middle;
+        }
+
+        .bg-green {
+            background-color: #28a745;
+        }
+
+        .bg-yellow {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .bg-red {
+            background-color: #dc3545;
+        }
+
+        .text-match {
+            color: #16a34a;
+        }
+
+        .text-mismatch {
+            color: #dc2626;
+        }
+
+        /* Grid */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .card {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .card h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        /* Enhanced print styles */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                width: 100%;
+            }
+
+            .page {
+                width: 210mm;
+                min-height: 297mm;
+                height: auto;
+                margin: 0 auto;
+                padding: 15mm;
+                page-break-after: always;
+                overflow: visible;
+                box-sizing: border-box;
+                border: none;
+                box-shadow: none;
+            }
+
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+            /* Prevent breaking inside cards */
+            .card,
+            .status-card,
+            .summary-box,
+            .action-card,
+            .priority-item,
+            .ai-response-block {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            p,
+            span,
+            div,
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            td,
+            th,
+            li {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                white-space: pre-wrap;
+            }
+
+            button,
+            .no-print {
+                display: none !important;
+            }
+        }
+
+
+        .priority-rank {
+            font-size: 11px;
+            color: #0052cc;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .priority-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        /* Quote */
+        .quote-box {
+            background: #f1f5f9;
+            border-left: 4px solid #334155;
+            padding: 25px;
+            font-style: italic;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 30px 0;
+            color: #334155;
+            font-family: 'Georgia', serif;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 15mm;
+            left: 20mm;
+            right: 20mm;
+            text-align: center;
+            font-size: 10px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 10px;
+        }
+
+        /* Action Summary */
+        .action-summary-container {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .warning-text {
+            color: #c53030;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .solution-box {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .solution-tag {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* Print Specifics */
+        @media print {
+            body {
+                background: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .page {
+                width: 100%;
+                height: auto;
+                min-height: auto;
+                margin: 0;
+                padding: 15mm;
+                box-shadow: none;
+                border: none;
+                page-break-after: always;
+            }
+
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+            /* Avoid breaking inside important elements */
+            .card,
+            .priority-item,
+            .summary-box,
+            table,
+            tr {
+                page-break-inside: avoid;
+            }
+
+            /* Hide browser headers/footers if possible */
+            @page {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Page 1: Summary -->
+    <div class="page">
+        <div class="header">
+            <h1>[안다미로 팬케이크 서촌] AI·검색 노출 진단 보고서</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">진단 요약</div>
+
+            
+            <div class="action-summary-container">
+                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                    <div style="font-size: 24px;">🚨</div>
+                    <div>
+                        <div class="warning-text">지도 앱마다 주소가 다릅니다. 내비게이션으로 찾아오는 고객이 길을 잃을 수 있습니다.</div>
+                        <div class="sub-text">이 문제를 방치하면 잠재 고객을 놓칠 수 있습니다.</div>
+                    </div>
+                </div>
+
+                <div class="solution-box">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; color: #2d3748; margin-bottom: 4px;">🚀 오늘 바로 해결하기</div>
+                        <div style="font-size: 14px; color: #4a5568;">각 지도 앱의 '주소'와 '도로명 주소'를 통일하세요.</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; font-size: 13px; color: #718096; padding-left: 8px;">
+                    💡 <strong>예상 효과:</strong> 고객이 혼란 없이 매장 앞까지 정확하게 도착합니다.
+                </div>
+            </div>
+            
+
+            <div class="summary-box">
+                <p class="summary-text">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
+                <div style="height: 10px;"></div>
+                <p class="summary-text">AI 검색 엔진마다 우리 매장을 설명하는 내용과 비중이 제각각입니다. 정보가 불일치하면 AI는 신뢰할 수 없는 정보로 판단하여 노출을 줄이거나 잘못된 답변을 할 수 있습니다.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">지도 채널 등록 현황</div>
+            <div class="grid-3">
+                
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4>Naver</h4>
+                        <span class="status-badge bg-green">
+                            등록됨
+                        </span>
+                    </div>
+                    <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                </div>
+                
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4>Kakao</h4>
+                        <span class="status-badge bg-green">
+                            등록됨
+                        </span>
+                    </div>
+                    <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                </div>
+                
+                <div class="card">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4>Google</h4>
+                        <span class="status-badge bg-green">
+                            등록됨
+                        </span>
+                    </div>
+                    <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">매장 정보 일치 여부</div>
+            <table style="width: 100%;">
+                
+                <tr>
+                    <td style="width: 30%; font-weight: 500; color: #475569;">Name</td>
+                    <td style="text-align: right;">
+                        <span style="font-weight: 600;"
+                            class="text-match">일치</span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td style="width: 30%; font-weight: 500; color: #475569;">Address</td>
+                    <td style="text-align: right;">
+                        <span style="font-weight: 600;"
+                            class="text-mismatch">불일치 (채널간 정보 상이)</span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td style="width: 30%; font-weight: 500; color: #475569;">Phone</td>
+                    <td style="text-align: right;">
+                        <span style="font-weight: 600;"
+                            class="text-mismatch">네이버 미제공 및 불일치</span>
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+
+        <div class="footer">Page 1 / 4 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 2: AI Responses -->
+    <div class="page">
+        <div class="header">
+            <h1>AI가 바라본 우리 가게</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI 엔진별 상세 답변 분석</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
+                실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
+            </p>
+
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">ChatGPT</h3>
+
+                
+                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. Recommend a good place for 일반 매장 in 서울특별시 종로구?</div>
+                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                    <p style="font-size: 13px; color: #334155; margin: 0;">서울특별시 종로구에서 일반 매장으로는 광화문에 위치한 대형 백화점인 롯데백화점이 좋은 선택이 될 수 있습니다. 다양한 제품들을 쇼핑하고 다양한 음식점도 즐길 수 있습니다.</p>
+                </div>
+                
+                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. What can you tell me about 안다미로 팬케이크 서촌 in 서울특별시 종로구?</div>
+                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                    <p style="font-size: 13px; color: #334155; margin: 0;">안다미로 팬케이크 서촌은 종로구에 위치한 인기 있는 팬케이크 전문점입니다. 다양한 종류의 맛있는 팬케이크와 음료를 즐길 수 있으며, 분위기도 아늑하고 귀여운 인테리어로 유명합니다. 방문 시 주말이나 휴일에는 대기가 있을 수 있으니 이 점 유의하시기 바랍니다.</p>
+                </div>
+                
+                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. Is 안다미로 팬케이크 서촌 a popular spot in 서울특별시 종로구? Why?</div>
+                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                    <p style="font-size: 13px; color: #334155; margin: 0;">네, 안다미로 팬케이크 서촌은 서울특별시 종로구에서 인기 있는 장소 중 하나입니다. 그 이유는 맛있는 팬케이크와 아늑한 분위기 때문입니다. 특히 SNS를 통해 소문이 나서 많은 사람들이 찾는 곳입니다.</p>
+                </div>
+                
+
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Gemini</h3>
+
+                
+
+                
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Claude</h3>
+
+                
+
+                
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Perplexity</h3>
+
+                
+
+                
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                
+            </div>
+            
+        </div>
+
+        <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 3: Improvements -->
+    <div class="page">
+        <div class="header">
+            <h1>우선 개선 과제 (Top 3)</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
+            </p>
+
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 1</div>
+                <div class="priority-title">매장 기본 정보 통일</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">모든 지도 앱의 이름/전화번호/주소를 100% 동일하게 맞추세요.</p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">High</span>
+                    <!-- Assuming importance text is descriptive now or we map it -->
+                </div>
+            </div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 2</div>
+                <div class="priority-title">AI가 이해하기 쉬운 소개글 추가</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">소개글에 '지역명 + 업종 + 대표메뉴'를 명확한 문장으로 적으세요.</p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">Medium</span>
+                    <!-- Assuming importance text is descriptive now or we map it -->
+                </div>
+            </div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 3</div>
+                <div class="priority-title">FAQ(자주 묻는 질문) 정리</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">주차, 영업시간 등 질문과 답변을 플레이스 정보에 등록하세요.</p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">Medium</span>
+                    <!-- Assuming importance text is descriptive now or we map it -->
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
+            <p class="summary-text" style="color: #92400e; font-weight: 500;">
+                <strong>💡 Insight:</strong><br>
+                AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
+            </p>
+        </div>
+
+        <div class="footer">Page 3 / 4 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 4: Preview -->
+    <div class="page">
+        <div class="header">
+            <h1>바로 사용할 수 있는 최적화 문장</h1>
+            <span class="date">2026.01.13</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
+            </p>
+
+            <div class="quote-box">
+                "안다미로 팬케이크 서촌은(는) 이 지역에서 믿고 방문할 수 있는 일반 매장입니다."
+            </div>
+
+            <div style="text-align: right;">
+                <button
+                    onclick="navigator.clipboard.writeText(`안다미로 팬케이크 서촌은(는) 이 지역에서 믿고 방문할 수 있는 일반 매장입니다.`).then(()=>alert('복사되었습니다!'))"
+                    style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
+                    문장 복사하기
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">Page 4 / 4 • ReachCheck Analysis</div>
+    </div>
+
+</body>
+
+</html>

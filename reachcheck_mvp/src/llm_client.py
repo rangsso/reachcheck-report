@@ -20,12 +20,12 @@ class LLMClient:
             else:
                 self.client = OpenAI(api_key=self.api_key)
             
-    def check_exposure(self, store_name: str, questions: List[str]) -> Dict[str, Any]:
+    def check_exposure(self, store_name: str, questions: List[str], system_instruction: str = "") -> Dict[str, Any]:
         """
         Checks if the store is mentioned in the responses to the given questions.
         Returns mention rate and detailed responses.
+        system_instruction: Hidden instruction sent to LLM (e.g. language constraint)
         """
-
 
         if not self.client:
             # Fallback or error
@@ -40,6 +40,11 @@ class LLMClient:
         
         print(f"[-] Querying OpenAI with {len(questions)} questions for store '{store_name}'...")
         
+        # Base system prompt
+        base_system = "You are a helpful local assistant. Answer succinctly."
+        if system_instruction:
+            base_system += f" {system_instruction}"
+
         for i, q in enumerate(questions):
             try:
                 # Use a standard model
@@ -49,7 +54,7 @@ class LLMClient:
                 response = self.client.chat.completions.create(
                     model=model,
                     messages=[
-                        {"role": "system", "content": "You are a helpful local assistant. Answer succinctly."},
+                        {"role": "system", "content": base_system},
                         {"role": "user", "content": q}
                     ],
                     temperature=0.7,
@@ -67,6 +72,7 @@ class LLMClient:
                 else:
                     evaluation = "Bad"
                 
+                # Use the ORIGINAL 'q' (display question) for the result, not the one with instructions (if we merged them, but we didn't)
                 responses.append({
                     "question": q,
                     "answer": answer,

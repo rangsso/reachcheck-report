@@ -1,0 +1,93 @@
+{
+    "store_id": "ChIJobb671mhfDURrcE4SebLfyw",
+    "timestamp": "20260113_144534",
+    "standard_info": {
+        "id": "ChIJobb671mhfDURrcE4SebLfyw",
+        "name": "스타벅스 강남R점",
+        "address": "대한민국 서울특별시 강남구 강남대로 390",
+        "phone": "1522-3232",
+        "category": "Cafe",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": ""
+    },
+    "raw_google": {
+        "name": "스타벅스 강남R점",
+        "address": "대한민국 서울특별시 강남구 강남대로 390",
+        "phone": "1522-3232",
+        "category": "Cafe",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {},
+    "raw_kakao": {},
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "Recommend a good place for Cafe in 대한민국 서울특별시.",
+                "answer": "I recommend visiting Cafe Onion in Seoul, South Korea.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "What can you tell me about 스타벅스 강남R점 in 대한민국 서울특별시?",
+                "answer": "스타벅스 강남R점은 서울 강남구에 위치한 스타벅스 매장으로, R(리저브) 매장으로서 고품질의 원두와 다양한 음료 메뉴를 즐길 수 있습니다. 현대적이고 고급스러운 인테리어로 유명합니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "Is 스타벅스 강남R점 a popular spot in 대한민국 서울특별시? Why?",
+                "answer": "Yes, 스타벅스 강남R점 is a popular spot in 서울특별시 대한민국 because it is located in the bustling Gangnam area, known for its trendy atmosphere and high concentration of businesses and entertainment venues.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [],
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "스타벅스 뉴코아강남점",
+                "address": "서울 서초구 잠원로 69",
+                "phone": ""
+            },
+            {
+                "name": "스타벅스 케이스퀘어강남점",
+                "address": "서울 강남구 강남대로94길 10",
+                "phone": "1522-3232"
+            }
+        ],
+        "Naver": [
+            {
+                "name": "스타벅스 스타필드코엑스몰R점",
+                "address": "서울특별시 강남구 영동대로 513 (삼성동) 코엑스 A106호",
+                "phone": ""
+            },
+            {
+                "name": "스타벅스 강남R점",
+                "address": "서울특별시 강남구 강남대로 390 (역삼동)",
+                "phone": ""
+            },
+            {
+                "name": "스타벅스 리저브도산점",
+                "address": "서울특별시 강남구 선릉로155길 23 (신사동)",
+                "phone": ""
+            },
+            {
+                "name": "스타벅스 개포동점",
+                "address": "서울특별시 강남구 선릉로 34 (개포동)",
+                "phone": ""
+            },
+            {
+                "name": "스타벅스 코엑스별마당점",
+                "address": "서울특별시 강남구 영동대로 513 (삼성동)",
+                "phone": ""
+            }
+        ]
+    },
+    "errors": {
+        "Kakao": "SEARCH_NO_RESULT",
+        "Naver": "SEARCH_NO_RESULT"
+    }
+}

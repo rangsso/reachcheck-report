@@ -1,0 +1,74 @@
+{
+    "store_id": "ChIJj_q8H1SjfDURdTwUUsk32LY",
+    "timestamp": "20260113_165813",
+    "standard_info": {
+        "id": "ChIJj_q8H1SjfDURdTwUUsk32LY",
+        "name": "안다미로 팬케이크 서촌",
+        "address": "서울특별시 종로구 누하동 56-1 1층",
+        "phone": "",
+        "category": "일반 매장",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "https://www.instagram.com/admr_seochon"
+    },
+    "raw_google": {
+        "name": "안다미로 팬케이크 서촌점",
+        "address": "대한민국 서울특별시 종로구 필운대로5가길 2 1층",
+        "phone": "Phone not available",
+        "category": "Cafe",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "안다미로 팬케이크 서촌",
+        "address": "서울특별시 종로구 누하동 56-1 1층",
+        "phone": "",
+        "category": "일반 매장",
+        "link": "https://www.instagram.com/admr_seochon",
+        "mapx": "1269685811",
+        "mapy": "375794480"
+    },
+    "raw_kakao": {
+        "name": "안다미로 팬케이크 서촌점",
+        "address": "서울 종로구 필운대로5가길 2",
+        "phone": "070-4010-5630"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "Recommend a good place for 일반 매장 in 서울특별시 종로구?",
+                "answer": "서울특별시 종로구에서 일반 매장으로는 광화문에 위치한 대형 백화점인 롯데백화점이 좋은 선택이 될 수 있습니다. 다양한 제품들을 쇼핑하고 다양한 음식점도 즐길 수 있습니다.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "What can you tell me about 안다미로 팬케이크 서촌 in 서울특별시 종로구?",
+                "answer": "안다미로 팬케이크 서촌은 종로구에 위치한 인기 있는 팬케이크 전문점입니다. 다양한 종류의 맛있는 팬케이크와 음료를 즐길 수 있으며, 분위기도 아늑하고 귀여운 인테리어로 유명합니다. 방문 시 주말이나 휴일에는 대기가 있을 수 있으니 이 점 유의하시기 바랍니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "Is 안다미로 팬케이크 서촌 a popular spot in 서울특별시 종로구? Why?",
+                "answer": "네, 안다미로 팬케이크 서촌은 서울특별시 종로구에서 인기 있는 장소 중 하나입니다. 그 이유는 맛있는 팬케이크와 아늑한 분위기 때문입니다. 특히 SNS를 통해 소문이 나서 많은 사람들이 찾는 곳입니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [
+        "phone"
+    ],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "안다미로 팬케이크 서촌점",
+                "address": "서울 종로구 필운대로5가길 2",
+                "phone": "070-4010-5630"
+            }
+        ]
+    },
+    "errors": {}
+}

@@ -1,0 +1,75 @@
+{
+    "store_id": "ChIJobb671mhfDURrcE4SebLfyw",
+    "timestamp": "20260113_153450",
+    "standard_info": {
+        "id": "ChIJobb671mhfDURrcE4SebLfyw",
+        "name": "스타벅스 강남점",
+        "address": "서울 강남구 강남대로 396",
+        "phone": "",
+        "category": "General",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "https://dummy"
+    },
+    "raw_google": {
+        "name": "스타벅스 강남R점",
+        "address": "대한민국 서울특별시 강남구 강남대로 390",
+        "phone": "1522-3232",
+        "category": "Cafe",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "스타벅스 강남점",
+        "address": "서울 강남구 강남대로 396",
+        "phone": "",
+        "category": "General",
+        "link": "https://dummy",
+        "mapx": "123",
+        "mapy": "456"
+    },
+    "raw_kakao": {},
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "Recommend a good place for General in 서울 강남구. (답변은 반드시 한국어로, 존댓말로 작성해주세요)",
+                "answer": "서울 강남구에서 좋은 일반 가게를 추천드리겠습니다. \"강남 부대찌개\"라는 식당을 권해드립니다.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "What can you tell me about 스타벅스 강남점 in 서울 강남구? (답변은 반드시 한국어로, 존댓말로 작성해주세요)",
+                "answer": "서울 강남구에 위치한 스타벅스 강남점은 대로변에 위치해 접근성이 좋고, 넓은 공간과 다양한 음료 메뉴를 제공하는 인기있는 스타벅스 매장입니다. 분위기도 좋아서 사람들이 자주 방문하는 곳이에요.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "Is 스타벅스 강남점 a popular spot in 서울 강남구? Why? (답변은 반드시 한국어로, 존댓말로 작성해주세요)",
+                "answer": "네, 스타벅스 강남점은 서울 강남구에서 인기 있는 장소입니다. 그 이유는 위치가 중심에 있고, 편리하며 편안한 분위기를 제공하기 때문입니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [
+        "phone"
+    ],
+    "mismatch_fields": [],
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "스타벅스 뉴코아강남점",
+                "address": "서울 서초구 잠원로 69",
+                "phone": ""
+            },
+            {
+                "name": "스타벅스 케이스퀘어강남점",
+                "address": "서울 강남구 강남대로94길 10",
+                "phone": "1522-3232"
+            }
+        ]
+    },
+    "errors": {
+        "Kakao": "SEARCH_NO_RESULT"
+    }
+}

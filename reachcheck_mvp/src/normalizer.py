@@ -30,8 +30,6 @@ def normalize_address(addr: str) -> str:
     s = s.replace("Republic of Korea", "").replace("South Korea", "").replace("대한민국", "")
     
     # Remove common Province/City prefixes to focus on District/Street
-    # (Handling inconsistencies like "Seoul" vs "Seoul Special City" vs "서울특별시" vs "서울")
-    # This is a heuristic for MVP.
     prefixes = [
         "서울특별시", "서울시", "서울", "Seoul", 
         "경기도", "경기", "Gyeonggi-do", "Gyeonggi",
@@ -52,9 +50,9 @@ def normalize_address(addr: str) -> str:
     s = re.sub(r"\s\d+(층|호|F)\b", "", s) # 1층, 101호
     s = re.sub(r"\sB\d+\b", "", s)       # B1
     
-    # Remove spaces/punctuation
+    # Remove all spaces and punctuation for strict comparison
     s = re.sub(r"[\s,.]", "", s)
-    return s
+    return s.strip()
 
 from models import StoreSchema, PhotoData
 from typing import Dict, Any, List

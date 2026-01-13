@@ -1,0 +1,74 @@
+{
+    "store_id": "ChIJK14mBjyffDURykEQJzs687I",
+    "timestamp": "20260113_173806",
+    "standard_info": {
+        "id": "ChIJK14mBjyffDURykEQJzs687I",
+        "name": "팬팬",
+        "address": "서울특별시 영등포구 당산동1가 53-4 1층",
+        "phone": "",
+        "category": "일반 매장",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "https://www.instagram.com/panfan1997"
+    },
+    "raw_google": {
+        "name": "팬팬",
+        "address": "대한민국 서울특별시 영등포구 영등포로 143 1층",
+        "phone": "02-2135-2017",
+        "category": "Establishment",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "팬팬",
+        "address": "서울특별시 영등포구 당산동1가 53-4 1층",
+        "phone": "",
+        "category": "일반 매장",
+        "link": "https://www.instagram.com/panfan1997",
+        "mapx": "1268976715",
+        "mapy": "375214170"
+    },
+    "raw_kakao": {
+        "name": "팬팬(PANFAN)",
+        "address": "서울 영등포구 영등포로 143",
+        "phone": "02-2135-2017"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 일반 매장 추천해줄 만한 곳이 있나요?",
+                "answer": "영등포구에서 일반 매장으로는 타임스퀘어나 여의도 지역의 브랜드 매장들이 인기가 있습니다. 현지 상황에 따라 변동이 있을 수 있으니 방문 전에 사전에 확인하는 것이 좋습니다.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "서울특별시 영등포구에 있는 팬팬에 대해 알려주세요.",
+                "answer": "팬팬은 서울 영등포구에 위치한 대형 아케이드 게임장으로, 다양한 게임머신과 엔터테인먼트 시설을 제공합니다. 게임을 즐기는 공간뿐만 아니라 음식점과 편의시설도 갖추고 있어 다양한 즐거움을 느낄 수 있습니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "팬팬이 서울특별시 영등포구에서 인기 있는 이유가 뭔가요?",
+                "answer": "영등포구는 쇼핑, 엔터테인먼트, 음식 등 다양한 즐길 거리가 있어서 많은 사람들이 찾는 인기 명소입니다. 특히 홍대와 가까운 위치와 강이 흐르는 아름다운 야경이 유명합니다.",
+                "evaluation": "Bad"
+            }
+        ]
+    },
+    "missing_fields": [
+        "phone"
+    ],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "팬팬(PANFAN)",
+                "address": "서울 영등포구 영등포로 143",
+                "phone": "02-2135-2017"
+            }
+        ]
+    },
+    "errors": {}
+}

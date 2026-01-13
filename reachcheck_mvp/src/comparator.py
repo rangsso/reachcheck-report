@@ -69,37 +69,30 @@ def compare_data(sources: Dict[str, Dict[str, Any]]) -> List[ConsistencyResult]:
         # Case 1: Everyone matches (All present, single group)
         if not missing_sources and len(value_groups) == 1:
             status = "Match"
-            details = f"{label} information matches across all maps (Google, Naver, Kakao)."
+            details = "일치"
             
         # Case 2: Missing Data
         elif missing_sources:
-            status = "Missing"
-            missing_str = ", ".join([s.title() for s in missing_sources])
-            
-            if len(value_groups) == 0:
-                 details = f"{label} information matches nowhere (All missing)."
-            elif len(value_groups) == 1:
-                # Rest match
-                 details = f"{label} is missing on {missing_str}, but matches on the others."
+            # Special Logic: If Naver is missing phone but others match, treating as "Unavailable" not Mismatch
+            if key == "phone" and "naver" in missing_sources and len(value_groups) == 1:
+                status = "Match" # Or special status "Partial" if needed, but per req "Naver Unavailable" is descriptive enough
+                details = "네이버 미제공 (Google/Kakao 일치)"
             else:
-                # Rest mismatch
-                 details = f"{label} is missing on {missing_str}, and differs among the others."
+                status = "Missing"
+                missing_korean = [s.replace('google','구글').replace('naver','네이버').replace('kakao','카카오') for s in missing_sources]
+                missing_str = ", ".join(missing_korean)
+                
+                if len(value_groups) == 0:
+                     details = "정보 없음"
+                elif len(value_groups) == 1:
+                     details = f"{missing_str} 미제공 (나머지 일치)"
+                else:
+                     details = f"{missing_str} 미제공 및 불일치"
 
-        # Case 3: Mismatch (No missing, but multiple groups)
-        else: # len(value_groups) > 1 and not missing_sources
+        # Case 3: Mismatch
+        else: 
             status = "Mismatch"
-            # Build description of groups
-            # e.g. "Google/Naver match, but Kakao differs."
-            
-            # Find the majority group if any
-            sorted_groups = sorted(value_groups.items(), key=lambda item: len(item[1]), reverse=True)
-            
-            descriptions = []
-            for val, srcs in sorted_groups:
-                src_names = "/".join([s.title() for s in srcs])
-                descriptions.append(f"{src_names}")
-            
-            details = f"{label} differs: {descriptions[0]} vs {descriptions[1]}."
+            details = "불일치 (채널간 정보 상이)"
 
         results.append(ConsistencyResult(
             field_name=label,

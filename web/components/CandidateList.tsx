@@ -1,36 +1,51 @@
 'use client';
 
+import { Check } from 'lucide-react';
+
 interface Candidate {
     place_id: string;
     name: string;
     address: string;
     road_address?: string;
+    category?: string;
+    tel?: string;
     provider: string;
+    link?: string;
 }
 
 interface CandidateListProps {
     candidates: Candidate[];
     selectedId: string | null;
-    onSelect: (candidate: Candidate) => void;
+    onSelect: (candidate: Candidate | null) => void;
 }
 
 export default function CandidateList({ candidates, selectedId, onSelect }: CandidateListProps) {
+    if (candidates.length === 0) return null;
+
     return (
-        <div className="candidate-list">
-            {candidates.map(cand => (
-                <div
-                    key={cand.place_id}
-                    className={`candidate-item ${selectedId === cand.place_id ? 'selected' : ''}`}
-                    onClick={() => onSelect(cand)}
-                >
-                    <div className="candidate-name">{cand.name}</div>
-                    <div className="candidate-address">{cand.road_address || cand.address}</div>
-                    <div style={{ fontSize: '0.8rem', color: '#888' }}>{cand.provider}</div>
-                </div>
-            ))}
-            {candidates.length === 0 && (
-                <div style={{ padding: '1rem', color: '#888' }}>Search to see results</div>
-            )}
+        <div className="result-grid">
+            {candidates.map(cand => {
+                const isSelected = selectedId === cand.place_id;
+                return (
+                    <div
+                        key={cand.place_id}
+                        className={`saas-card ${isSelected ? 'selected' : ''}`}
+                        onClick={() => onSelect(isSelected ? null : cand)} // Toggle selection
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div className="card-title">{cand.name}</div>
+                            {isSelected && <Check size={20} color="#2563eb" />}
+                        </div>
+
+                        <div className="card-sub">{cand.road_address || cand.address}</div>
+
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                            <span className="card-badge">{cand.category || '일반 매장'}</span>
+                            {cand.tel && <span className="card-badge">{cand.tel}</span>}
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }

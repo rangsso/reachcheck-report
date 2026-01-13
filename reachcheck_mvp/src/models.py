@@ -125,3 +125,4 @@ class ReportData:
     store: StoreInfo
     analysis: AnalysisResult
     date: str
+    action_summary: Dict[str, str] = field(default_factory=dict) # warning, action, benefit

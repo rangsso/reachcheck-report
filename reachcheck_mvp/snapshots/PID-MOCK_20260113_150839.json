@@ -1,0 +1,56 @@
+{
+    "store_id": "PID-MOCK",
+    "timestamp": "20260113_150839",
+    "standard_info": {
+        "id": "PID-MOCK",
+        "name": "TestStore",
+        "address": "Seoul",
+        "phone": "",
+        "category": "General",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "http://test"
+    },
+    "raw_google": {},
+    "raw_naver": {
+        "name": "TestStore",
+        "address": "Seoul",
+        "phone": "",
+        "category": "General",
+        "link": "http://test",
+        "mapx": "0",
+        "mapy": "0"
+    },
+    "raw_kakao": {},
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "Recommend a good place for General in Seoul.",
+                "answer": "I recommend visiting Gyeongbokgung Palace in Seoul for a general overview of Korean history and culture.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "What can you tell me about TestStore in Seoul?",
+                "answer": "TestStore in Seoul is a popular electronics store known for its wide selection of gadgets and tech accessories. They offer a range of products such as smartphones, laptops, cameras, and more at competitive prices. Customers also appreciate their knowledgeable staff and excellent customer service.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "Is TestStore a popular spot in Seoul? Why?",
+                "answer": "Yes, TestStore is a popular spot in Seoul because it offers a wide range of trendy and unique products, attracting both locals and tourists.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [
+        "phone"
+    ],
+    "mismatch_fields": [],
+    "search_candidates": {},
+    "errors": {
+        "Kakao": "SEARCH_NO_RESULT",
+        "Google": "SEARCH_NO_RESULT"
+    }
+}

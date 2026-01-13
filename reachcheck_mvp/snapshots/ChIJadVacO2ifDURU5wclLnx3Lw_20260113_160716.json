@@ -1,0 +1,74 @@
+{
+    "store_id": "ChIJadVacO2ifDURU5wclLnx3Lw",
+    "timestamp": "20260113_160716",
+    "standard_info": {
+        "id": "ChIJadVacO2ifDURU5wclLnx3Lw",
+        "name": "스타벅스 한국프레스센터점",
+        "address": "서울특별시 중구 태평로1가 25",
+        "phone": "",
+        "category": "일반 매장",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "http://www.starbucks.co.kr/"
+    },
+    "raw_google": {
+        "name": "스타벅스 한국프레스센터점",
+        "address": "대한민국 서울특별시 중구 태평로1가 25",
+        "phone": "1522-3232",
+        "category": "Cafe",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "스타벅스 한국프레스센터점",
+        "address": "서울특별시 중구 태평로1가 25",
+        "phone": "",
+        "category": "일반 매장",
+        "link": "http://www.starbucks.co.kr/",
+        "mapx": "1269780493",
+        "mapy": "375672475"
+    },
+    "raw_kakao": {
+        "name": "스타벅스 한국프레스센터점",
+        "address": "서울 중구 세종대로 124",
+        "phone": "1522-3232"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "Recommend a good place for 일반 매장 in 서울특별시 중구. (답변은 반드시 한국어로, 존댓말로 작성해주세요)",
+                "answer": "중구에 위치한 명동은 일반 매장이 다양하게 밀집돼 있어 좋은 장소입니다. 현대적인 쇼핑센터나 전통 시장을 찾아보세요.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "What can you tell me about 스타벅스 한국프레스센터점 in 서울특별시 중구? (답변은 반드시 한국어로, 존댓말로 작성해주세요)",
+                "answer": "서울특별시 중구에 위치한 스타벅스 한국프레스센터점은 한국 프레스센터 내에 위치한 매장으로, 주변에는 많은 사무실과 기관들이 있어서 주로 직장인들이 이용하는 곳입니다. 분위기가 조용하고 깔끔하며 커피 맛도 좋아서 인기가 있습니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "Is 스타벅스 한국프레스센터점 a popular spot in 서울특별시 중구? Why? (답변은 반드시 한국어로, 존댓말로 작성해주세요)",
+                "answer": "네, 스타벅스 한국프레스센터점은 서울특별시 중구에서 인기 있는 장소 중 하나입니다. 언론사들이 모여서 일을 하기 좋고 분위기도 좋아서 많은 사람들이 찾는 곳입니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [
+        "phone"
+    ],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "스타벅스 한국프레스센터점",
+                "address": "서울 중구 세종대로 124",
+                "phone": "1522-3232"
+            }
+        ]
+    },
+    "errors": {}
+}

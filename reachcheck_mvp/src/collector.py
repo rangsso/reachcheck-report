@@ -56,7 +56,7 @@ class DataCollector:
                 "name": naver_seed.get("store_name"),
                 "address": naver_seed.get("address") or naver_seed.get("road_address"),
                 "phone": naver_seed.get("tel"),
-                "category": "General", # or pass if available
+                "category": "일반 매장", # or pass if available
                 "link": naver_seed.get("naver_link"),
                 "mapx": naver_seed.get("mapx"),
                 "mapy": naver_seed.get("mapy")
@@ -125,7 +125,7 @@ class DataCollector:
                  "name": store_name, 
                  "address": "Seoul, Mock Address", 
                  "phone": "02-1234-5678",
-                 "category": "General"
+                 "category": "일반 매장"
              }
 
         # 4. Naver Search (If not seeded, fetch it)
@@ -155,7 +155,7 @@ class DataCollector:
                  name=naver_data.get("name", store_name),
                  address=naver_data.get("address", ""),
                  phone=naver_data.get("phone", ""),
-                 category=naver_data.get("category", "General"),
+                 category=naver_data.get("category", "일반 매장"),
                  lat=0.0, lng=0.0, # Mapxy conversion not in MVP scope
                  hours="",
                  description="",
@@ -447,13 +447,17 @@ class DataCollector:
                 # Derive Area from address (Simple heuristic)
                 area = " ".join(store_info.address.split()[:2]) if store_info.address else "Seoul"
                 
+                # Clean prompt questions (Korean Display)
                 questions = [
-                    f"Recommend a good place for {store_info.category} in {area}.",
-                    f"What can you tell me about {store_info.name} in {area}?",
-                    f"Is {store_info.name} a popular spot in {area}? Why?"
+                    f"{area}에서 {store_info.category} 추천해줄 만한 곳이 있나요?",
+                    f"{area}에 있는 {store_info.name}에 대해 알려주세요.",
+                    f"{store_info.name}이 {area}에서 인기 있는 이유가 뭔가요?"
                 ]
                 
-                openai_result = llm_client.check_exposure(store_info.name, questions)
+                # Instruction sent separately
+                system_instruction = "답변은 반드시 한국어로, 존댓말로 작성해주세요."
+                
+                openai_result = llm_client.check_exposure(store_info.name, questions, system_instruction=system_instruction)
                 mention_rate = openai_result["mention_rate"]
                 responses = openai_result["responses"]
                 
@@ -465,19 +469,19 @@ class DataCollector:
                 
                 if mention_rate >= 60:
                     color = StatusColor.GREEN
-                    summary = "Stable recognition"
-                    problem = "None"
-                    interpretation = "Reflects reviews/assets well"
+                    summary = "노출 안정적"
+                    problem = "없음"
+                    interpretation = "리뷰/정보가 잘 반영됨"
                 elif mention_rate >= 20:
                     color = StatusColor.YELLOW
-                    summary = "Unstable recognition"
-                    problem = "Low frequency"
-                    interpretation = "Insufficient differentiation"
+                    summary = "노출 불안정"
+                    problem = "언급 빈도 낮음"
+                    interpretation = "AI가 매장을 충분히 학습하지 못함"
                 else:
                     color = StatusColor.RED
-                    summary = "Failed to recognize"
-                    problem = "High risk of omission"
-                    interpretation = "Not recognized as a candidate"
+                    summary = "노출 실패"
+                    problem = "AI 인지도 부족"
+                    interpretation = "검색 후보군에 포함되지 않음"
 
                 ai_statuses.append(AIEngineStatus(
                     engine_name="ChatGPT",
@@ -498,8 +502,8 @@ class DataCollector:
                         is_mentioned=False,
                         mention_rate=0.0,
                         has_description=False,
-                        summary="Not Connected",
-                        problem="Provider not configured",
+                        summary="연동 안됨",
+                        problem="서비스 미지원",
                         interpretation="-",
                         color=StatusColor.RED
                     ))
@@ -523,19 +527,19 @@ class DataCollector:
                 
                 if mention_rate >= 60:
                     color = StatusColor.GREEN
-                    summary = "Stable recognition"
-                    problem = "None"
-                    interpretation = "Reflects reviews/assets well"
+                    summary = "노출 안정적"
+                    problem = "없음"
+                    interpretation = "리뷰/정보가 잘 반영됨"
                 elif mention_rate >= 20:
                     color = StatusColor.YELLOW
-                    summary = "Unstable recognition"
-                    problem = "Low frequency"
-                    interpretation = "Insufficient differentiation"
+                    summary = "노출 불안정"
+                    problem = "언급 빈도 낮음"
+                    interpretation = "AI가 매장을 충분히 학습하지 못함"
                 else:
                     color = StatusColor.RED
-                    summary = "Failed to recognize"
-                    problem = "High risk of omission"
-                    interpretation = "Not recognized as a candidate"
+                    summary = "노출 실패"
+                    problem = "AI 인지도 부족"
+                    interpretation = "검색 후보군에 포함되지 않음"
 
                 ai_statuses.append(AIEngineStatus(
                     engine_name=engine,
@@ -551,9 +555,12 @@ class DataCollector:
                 # Mock Responses for Page 2
                 responses = []
                 for i in range(3):
+                    q_text = f"{store_info.category} 추천해주세요 ({area})"
+                    a_text = f"{store_info.name}을(를) 추천합니다. 맛과 분위기가 훌륭하다고 알려져 있습니다." if is_mentioned else "구체적인 정보를 찾을 수 없습니다."
+                    
                     responses.append({
-                        "question": f"Recommend a good place for {store_info.category} in this area.",
-                        "answer": f"I recommend {store_info.name}. It is known for good ambiance." if is_mentioned else "I couldn't find specific details.",
+                        "question": q_text,
+                        "answer": a_text,
                         "evaluation": "Good" if is_mentioned else "Bad"
                     })
                 ai_responses[engine] = responses

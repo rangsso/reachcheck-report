@@ -3,8 +3,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+interface StoreData {
+    name: string;
+    address: string;
+    roadAddress?: string;
+    tel?: string;
+    link?: string;
+    mapx?: string;
+    mapy?: string;
+}
+
 interface AnalyzeButtonProps {
-    selected: any;
+    selected: StoreData | null;
 }
 
 export default function AnalyzeButton({ selected }: AnalyzeButtonProps) {
@@ -71,10 +81,24 @@ export default function AnalyzeButton({ selected }: AnalyzeButtonProps) {
                 {analyzing ? 'Analyzing...' : 'Generate Report'}
             </button>
             {analyzing && (
-                <div className="loading-overlay">
-                    <div>
-                        <p>Analyzing {selected?.name}...</p>
-                        <small>Generating Snapshots & Report</small>
+                <div className="loading-overlay" style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    zIndex: 9999
+                }}>
+                    <div className="loading-spinner" style={{ width: '48px', height: '48px', border: '5px solid rgba(37, 99, 235, 0.2)', borderTopColor: '#2563eb' }}></div>
+                    <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>리포트 생성 중...</p>
+                        <p style={{ fontSize: '0.95rem', color: '#64748b' }}>약 5~10초 정도 소요됩니다.</p>
                     </div>
                 </div>
             )}
