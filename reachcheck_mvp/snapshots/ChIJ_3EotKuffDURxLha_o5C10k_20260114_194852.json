@@ -1,0 +1,123 @@
+{
+    "store_id": "ChIJ_3EotKuffDURxLha_o5C10k",
+    "timestamp": "20260114_194852",
+    "standard_info": {
+        "id": "ChIJ_3EotKuffDURxLha_o5C10k",
+        "name": "김밥예쁘게드세요",
+        "address": "서울특별시 영등포구 양평동1가 222-17 1층",
+        "phone": "0507-1336-3425",
+        "category": "분식>김밥",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": ""
+    },
+    "raw_google": {
+        "name": "김밥, 예쁘게 드세요",
+        "address": "대한민국 서울특별시 영등포구 양평동1가 222-17번지 1층",
+        "phone": "Phone not available",
+        "category": "Establishment",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "김밥예쁘게드세요",
+        "address": "서울특별시 영등포구 양평동1가 222-17 1층",
+        "phone": "0507-1336-3425",
+        "category": null,
+        "link": "",
+        "mapx": "1268884105",
+        "mapy": "375248787"
+    },
+    "raw_kakao": {
+        "name": "김밥예쁘게드세요",
+        "address": "서울 영등포구 영등포로11길 26",
+        "phone": "02-2635-3425"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 추천할 만한 식당이 있나요?",
+                "answer": "영등포구에는 다양한 맛집이 있습니다. 몇 가지 추천드리자면:\n\n1. **명동교자** - 칼국수와 만두가 유명한 곳입니다.\n2. **마포갈매기** - 맛있는 갈비와 고기를 즐길 수 있는 고기집입니다.\n3. **백억돈까스** - 바삭한 돈까스가 인기인 식당입니다.\n4. **영등포시장** - 다양한 먹거리를 한자리에서 즐길 수 있는 시장입니다.\n\n좋은 식사 되시길 바랍니다!",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "그중에서 김밥예쁘게드세요은 어떤 곳인가요?",
+                "answer": "김밥예쁘게드세요는 김밥 전문점으로, 다양한 종류의 김밥을 예쁘고 맛있게 제공하는 곳입니다. 보통 신선한 재료와 깔끔한 플레이팅으로 인기가 많습니다. 메뉴와 가격은 가게마다 다를 수 있으니 방문 전에 확인해 보시는 것이 좋습니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "김밥예쁘게드세요이 이 지역에서 자주 언급되는 이유는 무엇인가요?",
+                "answer": "김밥예쁘게드세요는 맛있는 김밥과 다양한 메뉴로 유명한 가게입니다. 특히 예쁜 비주얼과 신선한 재료 사용이 많은 사람들에게 사랑받고 있어 자주 언급됩니다. 또한, 포장과 인테리어도 매력적이어서 SNS에서도 화제를 모으고 있습니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "field_provenance": {
+        "standard_source": "naver_seed",
+        "phone_source": "search",
+        "category_source": "naver_seed_path",
+        "fields": {
+            "name": {
+                "standard": "김밥예쁘게드세요",
+                "sources": {
+                    "naver": "김밥예쁘게드세요",
+                    "kakao": "김밥예쁘게드세요",
+                    "google": "김밥, 예쁘게 드세요"
+                }
+            },
+            "address": {
+                "standard": "서울특별시 영등포구 양평동1가 222-17 1층",
+                "sources": {
+                    "naver": "서울특별시 영등포구 양평동1가 222-17 1층",
+                    "kakao": "서울 영등포구 영등포로11길 26",
+                    "google": "서울특별시 영등포구 양평동1가 222-17번지 1층"
+                }
+            },
+            "phone": {
+                "standard": "0507-1336-3425",
+                "sources": {
+                    "naver": "0507-1336-3425",
+                    "kakao": "02-2635-3425",
+                    "google": "Phone not available"
+                }
+            },
+            "category": {
+                "standard": "분식>김밥",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": "Establishment"
+                }
+            }
+        }
+    },
+    "review_insights": {
+        "source": "error",
+        "review_count": 0,
+        "top_phrases": [],
+        "pain_phrases": [],
+        "sample_reviews": [],
+        "fallback_used": "error",
+        "notes": [
+            "local variable 'pw_keywords' referenced before assignment"
+        ],
+        "debug_code": "CRASH:local variable 'pw_keywords' r"
+    },
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "김밥예쁘게드세요",
+                "address": "서울 영등포구 영등포로11길 26",
+                "phone": "02-2635-3425"
+            }
+        ]
+    },
+    "errors": {}
+}

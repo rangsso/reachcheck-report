@@ -8,9 +8,9 @@ from models import ReportData
 try:
     from weasyprint import HTML
     HAS_WEASYPRINT = True
-except OSError:
+except (OSError, ImportError):
     HAS_WEASYPRINT = False
-    print("[!] WeasyPrint system dependencies missing. Falling back...")
+    # We suppress the immediate error to check for fallback first.
 
 # Try checking for xhtml2pdf
 try:
@@ -57,8 +57,11 @@ class ReportGenerator:
             except Exception as e:
                 print(f"[!] WeasyPrint failed: {e}")
         
+        # Fallback Logic
         if HAS_XHTML2PDF:
-            print("[*] Using xhtml2pdf for PDF generation...")
+            if not HAS_WEASYPRINT:
+                 print("[-] WeasyPrint unavailable. Falling back to xhtml2pdf...")
+                 
             with open(pdf_path, "wb") as pdf_file:
                 pisa_status = pisa.CreatePDF(html_string, dest=pdf_file)
             
@@ -67,5 +70,10 @@ class ReportGenerator:
             else:
                 print(f"[!] xhtml2pdf error: {pisa_status.err}")
         
-        print("[!] Could not generate PDF. Please open the HTML file instead.")
+        # Final Fallback
+        if not HAS_WEASYPRINT and not HAS_XHTML2PDF:
+             print("[-] PDF Engine unavailable (System dependencies missing). Returning HTML Report.")
+        else:
+             print("[!] PDF Generation failed. Returning HTML Report.")
+             
         return html_path

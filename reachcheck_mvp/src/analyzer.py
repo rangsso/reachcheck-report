@@ -3,7 +3,7 @@ from typing import Any
 from datetime import datetime
 
 class Analyzer:
-    def process(self, store: Any, analysis: AnalysisResult) -> ReportData:
+    def process(self, store: Any, analysis: AnalysisResult, review_insights: Any = None) -> ReportData:
         # Here we could refine the raw analysis data with more complex rules if needed.
         # For the mock/MVP, the collector already did most of the "simulated" analysis.
         # This class primarily acts to structure the final ReportData object.
@@ -49,7 +49,6 @@ class Analyzer:
         # 3. Causal Link (User Req: 4-3)
         if has_map_issues or analysis.ai_mention_rate < 80:
             analysis.ai_summary += " 정보가 불일치하면 AI는 신뢰할 수 없는 정보로 판단하여 노출을 줄이거나 잘못된 답변을 할 수 있습니다."
-
             
         # 4. Action Summary Logic (User Req: 3 - Actionable Report)
         # Determine the single most critical issue
@@ -142,5 +141,6 @@ class Analyzer:
             store=store,
             analysis=analysis,
             date=datetime.now().strftime("%Y.%m.%d"),
-            action_summary=action_summary
+            action_summary=action_summary,
+            review_insights=review_insights
         )

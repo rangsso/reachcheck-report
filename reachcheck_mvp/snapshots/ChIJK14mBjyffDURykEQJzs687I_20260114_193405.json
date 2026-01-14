@@ -1,0 +1,124 @@
+{
+    "store_id": "ChIJK14mBjyffDURykEQJzs687I",
+    "timestamp": "20260114_193405",
+    "standard_info": {
+        "id": "ChIJK14mBjyffDURykEQJzs687I",
+        "name": "팬팬",
+        "address": "서울특별시 영등포구 당산동1가 53-4 1층",
+        "phone": "0507-1354-2022",
+        "category": "분식>떡볶이",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "https://www.instagram.com/panfan1997"
+    },
+    "raw_google": {
+        "name": "팬팬",
+        "address": "대한민국 서울특별시 영등포구 영등포로 143 1층",
+        "phone": "02-2135-2017",
+        "category": "Establishment",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "팬팬",
+        "address": "서울특별시 영등포구 당산동1가 53-4 1층",
+        "phone": "0507-1354-2022",
+        "category": null,
+        "link": "https://www.instagram.com/panfan1997",
+        "mapx": "1268976715",
+        "mapy": "375214170"
+    },
+    "raw_kakao": {
+        "name": "팬팬(PANFAN)",
+        "address": "서울 영등포구 영등포로 143",
+        "phone": "02-2135-2017"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 추천할 만한 식당이 있나요?",
+                "answer": "네, 영등포구에는 다양한 맛집이 있습니다. 몇 곳 추천드리면:\n\n1. **영등포시장 곱창** - 맛있는 곱창과 함께하는 전통 시장 분위기.\n2. **신길동 보쌈** - 푸짐하고 맛있는 보쌈을 즐길 수 있는 곳입니다.\n3. **여의도 한정식** - 정갈하고 다양한 반찬이 나오는 한정식 전문점입니다.\n4. **대림동 중국집** - 짜장면과 짬뽕이 유명한 중국 음식점입니다.\n\n여기서 맛있는 식사 즐기세요!",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "그중에서 팬팬은 어떤 곳인가요?",
+                "answer": "팬팬은 주로 팬들과 아티스트 간의 소통을 위한 플랫폼으로, 팬들이 좋아하는 아티스트의 콘텐츠를 쉽게 접근하고 소통할 수 있도록 도와주는 서비스입니다. 팬들이 아티스트의 활동을 지원하고, 다양한 혜택을 누릴 수 있는 장소입니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "팬팬이 이 지역에서 자주 언급되는 이유는 무엇인가요?",
+                "answer": "팬팬이 이 지역에서 자주 언급되는 이유는 주로 지역 특산물이나 문화와 관련이 있을 수 있습니다. 팬팬은 특정 제품이나 서비스의 브랜드명일 수도 있고, 지역 행사나 축제와 관련된 인물일 수도 있습니다. 더 구체적인 정보가 필요하시면 말씀해 주세요.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "field_provenance": {
+        "standard_source": "naver_seed",
+        "phone_source": "search",
+        "category_source": "naver_seed_path",
+        "fields": {
+            "name": {
+                "standard": "팬팬",
+                "sources": {
+                    "naver": "팬팬",
+                    "kakao": "팬팬(PANFAN)",
+                    "google": "팬팬"
+                }
+            },
+            "address": {
+                "standard": "서울특별시 영등포구 당산동1가 53-4 1층",
+                "sources": {
+                    "naver": "서울특별시 영등포구 당산동1가 53-4 1층",
+                    "kakao": "서울 영등포구 영등포로 143",
+                    "google": "서울특별시 영등포구 영등포로 143 1층"
+                }
+            },
+            "phone": {
+                "standard": "0507-1354-2022",
+                "sources": {
+                    "naver": "0507-1354-2022",
+                    "kakao": "02-2135-2017",
+                    "google": "02-2135-2017"
+                }
+            },
+            "category": {
+                "standard": "분식>떡볶이",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": "Establishment"
+                }
+            }
+        }
+    },
+    "review_insights": {
+        "source": "none",
+        "review_count": 0,
+        "top_phrases": [],
+        "pain_phrases": [],
+        "sample_reviews": [],
+        "fallback_used": "none",
+        "notes": [
+            "PW Error: It looks like you are using Playwright Sync API inside the asyncio loop.\nPlease use the Async API instead.",
+            "No reviews found"
+        ],
+        "debug_code": "t0:search_fail_200_pw:error"
+    },
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "팬팬(PANFAN)",
+                "address": "서울 영등포구 영등포로 143",
+                "phone": "02-2135-2017"
+            }
+        ]
+    },
+    "errors": {}
+}

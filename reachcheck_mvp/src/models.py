@@ -39,6 +39,28 @@ class ReviewAnalysis:
     negative_keywords: List[str]
 
 @dataclass
+class ReviewPhrase:
+    text: str
+    count: int
+
+@dataclass
+class ReviewSample:
+    text: str
+    type: str = "neutral"  # positive, neutral, negative
+    date: Optional[str] = None  # Visit date (separate from review body)
+
+@dataclass
+class ReviewStats:
+    source: str  # 'naver', 'kakao'
+    review_count: int
+    top_phrases: List[ReviewPhrase]
+    pain_phrases: List[ReviewPhrase]
+    sample_reviews: List[ReviewSample]
+    fallback_used: str = "none" # "none", "search_snippets", "playwright"
+    notes: List[str] = field(default_factory=list)
+    debug_code: Optional[str] = None # e.g. "t1:captcha", "pw:ok"
+
+@dataclass
 class StoreInfo:
     """Deprecated: Use StoreSchema instead for new logic"""
     name: str
@@ -98,6 +120,9 @@ class SnapshotData:
     # Provenance (New)
     field_provenance: Dict[str, Any] = field(default_factory=dict) # { "phone_source": "playwright", "fields": {...} }
 
+    # Review Insights (New)
+    review_insights: Optional[ReviewStats] = None
+
     # Search candidates (if ambiguous)
     search_candidates: Dict[str, List[Dict[str, str]]] = field(default_factory=dict) # channel -> list of {name, address}
     
@@ -131,4 +156,5 @@ class ReportData:
     store: StoreInfo
     analysis: AnalysisResult
     date: str
+    review_insights: Optional[ReviewStats] = None
     action_summary: Dict[str, str] = field(default_factory=dict) # warning, action, benefit

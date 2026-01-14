@@ -1,0 +1,120 @@
+{
+    "store_id": "ChIJc48Z4ueefDUR6JF5h1GyRrs",
+    "timestamp": "20260114_173529",
+    "standard_info": {
+        "id": "ChIJc48Z4ueefDUR6JF5h1GyRrs",
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+        "phone": "0507-1467-0376",
+        "category": "분식>김밥",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "http://www.instagram.com/youmeboon"
+    },
+    "raw_google": {
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "대한민국 서울특별시 영등포구 당산로40길 16 보성빌딩 1층 101호",
+        "phone": "050-71467-0376",
+        "category": "Establishment",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+        "phone": "0507-1467-0376",
+        "category": null,
+        "link": "http://www.instagram.com/youmeboon",
+        "mapx": "1269004148",
+        "mapy": "375292078"
+    },
+    "raw_kakao": {
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "서울 영등포구 당산로40길 16",
+        "phone": "0507-1467-0376"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 추천할 만한 식당이 있나요?",
+                "answer": "영등포구에서 추천할 만한 식당으로는 다음과 같은 곳이 있습니다:\n\n1. **영등포 삼겹살** - 맛있는 삼겹살과 다양한 반찬이 인기입니다.\n2. **사당동 쭈꾸미** - 매콤한 쭈꾸미 요리가 유명합니다.\n3. **이태원 부대찌개** - 진한 국물의 부대찌개가 맛있습니다.\n4. **서래갈매기** - 고급 한우를 즐길 수 있는 곳입니다.\n\n각 식당마다 특색이 있으니 방문해 보시면 좋을 것 같습니다!",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "그중에서 유미분김밥 소정담 당산 본점은 어떤 곳인가요?",
+                "answer": "유미분김밥 소정담 당산 본점은 신선한 재료로 만든 다양한 종류의 김밥을 제공하는 식당입니다. 아늑한 분위기에서 맛있고 건강한 한 끼를 즐길 수 있는 곳으로, 특히 김밥 외에도 여러 가지 사이드 메뉴가 인기입니다. 고객들에게 좋은 서비스를 제공하며, 많은 이들이 찾는 맛집 중 하나입니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "유미분김밥 소정담 당산 본점이 이 지역에서 자주 언급되는 이유는 무엇인가요?",
+                "answer": "유미분김밥 소정담 당산 본점은 신선한 재료와 다양한 김밥 종류로 많은 사랑을 받고 있습니다. 또한, 합리적인 가격과 빠른 서비스, 깔끔한 매장 분위기 덕분에 지역 주민들 사이에서 자주 언급되는 것 같습니다. 맛과 품질이 뛰어나서 여러 입소문이 나고 있는 것 또한 큰 이유입니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [],
+    "field_provenance": {
+        "standard_source": "naver_seed",
+        "phone_source": "search",
+        "category_source": "naver_seed_path",
+        "fields": {
+            "name": {
+                "standard": "유미분김밥 소정담 당산 본점",
+                "sources": {
+                    "naver": "유미분김밥 소정담 당산 본점",
+                    "kakao": "유미분김밥 소정담 당산 본점",
+                    "google": "유미분김밥 소정담 당산 본점"
+                }
+            },
+            "address": {
+                "standard": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+                "sources": {
+                    "naver": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+                    "kakao": "서울 영등포구 당산로40길 16",
+                    "google": "서울특별시 영등포구 당산로40길 16 보성빌딩 1층 101호"
+                }
+            },
+            "phone": {
+                "standard": "0507-1467-0376",
+                "sources": {
+                    "naver": "0507-1467-0376",
+                    "kakao": "0507-1467-0376",
+                    "google": "050-71467-0376"
+                }
+            },
+            "category": {
+                "standard": "분식>김밥",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": "Establishment"
+                }
+            }
+        }
+    },
+    "review_insights": {
+        "source": "naver",
+        "review_count": 0,
+        "top_phrases": [],
+        "pain_phrases": [],
+        "sample_reviews": [],
+        "fallback_used": "no_reviews",
+        "notes": [
+            "No reviews found"
+        ]
+    },
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "유미분김밥 소정담 당산 본점",
+                "address": "서울 영등포구 당산로40길 16",
+                "phone": "0507-1467-0376"
+            }
+        ]
+    },
+    "errors": {}
+}

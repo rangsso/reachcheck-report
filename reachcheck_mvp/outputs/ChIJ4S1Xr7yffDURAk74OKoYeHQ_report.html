@@ -378,19 +378,19 @@
         <!-- Page 1: Summary -->
         <div class="page">
             <div class="header">
-                <h1>[{{ data.store.name }}] AI·검색 노출 진단 보고서</h1>
-                <span class="date">{{ data.date }}</span>
+                <h1>[클래식오븐] AI·검색 노출 진단 보고서</h1>
+                <span class="date">2026.01.14</span>
             </div>
 
             <div class="section">
                 <div class="section-title">진단 요약</div>
 
-                {% if data.action_summary %}
+                
                 <div class="action-summary-container">
                     <div style="display: flex; gap: 16px; margin-bottom: 16px;">
                         <div style="font-size: 24px;">🚨</div>
                         <div>
-                            <div class="warning-text">{{ data.action_summary.warning }}</div>
+                            <div class="warning-text">현재 검색 결과에서 매장 정보가 불안정하게 노출되고 있습니다.</div>
                             <div class="sub-text">이 문제를 방치하면 잠재 고객을 놓칠 수 있습니다.</div>
                         </div>
                     </div>
@@ -398,38 +398,60 @@
                     <div class="solution-box">
                         <div style="flex: 1;">
                             <div style="font-weight: 700; color: #2d3748; margin-bottom: 4px;">🚀 오늘 바로 해결하기</div>
-                            <div style="font-size: 14px; color: #4a5568;">{{ data.action_summary.action }}</div>
+                            <div style="font-size: 14px; color: #4a5568;">매장 기본 정보를 점검하세요.</div>
                         </div>
                     </div>
 
                     <div style="margin-top: 12px; font-size: 13px; color: #718096; padding-left: 8px;">
-                        💡 <strong>예상 효과:</strong> {{ data.action_summary.benefit }}
+                        💡 <strong>예상 효과:</strong> 고객이 정확한 정보를 찾고 방문할 확률이 높아집니다.
                     </div>
                 </div>
-                {% endif %}
+                
 
                 <div class="summary-box">
-                    <p class="summary-text">{{ data.analysis.map_summary }}</p>
+                    <p class="summary-text">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
                     <div style="height: 10px;"></div>
-                    <p class="summary-text">{{ data.analysis.ai_summary }}</p>
+                    <p class="summary-text">AI 검색 엔진마다 우리 매장을 설명하는 내용과 비중이 제각각입니다. 정보가 불일치하면 AI는 신뢰할 수 없는 정보로 판단하여 노출을 줄이거나 잘못된 답변을 할 수 있습니다.</p>
                 </div>
             </div>
 
             <div class="section">
                 <div class="section-title">지도 채널 등록 현황</div>
                 <div class="grid-3">
-                    {% for channel in data.analysis.map_statuses %}
+                    
                     <div class="card">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <h4>{{ channel.channel_name }}</h4>
-                            <span class="status-badge bg-{{ channel.color.value }}">
-                                {{ '등록됨' if channel.is_registered else '미등록' }}
+                            <h4>Naver</h4>
+                            <span class="status-badge bg-green">
+                                등록됨
                             </span>
                         </div>
-                        <p style="font-size: 12px; color: #64748b;">{{ channel.status_text }}</p>
+                        <p style="font-size: 12px; color: #64748b;">Information found.</p>
                     </div>
-                    {% endfor %}
+                    
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4>Kakao</h4>
+                            <span class="status-badge bg-green">
+                                등록됨
+                            </span>
+                        </div>
+                        <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4>Google</h4>
+                            <span class="status-badge bg-green">
+                                등록됨
+                            </span>
+                        </div>
+                        <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -446,44 +468,96 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if data.analysis.field_provenance and data.analysis.field_provenance.fields %}
-                        {% for key, val in data.analysis.field_provenance.fields.items() %}
-                        {% if key != 'category' %}
+                        
+                        
+                        
                         <tr>
-                            <td style="font-weight: 600; color: #475569;">{{ key|capitalize }}</td>
+                            <td style="font-weight: 600; color: #475569;">Name</td>
                             <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
-                            <td style="word-break: break-all;">{{ val.standard }}</td>
-                            <td style="word-break: break-all;">{{ val.sources.kakao or '-' }}</td>
-                            <td style="word-break: break-all;">{{ val.sources.google or '-' }}</td>
+                            <td style="word-break: break-all;">클래식오븐</td>
+                            <td style="word-break: break-all;">클래식오븐</td>
+                            <td style="word-break: break-all;">클래식오븐</td>
                             <td>
                                 <!-- Match Status Logic -->
-                                {% set ns = namespace(status="Unknown", color="black") %}
-                                {% for cr in data.analysis.consistency_results %}
-                                {% if cr.field_name|lower == key|lower %}
-                                {% set ns.status = cr.status %}
-                                {% set ns.color = 'text-match' if cr.status == 'Match' else 'text-mismatch' %}
-                                {% endif %}
-                                {% endfor %}
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
 
-                                <span class="{{ ns.color }}" style="font-weight: 700;">{{ ns.status }}</span>
+                                <span class="text-match" style="font-weight: 700;">Match</span>
                             </td>
                         </tr>
-                        {% endif %}
-                        {% endfor %}
-                        {% else %}
+                        
+                        
+                        
                         <tr>
-                            <td colspan="5">Provenance data unavailable.</td>
+                            <td style="font-weight: 600; color: #475569;">Address</td>
+                            <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
+                            <td style="word-break: break-all;">서울특별시 영등포구 당산동3가 472 1층</td>
+                            <td style="word-break: break-all;">서울 영등포구 당산로27길 21-1</td>
+                            <td style="word-break: break-all;">서울특별시 영등포구 당산로27길 21-1</td>
+                            <td>
+                                <!-- Match Status Logic -->
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+
+                                <span class="text-match" style="font-weight: 700;">Match</span>
+                            </td>
                         </tr>
-                        {% endif %}
+                        
+                        
+                        
+                        <tr>
+                            <td style="font-weight: 600; color: #475569;">Phone</td>
+                            <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
+                            <td style="word-break: break-all;">0507-1371-3285</td>
+                            <td style="word-break: break-all;">-</td>
+                            <td style="word-break: break-all;">Phone not available</td>
+                            <td>
+                                <!-- Match Status Logic -->
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+
+                                <span class="text-mismatch" style="font-weight: 700;">Mismatch</span>
+                            </td>
+                        </tr>
+                        
+                        
+                        
+                        
+                        
                     </tbody>
                 </table>
                 <div
                     style="background: #f1f5f9; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 11px; color: #334155;">
                     <div style="display: flex; justify-content: space-between;">
-                        <span><strong>Standard Source:</strong> {{ data.analysis.field_provenance.standard_source
-                            }}</span>
-                        <span><strong>Phone Acquired By:</strong> {{ data.analysis.field_provenance.phone_source
-                            }}</span>
+                        <span><strong>Standard Source:</strong> naver_seed</span>
+                        <span><strong>Phone Acquired By:</strong> search</span>
                     </div>
                 </div>
             </div>
@@ -496,7 +570,7 @@
     <div class="page">
         <div class="header">
             <h1>AI가 바라본 우리 가게</h1>
-            <span class="date">{{ data.date }}</span>
+            <span class="date">2026.01.14</span>
         </div>
 
         <div class="section">
@@ -505,24 +579,70 @@
                 실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
             </p>
 
-            {% for engine, responses in data.analysis.ai_responses.items() %}
+            
             <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">{{ engine }}</h3>
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">ChatGPT</h3>
 
-                {% for resp in responses %}
+                
                 <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. {{
-                        resp.question }}</div>
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 서울특별시 영등포구에서 추천할 만한 식당이 있나요?</div>
                     <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                    <p style="font-size: 13px; color: #334155; margin: 0;">{{ resp.answer }}</p>
-                </div>
-                {% endfor %}
+                    <p style="font-size: 13px; color: #334155; margin: 0;">영등포구에는 다양한 맛집이 있습니다. 몇 가지 추천드리자면:
 
-                {% if not responses %}
-                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                {% endif %}
+1. **영등포 족발** - 맛있는 족발과 보쌈이 유명합니다.
+2. **상해성** - 중화요리를 좋아하신다면 추천드립니다.
+3. **갈비명가** - 양념갈비와 불고기가 맛있습니다.
+4. **마포갈매기** - 고기와 함께 즐길 수 있는 다양한 반찬이 인기입니다.
+
+방문하시면 좋을 것 같습니다!</p>
+                </div>
+                
+                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 그중에서 클래식오븐은 어떤 곳인가요?</div>
+                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                    <p style="font-size: 13px; color: #334155; margin: 0;">클래식오븐은 주로 베이커리와 카페를 운영하는 곳으로, 신선한 빵과 디저트를 제공합니다. 아늑한 분위기에서 다양한 종류의 커피와 함께 즐길 수 있는 장소입니다. 추가적인 정보가 필요하시면 말씀해 주세요!</p>
+                </div>
+                
+                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 클래식오븐이 이 지역에서 자주 언급되는 이유는 무엇인가요?</div>
+                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                    <p style="font-size: 13px; color: #334155; margin: 0;">클래식오븐이 이 지역에서 자주 언급되는 이유는 주로 그 고유한 조리 방식과 맛 때문입니다. 클래식오븐은 균일한 열 전달로 음식의 풍미를 극대화하며, 다양한 요리를 손쉽게 준비할 수 있습니다. 또한, 지역 내에서 인기 있는 레스토랑이나 카페들이 클래식오븐을 활용한 메뉴를 제공하여 더욱 주목받고 있습니다.</p>
+                </div>
+                
+
+                
             </div>
-            {% endfor %}
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Gemini</h3>
+
+                
+
+                
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Claude</h3>
+
+                
+
+                
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                
+            </div>
+            
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Perplexity</h3>
+
+                
+
+                
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                
+            </div>
+            
         </div>
 
         <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
@@ -532,47 +652,11 @@
     <div class="page">
         <div class="header">
             <h1>고객 리뷰 분석 Insight</h1>
-            <span class="date">{{ data.date }}</span>
+            <span class="date">2026.01.14</span>
         </div>
 
         <div class="section">
-            {% if data.review_insights and data.review_insights.review_count >= 5 %}
-            <div class="section-title">자주 언급된 표현 (긍정/특징)</div>
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                고객들이 우리 매장을 경험할 때 가장 많이 사용하는 단어들입니다.
-                {% if data.review_insights.review_count < 20 %} <span style="color: #eab308; font-weight: bold;">(데이터
-                    부족으로 참고용)</span>
-                    {% endif %}
-            </p>
-
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px;">
-                {% for phrase in data.review_insights.top_phrases %}
-                <div
-                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 20px; font-size: 14px; color: #1e40af;">
-                    <span style="font-weight: 700;">{{ phrase.text }}</span>
-                    <span style="font-size: 12px; color: #60a5fa; margin-left: 4px;">({{ phrase.count }})</span>
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="section-title">자주 언급된 아쉬운 점 (Pain Points)</div>
-            <div
-                style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-                {% if data.review_insights.pain_phrases %}
-                {% for phrase in data.review_insights.pain_phrases %}
-                <div
-                    style="display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #feb2b2; padding-bottom: 4px;">
-                    <span style="color: #c53030; font-weight: 600;">⚠️ {{ phrase.text }}</span>
-                    <span style="color: #e53e3e;">{{ phrase.count }}회 언급</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p style="color: #48bb78; font-weight: 600; text-align: center; margin: 0;">
-                    ✨ 반복되는 부정적인 피드백이 발견되지 않았습니다. 관리가 훌륭합니다!
-                </p>
-                {% endif %}
-            </div>
-            {% else %}
+            
             <div class="section-title" style="color: #64748b;">리뷰 분석 대기 중</div>
             <div
                 style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
@@ -581,11 +665,11 @@
                 </p>
                 <p style="font-size: 13px; color: #64748b; margin: 0;">
                     잠시 후 다시 시도해주시거나, 데이터가 충분히 모이면 자동으로 분석 결과가 업데이트됩니다.<br>
-                    (현재 수집된 리뷰: {{ data.review_insights.review_count if data.review_insights else 0 }}개)
+                    (현재 수집된 리뷰: 0개)
                 </p>
                 <!-- Debug info moved to footer -->
             </div>
-            {% endif %}
+            
 
             <style>
                 .card-positive {
@@ -615,25 +699,15 @@
 
             <div class="section-title">대표 리뷰 샘플</div>
             <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
-                {% if data.review_insights and data.review_insights.sample_reviews %}
-                {% for sample in data.review_insights.sample_reviews %}
-                <div class="card {{ 'card-positive' if sample.type == 'positive' else 'card-negative' }}">
-                    <div class="{{ 'title-positive' if sample.type == 'positive' else 'title-negative' }}">
-                        {{ '😊 긍정 리뷰' if sample.type == 'positive' else '😢 아쉬운 점' }}
-                    </div>
-                    {{ sample.text }}
-                </div>
-                {% endfor %}
-                {% else %}
+                
                 <div class="card">수집된 샘플 리뷰가 없습니다.</div>
-                {% endif %}
+                
             </div>
 
             <!-- Always Visible Debug Info -->
             <div
                 style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8; border-top: 1px dotted #e2e8f0; padding-top: 10px;">
-                * 상태 코드: {{ data.review_insights.debug_code if data.review_insights and
-                data.review_insights.debug_code else 'System Init' }}
+                * 상태 코드: t0:search_fail_200_pw:kw_only
             </div>
         </div>
 
@@ -644,7 +718,7 @@
     <div class="page">
         <div class="header">
             <h1>우선 개선 과제 (Top 3)</h1>
-            <span class="date">{{ data.date }}</span>
+            <span class="date">2026.01.14</span>
         </div>
 
         <div class="section">
@@ -652,17 +726,37 @@
                 가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
             </p>
 
-            {% for imp in data.analysis.improvements %}
+            
             <div class="priority-item">
-                <div class="priority-rank">Priority {{ loop.index }}</div>
-                <div class="priority-title">{{ imp.title }}</div>
-                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">{{ imp.description }}</p>
+                <div class="priority-rank">Priority 1</div>
+                <div class="priority-title">매장 기본 정보 통일</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">모든 지도 앱의 이름/전화번호/주소를 100% 동일하게 맞추세요.</p>
                 <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
                     <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
-                    <span style="color: #475569;">{{ imp.importance }}</span>
+                    <span style="color: #475569;">High</span>
                 </div>
             </div>
-            {% endfor %}
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 2</div>
+                <div class="priority-title">AI가 이해하기 쉬운 소개글 추가</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">소개글에 '지역명 + 업종 + 대표메뉴'를 명확한 문장으로 적으세요.</p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">Medium</span>
+                </div>
+            </div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 3</div>
+                <div class="priority-title">FAQ(자주 묻는 질문) 정리</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">주차, 영업시간 등 질문과 답변을 플레이스 정보에 등록하세요.</p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">Medium</span>
+                </div>
+            </div>
+            
         </div>
 
         <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
@@ -679,7 +773,7 @@
     <div class="page">
         <div class="header">
             <h1>바로 사용할 수 있는 최적화 문장</h1>
-            <span class="date">{{ data.date }}</span>
+            <span class="date">2026.01.14</span>
         </div>
 
         <div class="section">
@@ -689,12 +783,12 @@
             </p>
 
             <div class="quote-box">
-                "{{ data.analysis.ai_intro_sentence }}"
+                "클래식오븐은(는) 서울특별시 영등포구에서 꾸준히 언급되는 장소입니다."
             </div>
 
             <div style="text-align: right;">
                 <button
-                    onclick="navigator.clipboard.writeText(`{{ data.analysis.ai_intro_sentence }}`).then(()=>alert('복사되었습니다!'))"
+                    onclick="navigator.clipboard.writeText(`클래식오븐은(는) 서울특별시 영등포구에서 꾸준히 언급되는 장소입니다.`).then(()=>alert('복사되었습니다!'))"
                     style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
                     문장 복사하기
                 </button>

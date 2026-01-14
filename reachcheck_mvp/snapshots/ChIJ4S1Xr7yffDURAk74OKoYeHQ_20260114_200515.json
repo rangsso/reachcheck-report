@@ -1,0 +1,177 @@
+{
+    "store_id": "ChIJ4S1Xr7yffDURAk74OKoYeHQ",
+    "timestamp": "20260114_200515",
+    "standard_info": {
+        "id": "ChIJ4S1Xr7yffDURAk74OKoYeHQ",
+        "name": "클래식오븐",
+        "address": "서울특별시 영등포구 당산동3가 472 1층",
+        "phone": "0507-1371-3285",
+        "category": "카페,디저트>베이커리",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "https://instagram.com/classicoven.seoul?igshid=MzRlODBiNWFlZA=="
+    },
+    "raw_google": {
+        "name": "클래식오븐",
+        "address": "대한민국 서울특별시 영등포구 당산로27길 21-1",
+        "phone": "Phone not available",
+        "category": "Bakery",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "클래식오븐",
+        "address": "서울특별시 영등포구 당산동3가 472 1층",
+        "phone": "0507-1371-3285",
+        "category": null,
+        "link": "https://instagram.com/classicoven.seoul?igshid=MzRlODBiNWFlZA==",
+        "mapx": "1268938619",
+        "mapy": "375252559"
+    },
+    "raw_kakao": {
+        "name": "클래식오븐",
+        "address": "서울 영등포구 당산로27길 21-1",
+        "phone": ""
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 추천할 만한 식당이 있나요?",
+                "answer": "영등포구에는 다양한 맛집이 있습니다. 몇 곳 추천드리겠습니다:\n\n1. **영등포시장** - 전통시장에서 다양한 길거리 음식을 즐길 수 있습니다.\n2. **초밥집** - 신선한 초밥을 제공하는 곳으로, 특히 점심시간에 인기가 많습니다.\n3. **갈비집** - 양념 갈비가 유명한 곳으로, 고기가 부드럽고 맛있습니다.\n4. **분식집** - 떡볶이와 튀김이 인기 있는 가게로, 간단하게 한 끼 해결하기 좋습니다.\n\n원하시는 종류에 따라 선택하시면 좋을 것 같습니다!",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "그중에서 클래식오븐은 어떤 곳인가요?",
+                "answer": "클래식오븐은 주로 베이커리와 디저트를 전문으로 하는 카페나 레스토랑입니다. 다양한 종류의 빵과 디저트를 제공하며, 고급스러운 분위기에서 식사를 즐길 수 있는 곳입니다. 특정 지역이나 브랜드에 따라 다를 수 있으니, 자세한 정보는 해당 매장에 문의하시는 것이 좋습니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "클래식오븐이 이 지역에서 자주 언급되는 이유는 무엇인가요?",
+                "answer": "클래식오븐이 이 지역에서 자주 언급되는 이유는 주로 그 품질과 맛, 그리고 다양한 요리를 가능하게 하는 기능 때문입니다. 또한, 많은 사람들이 가정에서 즐겨 사용하는 주방 기기이기 때문에 자연스럽게 대화에 오르기 쉽습니다. 다른 요리 기기와 비교하여 열 전달이 균일하고, 음식의 풍미를 살리는 데 효과적이기 때문입니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "field_provenance": {
+        "standard_source": "naver_seed",
+        "phone_source": "search",
+        "category_source": "naver_seed_path",
+        "fields": {
+            "name": {
+                "standard": "클래식오븐",
+                "sources": {
+                    "naver": "클래식오븐",
+                    "kakao": "클래식오븐",
+                    "google": "클래식오븐"
+                }
+            },
+            "address": {
+                "standard": "서울특별시 영등포구 당산동3가 472 1층",
+                "sources": {
+                    "naver": "서울특별시 영등포구 당산동3가 472 1층",
+                    "kakao": "서울 영등포구 당산로27길 21-1",
+                    "google": "서울특별시 영등포구 당산로27길 21-1"
+                }
+            },
+            "phone": {
+                "standard": "0507-1371-3285",
+                "sources": {
+                    "naver": "0507-1371-3285",
+                    "kakao": "",
+                    "google": "Phone not available"
+                }
+            },
+            "category": {
+                "standard": "카페,디저트>베이커리",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": "Bakery"
+                }
+            }
+        }
+    },
+    "review_insights": {
+        "source": "naver_playwright",
+        "review_count": 22,
+        "top_phrases": [
+            {
+                "text": "eb****",
+                "count": 1919
+            },
+            {
+                "text": "리뷰너굴",
+                "count": 691289395
+            },
+            {
+                "text": "nueoes25",
+                "count": 108
+            },
+            {
+                "text": "JiJi",
+                "count": 3023
+            },
+            {
+                "text": "wndus05031",
+                "count": 921341
+            }
+        ],
+        "pain_phrases": [],
+        "sample_reviews": [
+            {
+                "text": "이 키워드를 선택한 인원\n258",
+                "type": "neutral",
+                "date": ""
+            },
+            {
+                "text": "방문일\n25.12.25.목\n2025년 12월 25일 목요일",
+                "type": "neutral",
+                "date": ""
+            },
+            {
+                "text": "2025년 11월 10일 월요일",
+                "type": "neutral",
+                "date": ""
+            },
+            {
+                "text": "방문일\n25.11.21.금\n2025년 11월 21일 금요일",
+                "type": "neutral",
+                "date": ""
+            },
+            {
+                "text": "2025년 12월 25일 목요일",
+                "type": "neutral",
+                "date": ""
+            }
+        ],
+        "fallback_used": "playwright",
+        "notes": [
+            "Playwright collected 22",
+            "PW Keywords: 10",
+            "Final count: 22"
+        ],
+        "debug_code": "t0:search_fail_200_pw:ok"
+    },
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "클래식오븐",
+                "address": "서울 영등포구 당산로27길 21-1",
+                "phone": ""
+            },
+            {
+                "name": "바네스타코 송도트리플스트리트점",
+                "address": "인천 연수구 송도과학로16번길 33-2",
+                "phone": "032-310-9418"
+            }
+        ]
+    },
+    "errors": {}
+}

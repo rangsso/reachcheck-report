@@ -1,0 +1,177 @@
+{
+    "store_id": "ChIJ_3EotKuffDURxLha_o5C10k",
+    "timestamp": "20260114_202651",
+    "standard_info": {
+        "id": "ChIJ_3EotKuffDURxLha_o5C10k",
+        "name": "김밥예쁘게드세요",
+        "address": "서울특별시 영등포구 양평동1가 222-17 1층",
+        "phone": "0507-1336-3425",
+        "category": "분식>김밥",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": ""
+    },
+    "raw_google": {
+        "name": "김밥, 예쁘게 드세요",
+        "address": "대한민국 서울특별시 영등포구 양평동1가 222-17번지 1층",
+        "phone": "Phone not available",
+        "category": "Establishment",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "김밥예쁘게드세요",
+        "address": "서울특별시 영등포구 양평동1가 222-17 1층",
+        "phone": "0507-1336-3425",
+        "category": null,
+        "link": "",
+        "mapx": "1268884105",
+        "mapy": "375248787"
+    },
+    "raw_kakao": {
+        "name": "김밥예쁘게드세요",
+        "address": "서울 영등포구 영등포로11길 26",
+        "phone": "02-2635-3425"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 추천할 만한 식당이 있나요?",
+                "answer": "영등포구에는 다양한 맛집이 많습니다. 몇 곳 추천드리겠습니다:\n\n1. **영등포 족발** - 맛있는 족발과 보쌈으로 유명한 집입니다.\n2. **진주회관** - 전통적인 한식과 갈비찜이 인기입니다.\n3. **마포갈매기** - 고기와 함께 다양한 반찬을 즐길 수 있는 곳입니다.\n4. **이화수전통육개장** - 깊고 진한 육개장이 일품인 맛집입니다.\n\n원하시는 메뉴에 따라 선택하시면 좋을 것 같습니다!",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "그중에서 김밥예쁘게드세요은 어떤 곳인가요?",
+                "answer": "김밥예쁘게드세요는 다양한 종류의 김밥을 전문으로 판매하는 음식점입니다. 신선한 재료와 정성이 담긴 김밥을 제공하여 많은 사람들에게 인기를 끌고 있습니다. 메뉴에는 전통 김밥뿐만 아니라 창의적인 변형 김밥도 포함되어 있어 선택의 폭이 넓습니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "김밥예쁘게드세요이 이 지역에서 자주 언급되는 이유는 무엇인가요?",
+                "answer": "김밥예쁘게드세요는 김밥 전문점으로, 맛있는 김밥과 정성스러운 플레이팅으로 많은 사랑을 받고 있습니다. 또한, 인스타그램 등 소셜 미디어에서 비주얼이 뛰어난 음식으로 화제가 되어 더욱 자주 언급됩니다. 다양한 메뉴와 친절한 서비스도 이곳이 인기 있는 이유 중 하나입니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [
+        "phone_naver_kakao"
+    ],
+    "field_provenance": {
+        "standard_source": "naver_seed",
+        "phone_source": "search",
+        "category_source": "naver_seed_path",
+        "fields": {
+            "name": {
+                "standard": "김밥예쁘게드세요",
+                "sources": {
+                    "naver": "김밥예쁘게드세요",
+                    "kakao": "김밥예쁘게드세요",
+                    "google": "김밥, 예쁘게 드세요"
+                }
+            },
+            "address": {
+                "standard": "서울특별시 영등포구 양평동1가 222-17 1층",
+                "sources": {
+                    "naver": "서울특별시 영등포구 양평동1가 222-17 1층",
+                    "kakao": "서울 영등포구 영등포로11길 26",
+                    "google": "서울특별시 영등포구 양평동1가 222-17번지 1층"
+                }
+            },
+            "phone": {
+                "standard": "0507-1336-3425",
+                "sources": {
+                    "naver": "0507-1336-3425",
+                    "kakao": "02-2635-3425",
+                    "google": "Phone not available"
+                }
+            },
+            "category": {
+                "standard": "분식>김밥",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": "Establishment"
+                }
+            }
+        }
+    },
+    "review_insights": {
+        "source": "naver_playwright",
+        "review_count": 100,
+        "top_phrases": [
+            {
+                "text": "린에스테틱a",
+                "count": 2235169774586
+            },
+            {
+                "text": "마녀의생활26",
+                "count": 1859226
+            },
+            {
+                "text": "레페토",
+                "count": 64100
+            },
+            {
+                "text": "진심다다줌마",
+                "count": 2073110029
+            },
+            {
+                "text": "jure",
+                "count": 4491318
+            }
+        ],
+        "pain_phrases": [
+            {
+                "text": "그리고 식당에 들어가면 고소한 참기름 냄새가 듬뿍 나요",
+                "count": 1
+            }
+        ],
+        "sample_reviews": [
+            {
+                "text": "2025년 10월 10일 금요일",
+                "type": "neutral",
+                "date": null
+            },
+            {
+                "text": "인증 수단\n결제내역",
+                "type": "neutral",
+                "date": null
+            },
+            {
+                "text": "점심에 방문예약 후 이용대기 시간 바로 입장",
+                "type": "neutral",
+                "date": null
+            },
+            {
+                "text": "manwai0128\n리뷰 676사진 6,374팔로워 57테마 1\n팔로우",
+                "type": "neutral",
+                "date": null
+            },
+            {
+                "text": "이런 점이 좋았어요\n안내",
+                "type": "neutral",
+                "date": null
+            }
+        ],
+        "fallback_used": "playwright",
+        "notes": [
+            "Playwright collected 133",
+            "PW Keywords: 10",
+            "Final count: 133"
+        ],
+        "debug_code": "t0:search_fail_200_pw:ok"
+    },
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "김밥예쁘게드세요",
+                "address": "서울 영등포구 영등포로11길 26",
+                "phone": "02-2635-3425"
+            }
+        ]
+    },
+    "errors": {}
+}

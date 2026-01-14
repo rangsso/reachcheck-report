@@ -2,16 +2,20 @@ import random
 import os
 import requests
 from dotenv import load_dotenv
-from datetime import datetime
+from typing import List, Optional, Tuple, Dict, Any
+from datetime import datetime, timedelta
+from collections import Counter
 from models import (
     StoreInfo, MapChannelStatus, AIEngineStatus, ConsistencyResult, 
-    ReviewAnalysis, ReportData, AnalysisResult, StatusColor
+    ReviewAnalysis, ReportData, AnalysisResult, StatusColor,
+    ReviewStats, ReviewPhrase, ReviewSample
 )
 import bs4
 import re
 import json
 import time
 import shutil
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 
@@ -592,11 +596,971 @@ class DataCollector:
             errors=errors
         )
         
+        # 7. Collect Review Insights (New)
+        try:
+             # Use robust ID for caching key
+             review_cache_id = place_id if place_id and not place_id.startswith("PID-") else f"STORE_{store_name}"
+             snapshot.review_insights = self.collect_reviews(store_name, review_cache_id, naver_seed)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(f"[Review] Collection Failed: {e}")
+            snapshot.review_insights = ReviewStats(
+                source="error", review_count=0, top_phrases=[], pain_phrases=[], sample_reviews=[], 
+                fallback_used="error", notes=[str(e)],
+                debug_code=f"CRASH:{str(e)[:30]}"
+            )
+
         # Save immediately
         self.snapshot_manager.save(snapshot)
         
         return snapshot
     
+    # -------------------------------------------------------------------------
+    # REVIEW COLLECTION & SCRAPING (NEW)
+    # -------------------------------------------------------------------------
+
+    def _sleep_random(self):
+        """Rate limiting to prevent blocking."""
+        time.sleep(random.uniform(0.7, 1.8))
+
+    def _get_review_cache_path(self, store_id: str) -> Path:
+        cache_dir = Path(__file__).resolve().parent.parent / "snapshots" / "cache"
+        os.makedirs(cache_dir, exist_ok=True)
+        # Sanitize store_id
+        safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', store_id)
+        return cache_dir / f"reviews_{safe_id}.json"
+
+    def _load_cached_reviews(self, store_id: str) -> ReviewStats:
+        path = self._get_review_cache_path(store_id)
+        if not path.exists():
+            return None
+        
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            # Check validity (24 hours)
+            collected_at = datetime.fromisoformat(data.get("collected_at"))
+            if datetime.now() - collected_at > timedelta(hours=24):
+                return None
+                
+            # Reconstruct objects
+            return ReviewStats(
+                source=data["source"],
+                review_count=data["review_count"],
+                top_phrases=[ReviewPhrase(**p) for p in data["top_phrases"]],
+                pain_phrases=[ReviewPhrase(**p) for p in data["pain_phrases"]],
+                sample_reviews=[ReviewSample(**s) for s in data["sample_reviews"]],
+                fallback_used=data["fallback_used"],
+                notes=data.get("notes", [])
+            )
+        except Exception as e:
+            print(f"[CACHE] Read failed: {e}")
+            return None
+
+    def _save_review_cache(self, store_id: str, stats: ReviewStats):
+        path = self._get_review_cache_path(store_id)
+        try:
+            data = {
+                "source": stats.source,
+                "review_count": stats.review_count,
+                "top_phrases": [vars(p) for p in stats.top_phrases],
+                "pain_phrases": [vars(p) for p in stats.pain_phrases],
+                "sample_reviews": [vars(s) for s in stats.sample_reviews],
+                "fallback_used": stats.fallback_used,
+                "notes": stats.notes,
+                "collected_at": datetime.now().isoformat()
+            }
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"[CACHE] Save failed: {e}")
+
+    def _analyze_reviews(self, texts: List[str]) -> tuple[List[ReviewPhrase], List[ReviewPhrase]]:
+        """
+        Rule-based phrase extraction.
+        1. Split by .!?
+        2. Filter by length (6-30) & Blacklist & Suffix
+        3. Simple normalization
+        4. Count & Pain point extraction
+        """
+        # Constants
+        BLACKLIST = ["이벤트", "협찬", "쿠폰", "블로그", "체험단", "방문", "리뷰", "사장님", "성지", "작성", "문의", "예약", "서비스", "주차", "위치", "건물", "층", "역", "출구"]
+        VALID_SUFFIXES = ["요", "니다", "음", "함", "임", "다", "거", "게", "죠", "네", "요.", "다."]
+        # Refined Pain Keywords (Avoid single chars like '짜' matching '진짜')
+        PAIN_KEYWORDS = ["별로", "아쉽", "불친절", "느리", "오래", "웨이팅", "대기", "비싸", "짜요", "짜서", "싱거", "좁아", "좁은", "시끄", "불편", "실망", "더러", "지저분", "냄새"]
+        
+        # print(f"[DEBUG] Active PAIN_KEYWORDS: {PAIN_KEYWORDS}")
+
+        phrases = []
+        pain_candidates = []
+        
+        for text in texts:
+            # 1. Cleanup
+            # User request: "Minimize emoji removal, focus on trim"
+            # We remove only control chars and Korean Jamo (ㅋㅋ, ㅠㅠ) which are noise for phrase extraction
+            clean_text = re.sub(r'[ㄱ-ㅎ]+', '', text) 
+            
+            # 2. Split (keep punctuation for splitting)
+            sentences = re.split(r'[\.\!\?\n]', clean_text)
+            
+            for s in sentences:
+                s = s.strip()
+                if not s: continue
+                
+                # Length Filter
+                if len(s) < 6 or len(s) > 30: continue
+                
+                # Blacklist Filter
+                if any(bad in s for bad in BLACKLIST): continue
+                
+                # Suffix Filter (Must end with 'complete' Korean verb form approx)
+                if not any(s.endswith(suffix) for suffix in VALID_SUFFIXES): continue
+                
+                # Pain Point Check (Before Normalize)
+                if any(pk in s for pk in PAIN_KEYWORDS):
+                    pain_candidates.append(s)
+                else:
+                    phrases.append(s)
+
+        # Count
+        top_counter = Counter(phrases)
+        pain_counter = Counter(pain_candidates)
+        
+        # Convert to objects
+        top_phrases = [ReviewPhrase(text=k, count=v) for k, v in top_counter.most_common(5)]
+        pain_phrases = [ReviewPhrase(text=k, count=v) for k, v in pain_counter.most_common(3)]
+        
+        return top_phrases, pain_phrases
+
+    def _fetch_place_url_tier1(self, query: str) -> tuple[Optional[str], List[str], int, str]:
+        """
+        Search Naver -> Return (place_url, snippets_list, status_code, blocked_reason)
+        """
+        self._sleep_random()
+        print(f"[-] [Tier 1] Searching Naver for Place URL: {query}")
+        
+        url = "https://search.naver.com/search.naver"
+        params = {"query": query}
+        # [REVIEW][T1] Logging
+        # Harden Headers
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+            "Referer": "https://www.naver.com/"
+        }
+        
+        place_url = None
+        snippets = []
+        status_code = 0
+        response_len = 0
+        blocked_reason = "none"
+        
+        try:
+            resp = requests.get(url, params=params, headers=headers, timeout=5, allow_redirects=True)
+            status_code = resp.status_code
+            response_len = len(resp.text)
+            
+            # Check blockage
+            if status_code != 200:
+                blocked_reason = f"http_{status_code}"
+                
+            # Content checks for captcha/block
+            if "captcha" in resp.text or "비정상적인 접근" in resp.text:
+                 blocked_reason = "captcha_detected"
+            
+            if status_code == 200 and blocked_reason == "none":
+                soup = bs4.BeautifulSoup(resp.text, "html.parser")
+                
+                # 1. Find Place Link (Regex Strategy)
+                import re
+                
+                # Pattern: Direct links or map scripts
+                patterns = [
+                    r'place\.naver\.com/restaurant/(\d+)',
+                    r'place\.naver\.com/place/(\d+)',
+                    r'place\.naver\.com/hospital/(\d+)',
+                    r'place\.naver\.com/hairshop/(\d+)'
+                ]
+                
+                found_id = None
+                found_cat = "restaurant" # Default
+                
+                for p in patterns:
+                    match = re.search(p, resp.text)
+                    if match:
+                        found_id = match.group(1)
+                        if "hairshop" in p: found_cat = "hairshop"
+                        elif "hospital" in p: found_cat = "hospital"
+                        break
+                
+                if found_id:
+                    place_url = f"https://place.naver.com/{found_cat}/{found_id}" 
+                else:
+                     # Fallback link scan
+                     links = soup.select('a[href*="place.naver.com"]')
+                     for link in links:
+                         href = link.get('href')
+                         if "/place/" in href or "/restaurant" in href:
+                             place_url = href
+                             break
+                
+                # 2. Snippets
+                possible_snippets = soup.select('.review_content, .dsc_txt, .text_area, .review_txt') 
+                for s in possible_snippets:
+                    t = s.get_text(strip=True)
+                    if len(t) > 10:
+                        snippets.append(t)
+                        
+        except Exception as e:
+            blocked_reason = f"error_{str(e)}"
+            
+        # Log Result
+        print(f"[REVIEW][T1] url={url} query={query} status={status_code} bytes={response_len} blocked={blocked_reason} found_url={place_url is not None} snippets={len(snippets)}")
+        
+        return place_url, snippets, status_code, blocked_reason
+
+    def _fetch_reviews_tier2(self, place_url: str) -> List[str]:
+        """
+        Visit place_url -> Try to fetch reviews from static HTML or standard endpoints.
+        Note: place.naver.com is a React app. Static HTML might be empty.
+        We check if we can get initial state or if we need to infer the review URL.
+        """
+        self._sleep_random()
+        print(f"[-] [Tier 2] Visiting Place URL: {place_url}")
+        
+        reviews = []
+        try:
+            # Construct Review URL if possible
+            # if /restaurant/{id} -> /restaurant/{id}/review
+            review_url = place_url
+            if "/home" in place_url:
+                review_url = place_url.replace("/home", "/review")
+            elif not place_url.endswith("/review"):
+                # If query params exist?
+                if "?" in place_url:
+                    parts = place_url.split("?")
+                    review_url = parts[0] + "/review?" + parts[1]
+                else:
+                    review_url = place_url + "/review"
+
+            headers = {
+                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                 "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+                 "Referer": "https://m.place.naver.com/"
+            }
+            
+            # Fix URL: Ensure correct generic review path if possible
+            # But usually we just GET the main place URL and look for state, or generic /review
+            # The most robust for Review Text is actually visiting the place main or review sub-page.
+            
+            resp = requests.get(review_url, headers=headers, timeout=5, allow_redirects=True)
+            status_code = resp.status_code
+            response_len = len(resp.text)
+            
+            if status_code != 200:
+                print(f"[REVIEW][T2] url={review_url} status={status_code} blocked=http_error reviews=0")
+                return []
+                
+            # Apollo State Search
+            import json
+            apollo_found = False
+            
+            # 1. Check for window.__APOLLO_STATE__
+            script_match = re.search(r'window\.__APOLLO_STATE__\s*=\s*({.*?});', resp.text)
+            if script_match:
+                apollo_found = True
+                try:
+                    json_str = script_match.group(1)
+                    # We can try to parse, but regexing the string is faster and more robust against schema changes for just text extraction
+                    # Look for "contents": "review text" or "body": "review text"
+                    # In Naver Place, it's often "contents" or "body"
+                    
+                    # Pattern strategy
+                    # "body":"..." or "contents":"..."
+                    bodies = re.findall(r'"(body|contents)"\s*:\s*"(.*?)"', json_str)
+                    for key, val in bodies:
+                        # Clean up escaped chars
+                        val = val.replace('\\"', '"').replace('\\n', ' ').strip()
+                        if len(val) > 10: # Min length
+                            reviews.append(val)
+                            
+                except Exception as je:
+                    print(f"[Tier 2] JSON Parse Error: {je}")
+
+            # 2. Fallback: Static HTML (SSR)
+            if not reviews:
+                 soup = bs4.BeautifulSoup(resp.text, "html.parser")
+                 candidates = soup.select(".zPfVt, .n56if, .review_txt, .txt")
+                 for c in candidates:
+                     t = c.get_text(strip=True)
+                     if len(t) > 10:
+                         reviews.append(t)
+            
+            review_count = len(reviews)
+            blocked_reason = "none"
+            if "captcha" in resp.text: blocked_reason = "captcha"
+            
+            print(f"[REVIEW][T2] url={review_url} status={status_code} bytes={response_len} blocked={blocked_reason} apollo={apollo_found} reviews={review_count}")
+            
+        except Exception as e:
+            print(f"[REVIEW][T2] Error: {e}")
+            
+        return list(set(reviews))
+
+    # -------------------------------------------------------------------------
+    # REVIEW TEXT VALIDATION & PARSING HELPERS
+    # -------------------------------------------------------------------------
+    
+    def _is_valid_review_text(self, text: str) -> bool:
+        """
+        Minimal validation to filter out obvious non-review content.
+        Designed to be permissive - we want reviews!
+        """
+        if not text or len(text) < 10 or len(text) > 500:
+            return False
+        
+        # Must have SOME Korean characters
+        if not re.search(r'[가-힣]', text):
+            return False
+        
+        # Exclude pure username patterns (all alphanumeric, short)
+        if re.match(r'^[a-zA-Z0-9_]+$', text.strip()) and len(text.strip()) < 25:
+            return False
+        
+        # Exclude pure date patterns
+        if re.match(r'^\d{2,4}[\./]\d{1,2}[\./]\d{1,2}', text.strip()):
+            return False
+        
+        # Exclude single weekday
+        if text.strip() in ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']:
+            return False
+        
+        # Exclude obvious UI buttons
+        ui_patterns = ['공유하기', '신고하기', '복사하기', '길찾기', '예약하기', '영수증 인증']
+        if any(text.strip() == pattern for pattern in ui_patterns):
+            return False
+        
+        return True
+    
+    def _parse_apollo_state(self, html_content: str) -> List[Dict[str, str]]:
+        """
+        Parse __APOLLO_STATE__ or __NEXT_DATA__ from Naver Place mobile page.
+        Returns list of dicts with 'body' and optionally 'date', 'author'.
+        """
+        reviews = []
+        
+        try:
+            # Try __APOLLO_STATE__ first
+            apollo_match = re.search(r'window\.__APOLLO_STATE__\s*=\s*({.+?});', html_content, re.DOTALL)
+            if apollo_match:
+                apollo_data = json.loads(apollo_match.group(1))
+                
+                # Iterate through Apollo cache keys
+                for key, value in apollo_data.items():
+                    if isinstance(value, dict):
+                        # Look for review-like structures
+                        # Common fields: body, contents, reviewText, contentText
+                        body = None
+                        date = None
+                        
+                        for field in ['body', 'contents', 'reviewText', 'contentText', 'comment']:
+                            if field in value and isinstance(value[field], str):
+                                body = value[field]
+                                break
+                        
+                        # Extract date if available
+                        for date_field in ['visitDate', 'createdDate', 'date']:
+                            if date_field in value and isinstance(value[date_field], str):
+                                date = value[date_field]
+                                break
+                        
+                        if body:
+                            reviews.append({'body': body, 'date': date})
+                
+                if reviews:
+                    print(f"[Apollo] Extracted {len(reviews)} reviews from __APOLLO_STATE__")
+                    return reviews
+            
+            # Try __NEXT_DATA__ as fallback
+            next_match = re.search(r'__NEXT_DATA__\s*=\s*({.+?});', html_content, re.DOTALL)
+            if next_match:
+                next_data = json.loads(next_match.group(1))
+                
+                # Navigate through typical Next.js structure
+                # props.pageProps.dehydratedState.queries[].state.data.reviews
+                if 'props' in next_data:
+                    self._extract_reviews_from_nested(next_data['props'], reviews)
+                
+                if reviews:
+                    print(f"[NextData] Extracted {len(reviews)} reviews from __NEXT_DATA__")
+                    return reviews
+        
+        except Exception as e:
+            print(f"[Apollo Parse Error] {e}")
+        
+        return reviews
+    
+    def _extract_reviews_from_nested(self, data: Any, reviews: List[Dict]) -> None:
+        """Recursively search for review structures in nested JSON"""
+        if isinstance(data, dict):
+            # Check if this looks like a review object
+            if any(key in data for key in ['body', 'contents', 'reviewText', 'contentText']):
+                body = None
+                date = None
+                
+                for field in ['body', 'contents', 'reviewText', 'contentText']:
+                    if field in data and isinstance(data[field], str):
+                        body = data[field]
+                        break
+                
+                for date_field in ['visitDate', 'createdDate', 'date']:
+                    if date_field in data and isinstance(data[date_field], str):
+                        date = data[date_field]
+                        break
+                
+                if body:
+                    reviews.append({'body': body, 'date': date})
+            
+            # Recurse into nested structures
+            for value in data.values():
+                self._extract_reviews_from_nested(value, reviews)
+        
+        elif isinstance(data, list):
+            for item in data:
+                self._extract_reviews_from_nested(item, reviews)
+
+
+    def _collect_reviews_playwright(self, query: str, direct_url: str = None) -> tuple[List[str], Optional[str], List[dict]]:
+        """
+        Tier 4: Playwright-based extraction.
+        If direct_url is provided, skip search and go directly.
+        Returns (reviews, place_url, keyword_stats)
+        """
+        if not self.playwright_available:
+            return [], None, []
+            
+        print(f"[-] [Playwright] Launching Browser for {query} (DirectURL={direct_url is not None})...")
+        
+        # Run Playwright in a separate thread to avoid asyncio event loop conflict
+        from concurrent.futures import ThreadPoolExecutor
+        
+        def _run_playwright_sync():
+            """Internal function to run Playwright synchronously in a separate thread"""
+            reviews = []
+            keyword_stats = []
+            final_url = None
+            
+            from playwright.sync_api import sync_playwright
+            
+            with sync_playwright() as p:
+                # Launch options for stability
+                browser = p.chromium.launch(headless=self.headless)
+                # Use iPhone emulation for Mobile View (critical for reviewing)
+                iphone_13 = p.devices['iPhone 13']
+                context = browser.new_context(
+                    **iphone_13,
+                    locale='ko-KR'
+                )
+                page = context.new_page()
+                
+                try:
+                    # 1. Navigation
+                    # TIMEOUT INCREASED to 30s as per user issues
+                    if direct_url:
+                        print(f"[-] [Playwright] Direct Navigation: {direct_url}")
+                        page.goto(direct_url, timeout=30000)
+                        page.wait_for_load_state("domcontentloaded")
+                        final_url = direct_url
+                    else:
+                        # Search Flow
+                        print(f"[-] [Playwright] Searching: {query}")
+                        page.goto(f"https://m.search.naver.com/search.naver?query={query}", timeout=30000)
+                        
+                        # Find Place Link
+                        # In mobile search, it's usually a generic container or "place" blocks
+                        link_locator = None
+                        try:
+                            # Try finding a link that contains place.naver.com/restaurant
+                            # This selector is heuristic
+                            candidates = page.locator("a[href*='place.naver.com']").all()
+                            if not candidates:
+                                 print("[-] [Playwright] No place links found in search")
+                                 return [], None, []
+                                 
+                            for cand in candidates:
+                                href = cand.get_attribute("href")
+                                if href and ("/restaurant/" in href or "/place/" in href):
+                                    link_locator = cand
+                                    break
+                                    
+                            if not link_locator:
+                                 # Fallback: Just take first
+                                 link_locator = candidates[0]
+
+                            # Click
+                            if link_locator:
+                                with page.expect_popup(timeout=30000) as popup_info:
+                                    link_locator.click()
+                                place_page = popup_info.value
+                                place_page.wait_for_load_state("domcontentloaded")
+                                page = place_page # Switch context
+                                final_url = page.url
+                        except Exception as e:
+                             # Fallback mechanism: use current page if no new page opened (mobile SPA sometimes)
+                             final_url = page.url
+                             print(f"[!] Playwright Search Navigation Warning: {e}")
+
+                    # 2. Review Extraction (Mobile Page)
+                    # Ensure we are on /review tab
+                    if "/review" not in page.url:
+                        try:
+                            # Naver Mobile usually has tabs: 홈, 메뉴, 리뷰, 사진...
+                            # Selector for '리뷰' tab
+                            review_tab = page.locator("a span", has_text=re.compile("리뷰|방문자리뷰")).first
+                            if review_tab.is_visible():
+                                review_tab.click()
+                                page.wait_for_timeout(2000)
+                        except:
+                            pass
+                    
+                    # Scroll a bit
+                    for _ in range(3):
+                        page.mouse.wheel(0, 1000)
+                        page.wait_for_timeout(500)
+
+                    # ---------------------------------------------------------
+                    # NEW: Keyword Stats Extraction (Specific to Naver Mobile)
+                    # ---------------------------------------------------------
+                    try:
+                        # Look for the characteristic list items with progress bars or stats
+                        # Often `li` containing text and a count number
+                        # We look for elements that explicitly contain quotes or specialized keyword classes
+                        # Heuristic: Find elements with text like "음식이 맛있어요"
+                        
+                        # Try specific container selector for "Keyword Reviews"
+                        # Usually: div[class*="review_stat"] or similar.
+                        # FallbackGeneric: List items with text + number
+                        
+                        # Allow fuzzy finding
+                        # Iterate through visible list items
+                        possible_items = page.locator("li").all()
+                        
+                        for item in possible_items:
+                            text = item.inner_text()
+                            if not text: continue
+                            lines = text.split('\n')
+                            
+                            # Keyword stats usually appear as:
+                            # "음식이 맛있어요"
+                            # "120"
+                            if len(lines) >= 2:
+                                kw = lines[0].strip()
+                                cnt_str = lines[1].strip()
+                                
+                                # Validate Keyword (Korean, meaningful length)
+                                if len(kw) < 2 or len(kw) > 30: continue
+                                
+                                # Validate Count (must be digits)
+                                # Remove commas or '명'
+                                cnt_clean = re.sub(r'[^0-9]', '', cnt_str)
+                                if cnt_clean.isdigit():
+                                    count = int(cnt_clean)
+                                    # Filter out likely menu items (if price is present, usually > 1000 won format, but simple count is usually < 10000)
+                                    if count > 0:
+                                        keyword_stats.append({"text": kw, "count": count})
+                                        if len(keyword_stats) >= 10: break
+                                        
+                    except Exception as ks_e:
+                        print(f"[-] [Playwright] Keyword stats extraction failed: {ks_e}")
+
+                    # ---------------------------------------------------------
+                    # Text Extraction - Broad selection with smart filtering
+                    # ---------------------------------------------------------
+                    # Cast a wide net, let validation filter out noise
+                    elements = page.locator("span, div, p").all()
+                    for el in elements:
+                        try:
+                            t = el.inner_text().strip()
+                            if self._is_valid_review_text(t):
+                                reviews.append(t)
+                        except:
+                            continue
+                    
+                    reviews = list(set(reviews))
+                    print(f"[-] [Playwright] Extracted {len(reviews)} validated reviews, {len(keyword_stats)} keywords")
+                    
+                except Exception as e:
+                    print(f"[!] Playwright Execution Error: {e}")
+                finally:
+                    browser.close()
+                    
+            return reviews, final_url, keyword_stats
+        
+        # Execute in thread pool to avoid asyncio conflict
+        try:
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(_run_playwright_sync)
+                return future.result(timeout=90)  # 90 second timeout
+        except Exception as e:
+            print(f"[!] ThreadPool execution failed: {e}")
+            return [], None, []
+
+    def collect_reviews(self, store_name: str, place_id: str, naver_seed: dict = None) -> ReviewStats:
+        """
+        Main method for Review Insights (Mobile-First Strategy)
+        """
+        # 0. Cache Check
+        cache_key = place_id if place_id and not place_id.startswith("PID-") else f"STORE_{store_name}"
+        cached = self._load_cached_reviews(cache_key)
+        if cached:
+            print(f"[-] [Review] Using Cached Data for {cache_key}")
+            return cached
+            
+        print(f"[-] [Review] Collecting Reviews for {store_name}...")
+        
+        collected_texts = []
+        source_used = "none"
+        fallback_used = "none"
+        notes = []
+        debug_code = "init"
+        
+        # ---------------------------------------------------------------------
+        # Tier 0: Seed Parsing (Get ID)
+        # ---------------------------------------------------------------------
+        found_id = None
+        
+        # Try extract from seed link first
+        if naver_seed and "naver_link" in naver_seed:
+            s_link = naver_seed["naver_link"]
+            # Patterns: entry/place/123, restaurant/123
+            import re
+            m = re.search(r'/(place|restaurant|hospital|hairshop)/(\d+)', s_link)
+            if m:
+                found_id = m.group(2)
+                debug_code = "t0:seed_id"
+                print(f"[-] [Review] Found ID from seed: {found_id}")
+
+        # If no ID, Tier 4 (Search) is actually Tier 0.5 here
+        if not found_id:
+             try:
+                 # Fast search for ID only
+                 _, __, ___, ____ = self._fetch_place_url_tier1(store_name) # Reuse search to find ID logic internally?
+                 # Actually _fetch_place_url_tier1 returns URL. We parse ID from it.
+                 url, _snippets, s_code, _blocked = self._fetch_place_url_tier1(store_name)
+                 
+                 if url:
+                     m = re.search(r'/(place|restaurant|hospital|hairshop)/(\d+)', url)
+                     if m:
+                         found_id = m.group(2)
+                         debug_code = "t0:search_id"
+                 else:
+                     debug_code = f"t0:search_fail_{s_code}"
+             except Exception as e:
+                 debug_code = "t0:search_error"
+        
+        # ---------------------------------------------------------------------
+        # Tier 1: Mobile Requests with Apollo State Parsing
+        # ---------------------------------------------------------------------
+        if found_id:
+            # Try generic restaurant path first, usually redirects if wrong category
+            # m.place.naver.com is robust
+            mobile_url = f"https://m.place.naver.com/restaurant/{found_id}/review"
+            
+            try:
+                # 1. Requests
+                headers = {
+                    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+                    "Referer": "https://m.place.naver.com/"
+                }
+                resp = requests.get(mobile_url, headers=headers, timeout=5, allow_redirects=True)
+                
+                if resp.status_code == 200:
+                    # TIER 1A: Try Apollo State JSON first (PRIORITY)
+                    apollo_reviews = self._parse_apollo_state(resp.text)
+                    
+                    if apollo_reviews:
+                        # Extract and validate review bodies
+                        for review in apollo_reviews:
+                            body = review.get('body', '')
+                            if self._is_valid_review_text(body):
+                                collected_texts.append(body)
+                        
+                        if len(collected_texts) >= 5:
+                            source_used = "naver_apollo_state"
+                            debug_code += "_t1:apollo_ok"
+                            notes.append(f"Apollo State: {len(collected_texts)} clean reviews")
+                    
+                    # TIER 1B: Fallback to targeted DOM extraction
+                    if len(collected_texts) < 5:
+                        soup = bs4.BeautifulSoup(resp.text, "html.parser")
+                        
+                        # Use targeted selectors for review content areas
+                        # Naver mobile review cards typically use specific classes
+                        review_elements = soup.select('.review_content, .text_comment, [class*="review"] p, [class*="review"] span')
+                        
+                        found_texts = []
+                        for elem in review_elements:
+                            t = elem.get_text(strip=True)
+                            if self._is_valid_review_text(t):
+                                found_texts.append(t)
+                        
+                        if found_texts:
+                            collected_texts.extend(found_texts)
+                            collected_texts = list(set(collected_texts))  # Deduplicate
+                        
+                        if len(collected_texts) >= 5:
+                            source_used = "naver_requests_mobile"
+                            debug_code += "_t1:dom_ok"
+                            notes.append(f"DOM extraction: {len(collected_texts)} clean reviews")
+                        else:
+                            debug_code += f"_t1:low_{len(collected_texts)}"
+                else:
+                    debug_code += f"_t1:http_{resp.status_code}"
+            except Exception as e:
+                debug_code += "_t1:error"
+                print(f"[!] Tier 1 Error: {e}")
+
+
+        # ---------------------------------------------------------------------
+        # Tier 3: Playwright Mobile (Fallback)
+        # ---------------------------------------------------------------------
+        # Only if we have ID but failed requests, or have no ID at all (Playwright Search)
+        
+        should_run_pw = False
+        if len(collected_texts) < 5 and self.playwright_available:
+            should_run_pw = True
+            
+        if should_run_pw:
+            print(f"[-] [Review] Engaging Playwright (Tier 3) Mode={ 'ID_Direct' if found_id else 'Search'}")
+            try:
+                pw_results = []
+                # Use _collect_reviews_playwright but modified to accept ID? 
+                # Or just pass the URL we constructed.
+                
+                # We need to modify _collect_reviews_playwright to handle direct URL
+                # For now, let's pass a special query or modify the method.
+                # Actually, simpler to refactor _collect_reviews_playwright to accept optional url.
+                
+                target_url = None
+                if found_id:
+                    target_url = f"https://m.place.naver.com/restaurant/{found_id}/review"
+                
+                # Initialize variables to prevent UnboundLocalError if Playwright fails
+                pw_texts = []
+                pw_keywords = []
+                pw_url = None
+
+                # Call Playwright
+                # We'll pass the store_name as query fallback
+                # Call Playwright
+                # We'll pass the store_name as query fallback
+                pw_texts, pw_url, pw_keywords = self._collect_reviews_playwright(store_name, direct_url=target_url)
+                
+                if pw_texts:
+                    if len(pw_texts) > len(collected_texts):
+                        collected_texts = pw_texts
+                        source_used = "naver_playwright"
+                        fallback_used = "playwright"
+                        debug_code += "_pw:ok"
+                        notes.append(f"Playwright collected {len(pw_texts)}")
+                
+                # Handle Keywords even if text is empty
+                if pw_keywords:
+                    # If we have keywords, we consider it a success even if texts are low
+                    if not collected_texts and "pw:ok" not in debug_code:
+                         debug_code += "_pw:kw_only"
+                    
+                    # Store keywords in notes for debugging
+                    notes.append(f"PW Keywords: {len(pw_keywords)}")
+                
+                if not pw_texts and not pw_keywords:
+                    debug_code += "_pw:empty"
+                    if pw_url: 
+                        notes.append("PW visited but found 0")
+            except Exception as e:
+                # Add error msg to debug_code for visibility
+                err_msg = str(e).replace(" ", "_")[:50]
+                debug_code += f"_pw:error_{err_msg}"
+                notes.append(f"PW Error: {e}")
+                print(f"[!] Full Playwright Error: {e}")
+
+        # Final Count Check
+        if not collected_texts and not (should_run_pw and pw_keywords):
+            notes.append("No reviews found")
+            if "error" not in debug_code and "http" not in debug_code:
+                debug_code += "_no_reviews"
+        else:
+            notes.append(f"Final count: {len(collected_texts)}")
+
+        # Clamp texts
+        collected_texts = collected_texts[:100]
+        
+        # Analyze Phrases
+        top_phrases, pain_phrases = self._analyze_reviews(collected_texts)
+        
+        # MERGE PLAYWRIGHT KEYWORDS (Priority)
+        if should_run_pw and 'pw_keywords' in locals() and pw_keywords:
+            official_phrases = [ReviewPhrase(text=k['text'], count=k['count']) for k in pw_keywords]
+            
+            # Combine: Official first, then text-mined
+            # Remove duplicates based on text
+            seen_texts = {p.text for p in official_phrases}
+            for p in top_phrases:
+                if p.text not in seen_texts:
+                    official_phrases.append(p)
+            
+            top_phrases = official_phrases[:5] # Top 5
+            
+        # Sample Reviews (Simple)
+        sample_reviews = [ReviewSample(text=t, type="neutral") for t in collected_texts[:5]]
+        
+        # If no samples but we have keywords, create pseudo-samples? 
+        # User asked for "Keywords even if no reviews". 
+        # But report expects "Sample Reviews". 
+        # Leave samples empty if no text, but phrases will be populated.
+        
+        # Construct Stats
+        stats = ReviewStats(
+            source=source_used,
+            review_count=len(collected_texts),
+            top_phrases=top_phrases,
+            pain_phrases=pain_phrases,
+            sample_reviews=sample_reviews,
+            fallback_used=fallback_used,
+            notes=notes,
+            debug_code=debug_code
+        )
+        
+        # Save Cache (Moved BEFORE return)
+        self._save_review_cache(cache_key, stats)
+        
+        return stats
+    
+    # -------------------------------------------------------------------------
+    # REVIEW COLLECTION & SCRAPING (NEW)
+    # -------------------------------------------------------------------------
+
+    def _sleep_random(self):
+        """Rate limiting to prevent blocking."""
+        time.sleep(random.uniform(0.7, 1.8))
+
+    def _get_review_cache_path(self, store_id: str) -> Path:
+        cache_dir = Path(__file__).resolve().parent.parent / "snapshots" / "cache"
+        os.makedirs(cache_dir, exist_ok=True)
+        # Sanitize store_id
+        safe_id = re.sub(r'[^a-zA-Z0-9_\-]', '_', store_id)
+        return cache_dir / f"reviews_{safe_id}.json"
+
+    def _load_cached_reviews(self, store_id: str) -> ReviewStats:
+        path = self._get_review_cache_path(store_id)
+        if not path.exists():
+            return None
+        
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            # Check validity (24 hours)
+            collected_at = datetime.fromisoformat(data.get("collected_at"))
+            if datetime.now() - collected_at > timedelta(hours=24):
+                return None
+
+            # Force re-collection if debug_code is missing (Legacy Cache)
+            if "debug_code" not in data:
+                print(f"[-] [Review] Invalidate Legacy Cache (No Debug Code) for {store_id}")
+                return None
+                
+            # Reconstruct objects
+            return ReviewStats(
+                source=data["source"],
+                review_count=data["review_count"],
+                top_phrases=[ReviewPhrase(**p) for p in data["top_phrases"]],
+                pain_phrases=[ReviewPhrase(**p) for p in data["pain_phrases"]],
+                sample_reviews=[ReviewSample(**s) for s in data["sample_reviews"]],
+                fallback_used=data["fallback_used"],
+                notes=data.get("notes", []),
+                debug_code=data.get("debug_code")
+            )
+        except Exception as e:
+            print(f"[CACHE] Read failed: {e}")
+            return None
+
+    def _save_review_cache(self, store_id: str, stats: ReviewStats):
+        path = self._get_review_cache_path(store_id)
+        try:
+            data = {
+                "source": stats.source,
+                "review_count": stats.review_count,
+                "top_phrases": [vars(p) for p in stats.top_phrases],
+                "pain_phrases": [vars(p) for p in stats.pain_phrases],
+                "sample_reviews": [vars(s) for s in stats.sample_reviews],
+                "fallback_used": stats.fallback_used,
+                "notes": stats.notes,
+                "debug_code": stats.debug_code,
+                "collected_at": datetime.now().isoformat()
+            }
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            print(f"[CACHE] Save failed: {e}")
+
+    def _analyze_reviews(self, texts: List[str]) -> tuple[List[ReviewPhrase], List[ReviewPhrase]]:
+        """
+        Rule-based phrase extraction.
+        1. Split by .!?
+        2. Filter by length (6-30) & Blacklist & Suffix
+        3. Simple normalization
+        4. Count & Pain point extraction
+        """
+        # Constants
+        BLACKLIST = ["이벤트", "협찬", "쿠폰", "블로그", "체험단", "방문", "리뷰", "사장님", "작성", "문의", "예약", "서비스", "주차", "위치", "건물", "층", "역", "출구"]
+        VALID_SUFFIXES = ["요", "니다", "음", "함", "임", "다", "거", "게", "죠", "네"] # Relaxed but prioritized
+        PAIN_KEYWORDS = ["별로", "아쉽", "불친절", "느리", "오래", "웨이팅", "대기", "비싸", "짜", "싱거", "좁", "시끄", "불편", "실망", "더러", "지저분", "냄새"]
+        
+        phrases = []
+        pain_candidates = []
+        
+        for text in texts:
+            # 1. Cleanup
+            clean_text = re.sub(r'[^\w\s\.\!\?]', ' ', text) # Remove special chars except punctuation
+            
+            # 2. Split
+            sentences = re.split(r'[\.\!\?\n]', clean_text)
+            
+            for s in sentences:
+                s = s.strip()
+                if not s: continue
+                
+                # Length Filter
+                if len(s) < 6 or len(s) > 30: continue
+                
+                # Blacklist Filter
+                if any(bad in s for bad in BLACKLIST): continue
+                
+                # Suffix Filter (Must end with 'complete' Korean verb form approx)
+                if not any(s.endswith(suffix) for suffix in VALID_SUFFIXES): continue
+                
+                # Pain Point Check (Before Normalize)
+                if any(pk in s for pk in PAIN_KEYWORDS):
+                    pain_candidates.append(s)
+                else:
+                    phrases.append(s)
+
+        # Count
+        top_counter = Counter(phrases)
+        pain_counter = Counter(pain_candidates)
+        
+        # Convert to objects
+        top_phrases = [ReviewPhrase(text=k, count=v) for k, v in top_counter.most_common(5)]
+        pain_phrases = [ReviewPhrase(text=k, count=v) for k, v in pain_counter.most_common(3)]
+        
+        return top_phrases, pain_phrases
+
+
     def _log_source_data(self, source_name: str, data: dict):
         raw_name = data.get("name", "")
         raw_addr = data.get("address", "")

@@ -112,7 +112,7 @@ async def generate_report(request: ReportRequest):
             place_id=snapshot.standard_info.id
         )
         
-        report_data = analyzer.process(legacy_store_info, analysis_result)
+        report_data = analyzer.process(legacy_store_info, analysis_result, review_insights=snapshot.review_insights)
         
         # 5. Generate HTML/PDF
         generator = ReportGenerator()
