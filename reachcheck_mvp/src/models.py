@@ -95,6 +95,9 @@ class SnapshotData:
     missing_fields: List[str] = field(default_factory=list)
     mismatch_fields: List[str] = field(default_factory=list)
     
+    # Provenance (New)
+    field_provenance: Dict[str, Any] = field(default_factory=dict) # { "phone_source": "playwright", "fields": {...} }
+
     # Search candidates (if ambiguous)
     search_candidates: Dict[str, List[Dict[str, str]]] = field(default_factory=dict) # channel -> list of {name, address}
     
@@ -119,6 +122,9 @@ class AnalysisResult:
     
     # Page 2 Details
     ai_responses: Dict[str, List[Dict[str, str]]]  # Engine -> [{question, answer, evaluation}]
+    
+    # Provenance
+    field_provenance: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class ReportData:

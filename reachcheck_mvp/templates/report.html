@@ -434,125 +434,164 @@
             </div>
 
             <div class="section">
-                <div class="section-title">매장 정보 일치 여부</div>
-                <table style="width: 100%;">
-                    {% for item in data.analysis.consistency_results %}
-                    <tr>
-                        <td style="width: 30%; font-weight: 500; color: #475569;">{{ item.field_name }}</td>
-                        <td style="text-align: right;">
-                            <span style="font-weight: 600;"
-                                class="{{ 'text-match' if item.status == 'Match' else 'text-mismatch' }}">{{
-                                item.details }}</span>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                <div class="section-title">데이터 출처 및 정합성 (Data Provenance)</div>
+                <table style="font-size: 11px; table-layout: fixed; width: 100%;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="width: 15%">Field</th>
+                            <th style="width: 25%">Standard (Naver)</th>
+                            <th style="width: 20%">Kakao</th>
+                            <th style="width: 20%">Google</th>
+                            <th style="width: 20%">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if data.analysis.field_provenance and data.analysis.field_provenance.fields %}
+                        {% for key, val in data.analysis.field_provenance.fields.items() %}
+                        {% if key != 'category' %}
+                        <tr>
+                            <td style="font-weight: 600; color: #475569;">{{ key|capitalize }}</td>
+                            <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
+                            <td style="word-break: break-all;">{{ val.standard }}</td>
+                            <td style="word-break: break-all;">{{ val.sources.kakao or '-' }}</td>
+                            <td style="word-break: break-all;">{{ val.sources.google or '-' }}</td>
+                            <td>
+                                <!-- Match Status Logic -->
+                                {% set ns = namespace(status="Unknown", color="black") %}
+                                {% for cr in data.analysis.consistency_results %}
+                                {% if cr.field_name|lower == key|lower %}
+                                {% set ns.status = cr.status %}
+                                {% set ns.color = 'text-match' if cr.status == 'Match' else 'text-mismatch' %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <span class="{{ ns.color }}" style="font-weight: 700;">{{ ns.status }}</span>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5">Provenance data unavailable.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
                 </table>
-            </div>
-
-            <div class="footer">Page 1 / 4 • ReachCheck Analysis</div>
-        </div>
-
-        <!-- Page 2: AI Responses -->
-        <div class="page">
-            <div class="header">
-                <h1>AI가 바라본 우리 가게</h1>
-                <span class="date">{{ data.date }}</span>
-            </div>
-
-            <div class="section">
-                <div class="section-title">AI 엔진별 상세 답변 분석</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                    실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
-                </p>
-
-                {% for engine, responses in data.analysis.ai_responses.items() %}
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">{{ engine }}</h3>
-
-                    {% for resp in responses %}
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. {{
-                            resp.question }}</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">{{ resp.answer }}</p>
-                    </div>
-                    {% endfor %}
-
-                    {% if not responses %}
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
-        </div>
-
-        <!-- Page 3: Improvements -->
-        <div class="page">
-            <div class="header">
-                <h1>우선 개선 과제 (Top 3)</h1>
-                <span class="date">{{ data.date }}</span>
-            </div>
-
-            <div class="section">
-                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
-                    가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
-                </p>
-
-                {% for imp in data.analysis.improvements %}
-                <div class="priority-item">
-                    <div class="priority-rank">Priority {{ loop.index }}</div>
-                    <div class="priority-title">{{ imp.title }}</div>
-                    <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">{{ imp.description }}</p>
-                    <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
-                        <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
-                        <span style="color: #475569;">{{ imp.importance }}</span>
-                        <!-- Assuming importance text is descriptive now or we map it -->
+                <div
+                    style="background: #f1f5f9; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 11px; color: #334155;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><strong>Standard Source:</strong> {{ data.analysis.field_provenance.standard_source
+                            }}</span>
+                        <span><strong>Phone Acquired By:</strong> {{ data.analysis.field_provenance.phone_source
+                            }}</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="footer">Page 1 / 4 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 2: AI Responses -->
+    <div class="page">
+        <div class="header">
+            <h1>AI가 바라본 우리 가게</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI 엔진별 상세 답변 분석</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
+                실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
+            </p>
+
+            {% for engine, responses in data.analysis.ai_responses.items() %}
+            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">{{ engine }}</h3>
+
+                {% for resp in responses %}
+                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. {{
+                        resp.question }}</div>
+                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
+                    <p style="font-size: 13px; color: #334155; margin: 0;">{{ resp.answer }}</p>
+                </div>
                 {% endfor %}
-            </div>
 
-            <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
-                <p class="summary-text" style="color: #92400e; font-weight: 500;">
-                    <strong>💡 Insight:</strong><br>
-                    AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
-                </p>
+                {% if not responses %}
+                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
+                {% endif %}
             </div>
-
-            <div class="footer">Page 3 / 4 • ReachCheck Analysis</div>
+            {% endfor %}
         </div>
 
-        <!-- Page 4: Preview -->
-        <div class="page">
-            <div class="header">
-                <h1>바로 사용할 수 있는 최적화 문장</h1>
-                <span class="date">{{ data.date }}</span>
-            </div>
+        <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
+    </div>
 
-            <div class="section">
-                <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
-                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
-                    네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
-                </p>
-
-                <div class="quote-box">
-                    "{{ data.analysis.ai_intro_sentence }}"
-                </div>
-
-                <div style="text-align: right;">
-                    <button
-                        onclick="navigator.clipboard.writeText(`{{ data.analysis.ai_intro_sentence }}`).then(()=>alert('복사되었습니다!'))"
-                        style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
-                        문장 복사하기
-                    </button>
-                </div>
-            </div>
-
-            <div class="footer">Page 4 / 4 • ReachCheck Analysis</div>
+    <!-- Page 3: Improvements -->
+    <div class="page">
+        <div class="header">
+            <h1>우선 개선 과제 (Top 3)</h1>
+            <span class="date">{{ data.date }}</span>
         </div>
+
+        <div class="section">
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
+            </p>
+
+            {% for imp in data.analysis.improvements %}
+            <div class="priority-item">
+                <div class="priority-rank">Priority {{ loop.index }}</div>
+                <div class="priority-title">{{ imp.title }}</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">{{ imp.description }}</p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">{{ imp.importance }}</span>
+                    <!-- Assuming importance text is descriptive now or we map it -->
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
+            <p class="summary-text" style="color: #92400e; font-weight: 500;">
+                <strong>💡 Insight:</strong><br>
+                AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
+            </p>
+        </div>
+
+        <div class="footer">Page 3 / 4 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 4: Preview -->
+    <div class="page">
+        <div class="header">
+            <h1>바로 사용할 수 있는 최적화 문장</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
+            </p>
+
+            <div class="quote-box">
+                "{{ data.analysis.ai_intro_sentence }}"
+            </div>
+
+            <div style="text-align: right;">
+                <button
+                    onclick="navigator.clipboard.writeText(`{{ data.analysis.ai_intro_sentence }}`).then(()=>alert('복사되었습니다!'))"
+                    style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
+                    문장 복사하기
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">Page 4 / 4 • ReachCheck Analysis</div>
+    </div>
 
     </div> <!-- End Print Root -->
 </body>

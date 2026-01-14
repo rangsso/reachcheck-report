@@ -1,0 +1,110 @@
+{
+    "store_id": "ChIJc48Z4ueefDUR6JF5h1GyRrs",
+    "timestamp": "20260114_154442",
+    "standard_info": {
+        "id": "ChIJc48Z4ueefDUR6JF5h1GyRrs",
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+        "phone": "0507-1467-0376",
+        "category": "분식>김밥",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": "http://www.instagram.com/youmeboon"
+    },
+    "raw_google": {
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "대한민국 서울특별시 영등포구 당산로40길 16 보성빌딩 1층 101호",
+        "phone": "050-71467-0376",
+        "category": "Establishment",
+        "lat": 0.0,
+        "lng": 0.0
+    },
+    "raw_naver": {
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+        "phone": "0507-1467-0376",
+        "category": null,
+        "link": "http://www.instagram.com/youmeboon",
+        "mapx": "1269004148",
+        "mapy": "375292078"
+    },
+    "raw_kakao": {
+        "name": "유미분김밥 소정담 당산 본점",
+        "address": "서울 영등포구 당산로40길 16",
+        "phone": "0507-1467-0376"
+    },
+    "llm_responses": {
+        "ChatGPT": [
+            {
+                "question": "서울특별시 영등포구에서 분식>김밥 추천해줄 만한 곳이 있나요?",
+                "answer": "서울 영등포구에서 김밥이 맛있는 분식집으로는 '김밥천국'이나 '신전떡볶이'가 유명합니다. 이 외에도 '참치김밥'이 맛있는 전문점도 있으니 방문해보시면 좋을 것 같습니다.",
+                "evaluation": "Bad"
+            },
+            {
+                "question": "서울특별시 영등포구에 있는 유미분김밥 소정담 당산 본점에 대해 알려주세요.",
+                "answer": "유미분김밥 소정담 당산 본점은 서울특별시 영등포구에 위치한 인기 있는 김밥 전문점입니다. 다양한 종류의 김밥과 함께 간편한 한식을 제공하며, 신선한 재료로 만든 김밥이 특징입니다. 메뉴는 일반 김밥 외에도 다양한 토핑과 속재료를 선택할 수 있어 많은 손님들에게 사랑받고 있습니다. 편안한 분위기에서 식사를 즐길 수 있는 곳으로, 방문하시면 만족스러운 경험을 하실 수 있을 것입니다.",
+                "evaluation": "Good"
+            },
+            {
+                "question": "유미분김밥 소정담 당산 본점이 서울특별시 영등포구에서 인기 있는 이유가 뭔가요?",
+                "answer": "유미분김밥 소정담 당산 본점이 서울특별시 영등포구에서 인기 있는 이유는 신선한 재료와 다양한 메뉴, 그리고 퀄리티 높은 김밥을 제공하기 때문입니다. 또한, 깔끔한 인테리어와 편안한 분위기 덕분에 많은 손님들이 찾는 곳입니다. 고객 서비스 또한 친절하여 재방문율이 높습니다.",
+                "evaluation": "Good"
+            }
+        ]
+    },
+    "missing_fields": [],
+    "mismatch_fields": [],
+    "field_provenance": {
+        "standard_source": "naver_seed",
+        "phone_source": "search",
+        "category_source": "naver_seed_path",
+        "fields": {
+            "name": {
+                "standard": "유미분김밥 소정담 당산 본점",
+                "sources": {
+                    "naver": "유미분김밥 소정담 당산 본점",
+                    "kakao": "유미분김밥 소정담 당산 본점",
+                    "google": "유미분김밥 소정담 당산 본점"
+                }
+            },
+            "address": {
+                "standard": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+                "sources": {
+                    "naver": "서울특별시 영등포구 당산동4가 32-176 보성빌딩 1층 101호",
+                    "kakao": "서울 영등포구 당산로40길 16",
+                    "google": "서울특별시 영등포구 당산로40길 16 보성빌딩 1층 101호"
+                }
+            },
+            "phone": {
+                "standard": "0507-1467-0376",
+                "sources": {
+                    "naver": "0507-1467-0376",
+                    "kakao": "0507-1467-0376",
+                    "google": "050-71467-0376"
+                }
+            },
+            "category": {
+                "standard": "분식>김밥",
+                "visible": true,
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": "Establishment"
+                }
+            }
+        }
+    },
+    "search_candidates": {
+        "Kakao": [
+            {
+                "name": "유미분김밥 소정담 당산 본점",
+                "address": "서울 영등포구 당산로40길 16",
+                "phone": "0507-1467-0376"
+            }
+        ]
+    },
+    "errors": {}
+}

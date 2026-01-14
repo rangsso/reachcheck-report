@@ -27,32 +27,77 @@ def normalize_address(addr: str) -> str:
     
     s = addr
     # Remove Country
-    s = s.replace("Republic of Korea", "").replace("South Korea", "").replace("대한민국", "")
+    s = re.sub(r'^(대한민국|Republic of Korea|South Korea)\s*', '', s, flags=re.IGNORECASE)
     
-    # Remove common Province/City prefixes to focus on District/Street
-    prefixes = [
-        "서울특별시", "서울시", "서울", "Seoul", 
-        "경기도", "경기", "Gyeonggi-do", "Gyeonggi",
-        "인천광역시", "인천", "Incheon",
-        "부산광역시", "부산", "Busan",
-        "대구광역시", "대구", "Daegu",
-        "대전광역시", "대전", "Daejeon",
-        "광주광역시", "광주", "Gwangju",
-        "울산광역시", "울산", "Ulsan",
-        "세종특별자치시", "세종", "Sejong",
-        "제주특별자치도", "제주", "Jeju"
-    ]
+    # Remove content in parentheses (e.g. building info, extra dong)
+    s = re.sub(r'\(.*?\)', '', s)
     
-    for p in prefixes:
-        s = s.replace(p, "")
-        
-    # Remove floor/suite info (e.g. 1층, 101호, B1, 2F)
-    s = re.sub(r"\s\d+(층|호|F)\b", "", s) # 1층, 101호
-    s = re.sub(r"\sB\d+\b", "", s)       # B1
+    # Remove detailed location info (Floor, Suite, Basement)
+    # Examples: 1층, 101호, B1, 지하1층, 304호
+    s = re.sub(r'\s+(지하|B)?\d+(층|호)\b', '', s)
+    s = re.sub(r'\s+\d+(F|f)\b', '', s) # 1F
+    s = re.sub(r'\s+(B|지하)\d+\b', '', s, flags=re.IGNORECASE) # B1, 지하1 (Standalone)
     
-    # Remove all spaces and punctuation for strict comparison
-    s = re.sub(r"[\s,.]", "", s)
+    # Remove common Province/City prefixes (Optional but helps core match)
+    # User requirement 1-2 says "Core Tokens: Gu...". 
+    # Providing clean string "Seoul Yongsan-gu..." is fine, comparator can parse.
+    # We will just normalize whitespace.
+    
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
+def format_display_address(addr: str) -> str:
+    """
+    Format address for display only (Reports).
+    Removes country prefixes like 'Republic of Korea', '대한민국'.
+    """
+    if not addr: return ""
+    s = addr
+    # Remove Country Prefixes (case insensitive)
+    # Note: Regex includes optional trailing space/comma
+    s = re.sub(r'^(대한민국|Republic of Korea|South Korea|Korea, Republic of)\s*,?\s*', '', s, flags=re.IGNORECASE)
     return s.strip()
+
+def is_valid_category_for_display(cat: str) -> bool:
+    """
+    Check if category is meaningful for report display.
+    Hidden: Establishment, Unknown, Place, 업종 정보 없음, empty.
+    """
+    if not cat: return False
+    hidden_keywords = ["establishment", "unknown", "place", "point of interest", "업종 정보 없음", "일반 매장"]
+    norm = cat.lower().strip()
+    if norm in hidden_keywords: return False
+    return True
+
+def normalize_category_for_ai(raw_cat: str) -> str:
+    if not raw_cat:
+        return None
+    
+    rc = raw_cat.strip()
+    
+    # Ignore list (lowercase)
+    ignore_list = ["establishment", "point of interest", "store", "unknown", "-", ""]
+    if rc.lower() in ignore_list:
+        return None
+        
+    # Mappings
+    mapping = {
+        "restaurant": "식당",
+        "food": "식당",
+        "meal_takeaway": "식당",
+        "meal_delivery": "식당",
+        "cafe": "카페",
+        "bakery": "베이커리",
+        "bar": "술집",
+        "pub": "술집"
+    }
+    
+    rc_lower = rc.lower()
+    for k, v in mapping.items():
+        if k in rc_lower:
+            return v
+            
+    return rc
 
 from models import StoreSchema, PhotoData
 from typing import Dict, Any, List

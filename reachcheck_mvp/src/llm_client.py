@@ -48,7 +48,7 @@ class LLMClient:
         for i, q in enumerate(questions):
             try:
                 # Use a standard model
-                model = "gpt-3.5-turbo"
+                model = "gpt-4o-mini"
                 
                 print(f"    Scanning Q{i+1}: {q[:50]}...")
                 response = self.client.chat.completions.create(

@@ -6,3 +6,5 @@ uvicorn
 requests
 python-dotenv
 openai
+beautifulsoup4
+playwright

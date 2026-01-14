@@ -59,16 +59,32 @@ class Analyzer:
             "benefit": "고객이 정확한 정보를 찾고 방문할 확률이 높아집니다."
         }
         # Page 4 Sentence
-        analysis.ai_intro_sentence = f"{store.name}은(는) 이 지역에서 믿고 방문할 수 있는 {store.category}입니다."
+        # analysis.ai_intro_sentence override removed to use Collector's logic
+        pass
         
-        # Priority 1: Phone Missing
-        phone_issue = next((cr for cr in analysis.consistency_results if cr.field_name == "Phone" and cr.status != "Match" and "네이버 미제공" not in cr.details), None)
-        if phone_issue:
-            action_summary = {
-                "warning": "주요 지도 앱에 전화번호가 등록되지 않았습니다. 예약/문의 전화를 놓치고 있습니다.",
+        # Priority 1: Phone Issue
+        # Check Mismatch Result First
+        phone_result = next((cr for cr in analysis.consistency_results if cr.field_name == "Phone"), None)
+        
+        # Determine if ANY phone number exists across all sources
+        has_any_phone = False
+        if store.phone:
+             has_any_phone = True
+        elif phone_result:
+             for src, val in phone_result.evidence.items():
+                 if val and val != "(Missing)" and val != "None":
+                     has_any_phone = True
+                     break
+        
+        if not has_any_phone:
+             action_summary = {
+                "warning": "주요 지도 앱에 전화번호가 등록되지 않아 고객 문의를 놓치고 있습니다.",
                 "action": "네이버/카카오/구글 지도에서 '전화번호'를 입력하세요.",
                 "benefit": "고객의 전화 문의가 즉시 방문과 매출로 이어집니다."
             }
+        
+        # Phone Mismatch (status != Match) is explicitly EXCLUDED from Summary Box per user request.
+        # It will only be shown in Data Provenance table.
         
         # Priority 2: Address Mismatch
         elif any(cr.field_name == "Address" and cr.status != "Match" for cr in analysis.consistency_results):

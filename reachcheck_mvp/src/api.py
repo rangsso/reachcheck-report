@@ -56,6 +56,7 @@ class ReportRequest(BaseModel):
     naver_link: str = "" # To be used as ID or source
     mapx: str = ""
     mapy: str = ""
+    category_path: str = "" # New field from Frontend Picker
 
 from resolver import StoreResolver
 
@@ -85,7 +86,8 @@ async def generate_report(request: ReportRequest):
             "tel": request.tel,
             "naver_link": request.naver_link,
             "mapx": request.mapx,
-            "mapy": request.mapy
+            "mapy": request.mapy,
+            "category_path": request.category_path
         }
         
         # Use Naver Seed if link or map coordinates provided (heuristic for Naver source)

@@ -61,6 +61,7 @@ export default function Home() {
                 naver_link: selected.link,
                 mapx: selected.mapx,
                 mapy: selected.mapy,
+                category_path: selected.category, // Pass category from picker as seed
 
                 // Force Source to Naver to use Seed Logic in Collector
                 source_type: 'naver_seed'

@@ -7,6 +7,12 @@ from models import (
     StoreInfo, MapChannelStatus, AIEngineStatus, ConsistencyResult, 
     ReviewAnalysis, ReportData, AnalysisResult, StatusColor
 )
+import bs4
+import re
+import json
+import time
+import shutil
+from playwright.sync_api import sync_playwright
 
 
 from pathlib import Path
@@ -19,7 +25,11 @@ load_dotenv(dotenv_path=env_path)
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 NAVER_CLIENT_ID = os.getenv("NAVER_CLIENT_ID")
 NAVER_CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET")
+NAVER_CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET")
 KAKAO_REST_API_KEY = os.getenv("KAKAO_REST_API_KEY")
+
+# Set HEADLESS to True for production/headless modes
+HEADLESS_BROWSER = os.getenv("HEADLESS_BROWSER", "true").lower() == "true"
 
 from comparator import compare_data
 from normalizer import normalize_name, normalize_address, normalize_phone
@@ -38,25 +48,376 @@ ERR_UNKNOWN_ERROR = "UNKNOWN_ERROR"
 class DataCollector:
     def __init__(self):
         self.snapshot_manager = SnapshotManager()
+        self.playwright_available = False
+        self.headless = os.getenv("HEADLESS_BROWSER", "true").lower() == "true"
+        self._ensure_playwright_browsers()
+
+    def _ensure_playwright_browsers(self):
+        """Check if playwright is importable."""
+        try:
+            import playwright
+            from playwright.sync_api import sync_playwright
+            self.playwright_available = True
+        except ImportError:
+            self.playwright_available = False
+            print("[WARN] Playwright not found. Skipping map detail scraping.")
+
+    def _normalize_and_validate_phone(self, phone_str: str) -> str:
+        if not phone_str:
+            return None
+        # Remove non-digits
+        digits = re.sub(r'\D', '', phone_str)
+        
+        # Valid length check (Relaxed to support National 8, Mobile 10-11, 050x 11-12)
+        if len(digits) < 8 or len(digits) > 12:
+            return None
+            
+        # Format Logic
+        
+        # 050, 0505, 0507 (11-12 digits)
+        if digits.startswith("050"):
+            if len(digits) == 11: # 0507-1234-5678
+                return f"{digits[:4]}-{digits[4:8]}-{digits[8:]}"
+            elif len(digits) == 12: # 050X-XXXX-XXXX
+                return f"{digits[:4]}-{digits[4:8]}-{digits[8:]}"
+                
+        # 02 (Seoul)
+        if digits.startswith("02"):
+            if len(digits) == 9: # 02-333-4444
+                return f"{digits[:2]}-{digits[2:5]}-{digits[5:]}"
+            elif len(digits) == 10: # 02-3333-4444
+                return f"{digits[:2]}-{digits[2:6]}-{digits[6:]}"
+                
+        # Mobile / Other Area Codes (010, 031, 032, 042, etc.)
+        # Usually 0xx-xxx-xxxx (10) or 0xx-xxxx-xxxx (11)
+        if digits.startswith("0") and len(digits) in [10, 11]:
+            # 3-3-4 or 3-4-4
+            if len(digits) == 10:
+                return f"{digits[:3]}-{digits[3:6]}-{digits[6:]}"
+            else:
+                 return f"{digits[:3]}-{digits[3:7]}-{digits[7:]}"
+        
+        # National number 1588-XXXX (8 digits)
+        if len(digits) == 8 and (digits.startswith("15") or digits.startswith("16") or digits.startswith("18")):
+             return f"{digits[:4]}-{digits[4:]}"
+             
+        # Fallback: if starts with 0 and length is appropriate, just format loosely
+        if digits.startswith("0") and len(digits) >= 9:
+             # Best effort
+             return phone_str # Return original if we can't parse strictly but looks vaguely valid? 
+             # Or construct a dash format? logic: 0xx-xxxx-xxxx
+             pass
+
+        return None
+
+    def fetch_naver_map_detail(self, place_id: str) -> str:
+        """
+        Strategy 1: Playwright Scraping (Headless)
+        Uses async_playwright to avoid conflict with running event loop.
+        """
+        if not self.playwright_available:
+             return None
+
+        # Fix: Sync API crashes in asyncio loop. Switch to Async API or subprocess.
+        # Since this is likely called from async path (FastAPI), we should use async_playwright.
+        # BUT fetch_naver_map_detail is synchronous.
+        # To avoid massive refactor, we wrap async logic in a synchonous runner using asyncio.run
+        # UNLESS there is already an event loop running.
+        # API calls this synchronously?
+        # Actually, `api.py` calls `collector.collect` inside `async def generate_report`.
+        # So `collect` is running in a thread pool (FastAPI default for def) or main loop?
+        # `generate_report` is `async def`, so `collector = DataCollector()` runs in loop.
+        # `snapshot = collector.collect(...)` is sync!
+        # This blocks the loop. 
+        # Standard fix: Use sync_playwright but it fails if loop is running?
+        # "Playwright Sync API inside the asyncio loop."
+        
+        # Solution: Use `async_playwright` and run it via `asyncio.run_coroutine_threadsafe`? 
+        # Or better: make `collect` async. But that ripples.
+        # Quickest Fix for MVP: Run scrape in a separate process or thread that doesn't share loop.
+        # Or just use the hack: nest_asyncio? No.
+        
+        # Refactoring to use subprocess to run a script? No, too complex.
+        # Let's try to use sync_playwright but explicitly handle the loop issue?
+        # Actually, if we are in `async def`, we shouldn't block.
+        # Correct approach: `collect` should be async.
+        # But let's assume we can't change signature easily right now.
+        
+        # Workaround: Use a fresh thread for Playwright.
+        # Sync Playwright complains if *current thread* has a loop.
+        # Since `uvicorn` runs on main thread, and `async def` runs on it.
+        
+        from playwright.sync_api import sync_playwright
+        import threading
+        import queue
+
+        result_queue = queue.Queue()
+
+        def _scrape_thread(pid, q):
+            try:
+                with sync_playwright() as p:
+                    browser_args = {}
+                    if self.headless:
+                        browser_args['headless'] = True
+                    
+                    browser = p.chromium.launch(**browser_args)
+                    page = browser.new_page()
+                    # Anti-detect
+                    page.set_extra_http_headers({
+                        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                    })
+                    
+                    url = f"https://map.naver.com/p/entry/place/{pid}"
+                    print(f"[-] Fetching Naver Map Detail via Playwright for {pid}...")
+                    
+                    try:
+                        page.goto(url, timeout=15000, wait_until="domcontentloaded")
+                        
+                        # Strategy: 1. Try a[href^="tel:"] globally (sometimes works without frame)
+                        # Strategy: 2. Find Entry Iframe
+                        
+                        # Global check first
+                        try:
+                            tel_el = page.query_selector('a[href^="tel:"]')
+                            if tel_el:
+                                t = tel_el.text_content()
+                                q.put(t)
+                                browser.close()
+                                return
+                        except: pass
+                        
+                        # Iframe Search
+                        target_frame = None
+                        # Wait for any frame? Just wait for selector in entryIframe
+                        try:
+                            # Try explicit ID first
+                            frame_handle = page.wait_for_selector("#entryIframe", timeout=10000)
+                            if frame_handle:
+                                target_frame = frame_handle.content_frame()
+                        except:
+                            # Fallback: traverse frames
+                            for f in page.frames:
+                                if "entry" in f.url or "entryIframe" == f.name:
+                                    target_frame = f
+                                    break
+                        
+                        if target_frame:
+                            # Selector sequence
+                            for sel in ['a[href^="tel:"]', '.xl_text:has-text("0")']:
+                                try:
+                                    el = target_frame.wait_for_selector(sel, timeout=5000)
+                                    if el:
+                                        t = el.text_content()
+                                        q.put(t)
+                                        browser.close()
+                                        return
+                                except: continue
+                        
+                        # Fail
+                        q.put(None)
+                        
+                    except Exception as e:
+                        print(f"[FAIL][Playwright] Scrape Error: {e}")
+                        q.put(None)
+                    finally:
+                        browser.close()
+            except Exception as e:
+                print(f"[FAIL][Playwright] Thread Error: {e}")
+                q.put(None)
+
+        t = threading.Thread(target=_scrape_thread, args=(place_id, result_queue))
+        t.start()
+        t.join()
+        
+        raw_text = result_queue.get()
+        if raw_text:
+             return self._normalize_and_validate_phone(raw_text)
+        return None
+
+    def fetch_naver_search_web(self, query: str) -> str:
+        """
+        Strategy 2: Naver Search Scraping (requests + bs4)
+        """
+        print(f"[-] Fetching Naver Search Web for {query}...")
+        url = "https://search.naver.com/search.naver"
+        params = {"query": query}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        
+        try:
+            resp = requests.get(url, params=params, headers=headers, timeout=5)
+            if resp.status_code != 200:
+                print(f"[FAIL][SearchScraping] Status {resp.status_code}")
+                return None
+            
+            soup = bs4.BeautifulSoup(resp.text, "html.parser")
+            text = soup.get_text()
+            
+            # Regex to support:
+            # 1. Standard: 02-123-4567, 010-1234-5678 (3 parts)
+            # 2. National: 1588-1234 (2 parts)
+            # We use finding all numbers and then normalizing.
+            
+            # Find Pattern A: (0\d{1,2}|050\d)-?(\d{3,4})-?(\d{4})
+            matches_a = re.findall(r'(?<!\d)(0\d{1,2}|050\d)-?(\d{3,4})-?(\d{4})(?!\d)', text)
+            for m in matches_a:
+                full = f"{m[0]}-{m[1]}-{m[2]}"
+                valid = self._normalize_and_validate_phone(full)
+                if valid: return valid
+            
+            # Find Pattern B: (1\d{3})-?(\d{4})
+            matches_b = re.findall(r'(?<!\d)(1\d{3})-?(\d{4})(?!\d)', text)
+            for m in matches_b:
+                full = f"{m[0]}-{m[1]}"
+                valid = self._normalize_and_validate_phone(full)
+                if valid: return valid
+                    
+        except Exception as e:
+            print(f"[FAIL][SearchScraping] {e}")
+            
+        return None
+
+    def fetch_naver_search_extended(self, query: str):
+         # ... (existing)
+         pass 
+
+    def _infer_category(self, naver_data: dict, kakao_data: dict, google_data: dict, naver_seed: dict = None) -> tuple:
+        """
+        Infers the category and source.
+        Priority: 
+        1. Naver Seed / Data
+        2. Kakao (category_name or group_name)
+        3. Google (types mapping)
+        """
+        # 1. Naver
+        # 1. Naver Seed (High Priority)
+        if naver_seed:
+            if naver_seed.get("category_path"):
+                return naver_seed.get("category_path"), "naver_seed_path"
+            if naver_seed.get("category"):
+                return naver_seed.get("category"), "naver_seed"
+                
+        # 1-1. Naver Data
+        if naver_data and naver_data.get("category") and naver_data["category"] != "일반 매장":
+            return naver_data.get("category"), "naver_data"
+            
+        # 2. Kakao
+        if kakao_data:
+            # Kakao often has "category_name" like "음식점 > 양식 > 이탈리안"
+            # Or "category_group_name" like "음식점"
+            cat = kakao_data.get("category_name")
+            if cat:
+                # Take the last part? or full? usage depends.
+                # "음식점 > 양식 > 이탈리안" -> "이탈리안" for specificity
+                parts = cat.split(">")
+                return parts[-1].strip(), "kakao"
+                
+            cat_group = kakao_data.get("category_group_name")
+            if cat_group:
+                return cat_group, "kakao"
+        
+        # 3. Google
+        if google_data and google_data.get("category") and google_data["category"] != "Unknown":
+            return google_data.get("category"), "google"
+            
+        return "", "none" # Return empty per user request (no default generic)
 
     def collect(self, store_name: str, place_id: str = None, naver_seed: dict = None) -> SnapshotData:
+        # ... (start of collect)
         google_data = {}
         naver_data = {}
         kakao_data = {}
         
         errors = {}
         search_candidates = {}
+        
+        failure_logs = []
+
+        # -----------------------------------------------------------------
+        # 1. NAVER PHONE ACQUISITION (PRIORITY 1)
+        # -----------------------------------------------------------------
+        # We need a phone number. We will use the strategies in order.
+        
+        naver_phone = None
+        naver_phone_source = "unknown"
+        current_naver_id = place_id
+        
+        # Strategy 1: Map Detail Scraping (Source of Truth)
+        if current_naver_id and not current_naver_id.startswith("NID-") and not current_naver_id.startswith("PID-"):
+             raw_pw_phone = self.fetch_naver_map_detail(current_naver_id)
+             norm_pw_phone = self._normalize_and_validate_phone(raw_pw_phone) if raw_pw_phone else None
+             
+             print(f"[PHONE][RESULT] store={store_name} place_id={place_id}")
+             print(f"[PHONE][Playwright] raw={raw_pw_phone} normalized={norm_pw_phone}")
+             
+             if norm_pw_phone:
+                 naver_phone = norm_pw_phone
+                 naver_phone_source = "playwright"
+             else:
+                 failure_logs.append(f"[DetailScrape] Failed for ID {current_naver_id}")
+        
+        # Strategy 2: Search Web Scraping
+        if not naver_phone:
+            # Construct query
+            q = f"{store_name}"
+            if naver_seed and naver_seed.get("address"):
+                 # Append district for better accuracy e.g "Starbucks Gangnam"
+                 addr_parts = naver_seed.get("address").split()
+                 if len(addr_parts) > 1:
+                     q += f" {addr_parts[1]}"
+            
+            raw_search_phone = self.fetch_naver_search_web(q)
+            norm_search_phone = self._normalize_and_validate_phone(raw_search_phone) if raw_search_phone else None
+            
+            print(f"[PHONE][Search] raw={raw_search_phone} normalized={norm_search_phone}")
+            
+            if norm_search_phone:
+                naver_phone = norm_search_phone
+                naver_phone_source = "search"
+            else:
+                failure_logs.append(f"[SearchScrape] Failed for query {q}")
+
+        # Strategy 3: API Extended Search (Legacy)
+        if not naver_phone and NAVER_CLIENT_ID:
+             _, cand, _ = self.fetch_naver_search_extended(store_name)
+             if cand:
+                 # Check first candidate
+                 val = cand[0].get("phone")
+                 norm = self._normalize_and_validate_phone(val)
+                 print(f"[PHONE][API] raw={val} normalized={norm}")
+                 if norm:
+                     naver_phone = norm
+                     naver_phone_source = "api"
+             if not naver_phone:
+                 failure_logs.append("[SearchAPI] No phone in API results")
+        
+        # FATAL CHECK
+        if not naver_phone:
+             error_msg = f"FATAL: Could not obtain phone number for {store_name}. Logs: {'; '.join(failure_logs)}"
+             print(error_msg)
+             # Raising exception as requested
+             raise Exception(error_msg)
+        
+        print(f"[PHONE][FINAL] phone={naver_phone} source={naver_phone_source}")
+             
+        # -----------------------------------------------------------------
+        # Continue with Normal Flow (Populate Data)
+        # -----------------------------------------------------------------
 
         # 1. Base Identity (from Naver if available)
         if naver_seed:
             # MVP: Use normalized Naver data as seed
             # naver_seed comes from frontend (ReportRequest fields)
             print(f"[-] Using Naver Seed for {store_name}")
+            # Address Priority: Road Address > Address
+            final_address = naver_seed.get("road_address") or naver_seed.get("address")
+            
             naver_data = {
                 "name": naver_seed.get("store_name"),
-                "address": naver_seed.get("address") or naver_seed.get("road_address"),
-                "phone": naver_seed.get("tel"),
-                "category": "일반 매장", # or pass if available
+                "address": final_address,
+                "phone": naver_phone, # Inject robustly fetched phone
+                "category": naver_seed.get("category"), 
                 "link": naver_seed.get("naver_link"),
                 "mapx": naver_seed.get("mapx"),
                 "mapy": naver_seed.get("mapy")
@@ -68,11 +429,9 @@ class DataCollector:
         elif not place_id:
              place_id = f"PID-{random.randint(10000, 99999)}"
 
-        # 2. Kakao Search (Find match for Naver/Input data)
-        # Using name provided
+        # 2. Kakao Search
         if KAKAO_REST_API_KEY:
             k_data, k_candidates, k_error = self.fetch_kakao_search_extended(store_name)
-            # Refinement: check address match if strictly needed, but for MVP best match is ok
             if k_data:
                 kakao_data = k_data
             if k_candidates:
@@ -82,9 +441,8 @@ class DataCollector:
         else:
             errors["Kakao"] = ERR_AUTH_ERROR
 
-        # 3. Google Data (Find match or fetch by place_id if legacy flow)
+        # 3. Google Data
         if place_id and not place_id.startswith("PID-") and not place_id.startswith("NID-") and GOOGLE_MAPS_API_KEY:
-             # Legacy Flow: Place ID provided (Google ID)
              try:
                  print(f"[-] Fetching details for Place ID: {place_id}")
                  store_info = self.fetch_google_details(place_id, store_name)
@@ -100,10 +458,8 @@ class DataCollector:
                  errors["Google"] = ERR_UNKNOWN_ERROR
                  google_data = {"name": store_name, "address": "Seoul, Mock Address", "phone": "02-1234-5678", "category": "General"}
         elif GOOGLE_MAPS_API_KEY:
-             # Naver Flow: Search Google Text Search with name
-             # MVP: Simple text search and take top result
              try:
-                 # Re-use search logic (embedded here due to time constraint, or create helper)
+                 # Re-use search logic
                  url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
                  params = {"query": store_name, "key": GOOGLE_MAPS_API_KEY, "language": "ko"}
                  resp = requests.get(url, params=params)
@@ -113,14 +469,15 @@ class DataCollector:
                      google_data = {
                          "name": top.get("name"),
                          "address": top.get("formatted_address"),
-                         "place_id": top.get("place_id")
+                         "place_id": top.get("place_id"),
+                         # Extract category from types
+                         "category": top.get("types")[0] if top.get("types") else "Unknown"
                      }
                  else:
                      errors["Google"] = ERR_SEARCH_NO_RESULT
              except Exception as e:
                  errors["Google"] = f"SEARCH_FAIL: {str(e)}"
         else:
-             # Mock
              google_data = {
                  "name": store_name, 
                  "address": "Seoul, Mock Address", 
@@ -128,56 +485,97 @@ class DataCollector:
                  "category": "일반 매장"
              }
 
-        # 4. Naver Search (If not seeded, fetch it)
+        # 4. Naver Data Check
         if not naver_data and NAVER_CLIENT_ID and NAVER_CLIENT_SECRET:
-            n_data, n_candidates, n_error = self.fetch_naver_search_extended(store_name)
-            if n_data:
-                naver_data = n_data
-            if n_candidates:
-                search_candidates["Naver"] = n_candidates
-            if n_error:
-                errors["Naver"] = n_error
+             if naver_phone_source == "api" and not naver_data:
+                  pass
         elif not naver_data:
-            errors["Naver"] = ERR_AUTH_ERROR
+             errors["Naver"] = ERR_AUTH_ERROR
+             
+        # Force update phone
+        if naver_data:
+            naver_data["phone"] = naver_phone
         
         # LOGGING
         self._log_source_data("GOOGLE", google_data)
         self._log_source_data("NAVER", naver_data)
         self._log_source_data("KAKAO", kakao_data)
         
+        # INF_CATEGORY
+        from normalizer import normalize_category_for_ai
+        
+        raw_cat, cat_source = self._infer_category(naver_data, kakao_data, google_data, naver_seed)
+        
+        # FIX: Do not fallback to raw_cat if normalizer returns None (which means it's ignored/invalid)
+        cat = normalize_category_for_ai(raw_cat)
+        
+        if not cat:
+             # If ignored ("Establishment") or empty, treated as None
+             # Analyzer will handle None (AI Q1 fallback)
+             # But for Report Display? "업종 정보 없음" might be better than "Establishment".
+             # However, Analyzer logic checks `if not cat or cat == "업종 정보 없음"`.
+             pass # cat is None
+        
+        # If we really want "업종 정보 없음" for display:
+        if not cat:
+             # cat = "업종 정보 없음" 
+             # Wait, if I set it to "업종 정보 없음", then Analyzer sees it as valid string?
+             # Analyzer logic: `if not cat or cat == "업종 정보 없음": ...` -> fallback Q1.
+             # So setting generic string is safe for AI prompts.
+             # And better for Display than "None".
+             cat = "업종 정보 없음"
+        
+        print(f"[CATEGORY] Inferred: {cat} (Source: {cat_source}, Raw: {raw_cat})")
+        
         # 5. Normalize & Snapshot
-        # Use naver_data for standard info if available (Naver-First)
         if naver_data:
-             # Creating StoreSchema from Naver Data manually to ensure it is the standard
              from models import StoreSchema
              standard_info = StoreSchema(
                  id=place_id,
                  name=naver_data.get("name", store_name),
                  address=naver_data.get("address", ""),
                  phone=naver_data.get("phone", ""),
-                 category=naver_data.get("category", "일반 매장"),
-                 lat=0.0, lng=0.0, # Mapxy conversion not in MVP scope
+                 category=cat, # INJECT NORMALIZED CATEGORY
+                 lat=0.0, lng=0.0,
                  hours="",
                  description="",
                  source_url=naver_data.get("link", "") or naver_data.get("source_url", "")
              )
         else:
              standard_info = normalize_store_data(place_id, google_data, naver_data, kakao_data)
+             standard_info.category = cat # Update inferred
         
-        # 6. Field Status Analysis (Missing vs Mismatch)
+        # 6. Field Status Analysis
         missing_fields = []
         if not standard_info.name: missing_fields.append("name")
         if not standard_info.address: missing_fields.append("address")
         if not standard_info.phone: missing_fields.append("phone")
-        if not standard_info.category or standard_info.category == "Unknown": missing_fields.append("category")
+        if not standard_info.category or standard_info.category == "업종 정보 없음": missing_fields.append("category")  
         
         mismatch_fields = []
-        # Naver vs Kakao
         if naver_data and kakao_data:
             if normalize_name(naver_data.get("name","")) != normalize_name(kakao_data.get("name","")):
                 mismatch_fields.append("name_naver_kakao")
-            if normalize_name(naver_data.get("phone","")) != normalize_name(kakao_data.get("phone","")):
-                mismatch_fields.append("phone_naver_kakao") # Fixed key name preference
+            if normalize_phone(naver_data.get("phone","")) != normalize_phone(kakao_data.get("phone","")):
+                mismatch_fields.append("phone_naver_kakao") 
+
+        # DATA PROVENANCE UPDATE
+        from normalizer import format_display_address, is_valid_category_for_display
+        
+        field_provenance = {
+            "standard_source": "naver_seed" if naver_seed else "discovered",
+            "phone_source": naver_phone_source,
+            "category_source": cat_source,
+            "fields": {
+                "name": {"standard": standard_info.name, "sources": {"naver": naver_data.get("name"), "kakao": kakao_data.get("name"), "google": google_data.get("name")}},
+                "address": {"standard": standard_info.address, "sources": {"naver": naver_data.get("address"), "kakao": kakao_data.get("address"), "google": format_display_address(google_data.get("address"))}},
+                "phone": {"standard": standard_info.phone, "sources": {"naver": naver_data.get("phone"), "kakao": kakao_data.get("phone"), "google": google_data.get("phone")}},
+                "category": {
+                    "standard": standard_info.category, 
+                    "sources": {"naver": naver_data.get("category"), "kakao": kakao_data.get("category_name"), "google": google_data.get("category")}
+                }
+            }
+        }
         
         snapshot = SnapshotData(
             store_id=place_id,
@@ -189,6 +587,7 @@ class DataCollector:
             llm_responses={},
             missing_fields=missing_fields,
             mismatch_fields=mismatch_fields,
+            field_provenance=field_provenance,
             search_candidates=search_candidates,
             errors=errors
         )
@@ -381,6 +780,23 @@ class DataCollector:
             "kakao": snapshot.raw_kakao
         }
         
+        # Determine Area & Search Keyword (Global for Analysis)
+        area = " ".join(store_info.address.split()[:2]) if store_info.address else "Seoul"
+        
+        # Determine search_keyword
+        # Default "식당" as requested
+        search_keyword = "식당"
+        
+        # If seed has category_path (from FE picker), use it
+        # raw_naver contains seed data if source was naver_seed
+        if snapshot.raw_naver and snapshot.raw_naver.get("category_path"):
+             cat_path = snapshot.raw_naver.get("category_path")
+             # Extract last part: "분식 > 김밥" -> "김밥"
+             if ">" in cat_path:
+                 search_keyword = cat_path.split(">")[-1].strip()
+             else:
+                 search_keyword = cat_path.strip()
+        
         # If any source has data, run compare; else fallback
         if any(collected_sources.values()):
             consistency_results = compare_data(collected_sources)
@@ -444,14 +860,16 @@ class DataCollector:
                 from llm_client import LLMClient
                 llm_client = LLMClient()
                 
-                # Derive Area from address (Simple heuristic)
-                area = " ".join(store_info.address.split()[:2]) if store_info.address else "Seoul"
+                # Use Global Area/Keyword
                 
-                # Clean prompt questions (Korean Display)
+                q1_tmpl = os.getenv("AI_QUESTION_TEMPLATE_1", "{area}에서 추천할 만한 {search_keyword}이 있나요?")
+                q2_tmpl = os.getenv("AI_QUESTION_TEMPLATE_2", "그중에서 {store_name}은 어떤 곳인가요?")
+                q3_tmpl = os.getenv("AI_QUESTION_TEMPLATE_3", "{store_name}이 이 지역에서 자주 언급되는 이유는 무엇인가요?")
+                
                 questions = [
-                    f"{area}에서 {store_info.category} 추천해줄 만한 곳이 있나요?",
-                    f"{area}에 있는 {store_info.name}에 대해 알려주세요.",
-                    f"{store_info.name}이 {area}에서 인기 있는 이유가 뭔가요?"
+                    q1_tmpl.format(area=area, search_keyword=search_keyword, store_name=store_info.name),
+                    q2_tmpl.format(area=area, search_keyword=search_keyword, store_name=store_info.name),
+                    q3_tmpl.format(area=area, search_keyword=search_keyword, store_name=store_info.name)
                 ]
                 
                 # Instruction sent separately
@@ -554,8 +972,17 @@ class DataCollector:
                 
                 # Mock Responses for Page 2
                 responses = []
+                # Use Global Search Keyword
+                q1_tmpl = os.getenv("AI_QUESTION_TEMPLATE_1", "{area}에서 추천할 만한 {search_keyword}이 있나요?")
+                
+                q_tmpls = [
+                    q1_tmpl,
+                    os.getenv("AI_QUESTION_TEMPLATE_2", "그중에서 {store_name}은 어떤 곳인가요?"),
+                    os.getenv("AI_QUESTION_TEMPLATE_3", "{store_name}이 이 지역에서 자주 언급되는 이유는 무엇인가요?")
+                ]
+                
                 for i in range(3):
-                    q_text = f"{store_info.category} 추천해주세요 ({area})"
+                    q_text = q_tmpls[i].format(area=area, search_keyword=search_keyword, store_name=store_info.name)
                     a_text = f"{store_info.name}을(를) 추천합니다. 맛과 분위기가 훌륭하다고 알려져 있습니다." if is_mentioned else "구체적인 정보를 찾을 수 없습니다."
                     
                     responses.append({
@@ -579,11 +1006,11 @@ class DataCollector:
         improvements = [
             {"title": "Unify Store Information", "description": "Ensure Name/Phone/Address are identical across all maps.", "importance": "High"},
             {"title": "Add AI-friendly Description", "description": "Update store introduction with structured keywords.", "importance": "Medium"},
-            {"title": "Structure FAQs", "description": "Structure FAQs", "description": "Add Q&A section to map listings.", "importance": "Medium"}
+            {"title": "Structure FAQs", "description": "Add Q&A section to map listings.", "importance": "Medium"}
         ]
 
         # Page 4 Sentence
-        ai_intro_sentence = f"{store_info.name} is a {store_info.category} in Gangnam known for its verified taste and service."
+        ai_intro_sentence = f"{store_info.name}은(는) {area}에서 꾸준히 언급되는 장소입니다."
 
         return AnalysisResult(
             map_accuracy=map_accuracy,
@@ -597,5 +1024,6 @@ class DataCollector:
             opportunities=opportunities,
             improvements=improvements,
             ai_intro_sentence=ai_intro_sentence,
-            ai_responses=ai_responses
+            ai_responses=ai_responses,
+            field_provenance=snapshot.field_provenance
         )
