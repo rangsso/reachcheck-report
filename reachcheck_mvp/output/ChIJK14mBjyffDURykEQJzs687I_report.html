@@ -205,9 +205,9 @@
             border: 1px solid #e2e8f0;
             padding: 6px 8px;
             text-align: left;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            overflow: visible;
+            white-space: normal;
+            word-break: keep-all;
         }
 
         .compact-table th {
@@ -251,29 +251,61 @@
 
             body {
                 background: white;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
             }
+        }
 
-            .print-root {
-                width: 210mm;
-                /* Allow overflow context but restrict items */
-            }
-
+        /* Mobile Responsiveness for Web Preview */
+        @media screen and (max-width: 768px) {
             .page {
-                box-shadow: none;
-                margin: 0;
-                page-break-after: always;
-                border: none;
-                width: 210mm;
-                height: 297mm;
-                /* Force strict height per page */
-                padding: 12mm 15mm;
-                overflow: hidden;
-                /* Prevent spill to next page */
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                height: auto;
+                min-height: 100vh;
+                margin-bottom: 20px;
             }
 
-            /* Flex gap polyfills typically not needed for modern print, but ensure layout holds */
+            /* Stack AI Columns on Mobile */
+            div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        body {
+            background: white;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .print-root {
+            width: 210mm;
+            /* Allow overflow context but restrict items */
+        }
+
+        .page {
+            box-shadow: none;
+            margin: 0;
+            page-break-after: always;
+            border: none;
+            width: 210mm;
+            height: 297mm;
+            /* Force strict height per page */
+            padding: 12mm 15mm;
+            overflow: hidden;
+            /* Prevent spill to next page */
+        }
+
+
+        /* Strict AI Answer Alignment */
+        .ai-answer ul,
+        .ai-answer li,
+        .ai-answer p {
+            text-align: left !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+            list-style-position: inside !important;
+            white-space: pre-wrap !important;
+            /* Allow wrapping */
         }
     </style>
 </head>
@@ -291,13 +323,19 @@
             </div>
 
             <!-- 1. Horizontal Health Banner -->
-            <div class="health-banner">
-                <div class="health-banner-left">
-                    <span class="health-title">사장님의 매장 건강 점수</span>
-                    <span class="health-score">80점</span>
+            <div style="margin-bottom: 15px;">
+                <div class="health-banner" style="margin-bottom: 8px;">
+                    <div class="health-banner-left">
+                        <span class="health-title">사장님의 매장 건강 점수</span>
+                        <span class="health-score">80점</span>
+                    </div>
+                    <div class="health-banner-right">
+                        상위 20% 수준 (매우 건강함)
+                    </div>
                 </div>
-                <div class="health-banner-right">
-                    상위 20% 수준 (매우 건강함)
+                <!-- Health Score Rationale -->
+                <div style="text-align: right; font-size: 11px; color: #64748b; font-weight: 500;">
+                    * 낮은 AI 언급 비율 등이 점수에 영향을 주었습니다.
                 </div>
             </div>
 
@@ -308,7 +346,8 @@
                 <div>
                     <div style="font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 4px;">ReachCheck 처방전
                         (Prescription)</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5;">
+                    <div
+                        style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5; word-break: keep-all; white-space: pre-wrap;">
                         "'완도돌김 떡볶이가 진짜 예술이에요'에 대한 불만이 감지되었습니다. 관련 부분을 점검해보세요."
                     </div>
                 </div>
@@ -322,7 +361,7 @@
                     <div
                         style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; height: 100%; font-size: 13px; line-height: 1.6; color: #475569; word-break: keep-all; white-space: normal;">
                         <p style="margin-bottom: 8px; word-break: keep-all;">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
-                        <p style="word-break: keep-all;">AI 검색 엔진마다 우리 매장을 설명하는 내용과 비중이 제각각입니다. 정보가 불일치하면 AI는 신뢰할 수 없는 정보로 판단하여 노출을 줄이거나 잘못된 답변을 할 수 있습니다.</p>
+                        <p style="word-break: keep-all;">AI에게 **'영등포구 맛집'**으로 물어봤을 때, 매장 정보가 충분히 노출되지 않거나 불명확합니다. 정보가 불일치하면 AI는 신뢰도를 낮게 평가할 수 있습니다.</p>
                     </div>
                 </div>
 
@@ -497,78 +536,106 @@
 
         <!-- Page 2: AI Responses -->
         <div class="page">
-            <div class="header">
-                <h1>AI가 바라본 우리 가게</h1>
-                <span class="date">2026.01.15</span>
+            <div class="header-prescription">
+                <h2>AI 엔진별 상세 답변 분석</h2>
             </div>
 
             <div class="section">
-                <div class="section-title">AI 엔진별 상세 답변 분석</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                    실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
-                </p>
+                <!-- Duplicate header removed -->
 
-                
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">ChatGPT</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start;">
 
-                    
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 서울특별시 영등포구에서 추천할 만한 식당이 있나요?</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">서울 영등포구에는 맛있는 식당이 많이 있습니다. 예를 들어, '영등포 돈까스'는 바삭한 돈까스가 인기이고, '안동장'에서는 전통 한식을 즐기실 수 있습니다. 또한, '피자나라치킨공화국'도 다양한 피자와 치킨으로 유명합니다. 꼭 한번 방문해 보시기 바랍니다!</p>
+                    <!-- ChatGPT Column (Always Visible) -->
+                    <div style="background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 8px;">
+                            <h3
+                                style="font-size: 14px; margin: 0; color: #10a37f; display: flex; align-items: center; gap: 4px; font-weight: 700;">
+                                ChatGPT <span
+                                    style="font-size: 10px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </h3>
+                        </div>
+                        
+                        
+                        <div style="margin-bottom: 7px; text-align: left;">
+                            <p
+                                style="font-size: 12px; font-weight: 700; color: #0f1ba0; margin: 0 0 2px 0; line-height: 1.4;">
+                                Q. 서울특별시 영등포구에서 추천할 만한 식당이 있나요?</p>
+                            <div class="ai-answer"
+                                style="font-size: 12px; color: #1e293b; margin: 0; line-height: 1.5;">
+                                영등포구에서 추천할 만한 식당으로는 다음과 같은 곳들이 있습니다:
+갈비탕 전문점 - 전통적인 갈비탕을 즐길 수 있는 곳.
+이자카야 - 일본식 술집으로 다양한 안주와 함께 일본 사케를 맛볼 수 있습니다.
+중식당 - 다양한 중화 요리를 제공하며, 짜장면과 탕수육이 인기입니...</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 7px; text-align: left;">
+                            <p
+                                style="font-size: 12px; font-weight: 700; color: #0f1ba0; margin: 0 0 2px 0; line-height: 1.4;">
+                                Q. 그중에서 팬팬은 어떤 곳인가요?</p>
+                            <div class="ai-answer"
+                                style="font-size: 12px; color: #1e293b; margin: 0; line-height: 1.5;">
+                                팬팬은 영등포구 당산동에 위치한 떡볶이 전문점으로, 즉석 떡볶이와 다양한 사이드 메뉴를 제공합니다. 셀프코너에서 무한리필을 제공하며, 깔끔한 매장과 친절한 서비스로 인기를 끌고 있습니다. 특히, 완도돌김 차돌박이 떡볶이와 같은 독특한 메뉴가 매력적입니다.</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 7px; text-align: left;">
+                            <p
+                                style="font-size: 12px; font-weight: 700; color: #0f1ba0; margin: 0 0 2px 0; line-height: 1.4;">
+                                Q. 팬팬이 이 지역에서 자주 언급되는 이유는 무엇인가요?</p>
+                            <div class="ai-answer"
+                                style="font-size: 12px; color: #1e293b; margin: 0; line-height: 1.5;">
+                                팬팬은 셀프코너와 무료 리필로 가성비가 뛰어나며, 독창적인 떡볶이 메뉴와 깔끔한 매장 분위기로 많은 사랑을 받고 있습니다. 특히 즉석 떡볶이와 다양한 사이드 메뉴가 고객들에게 큰 호응을 얻고 있습니다. 친절한 서비스와 특별한 맛 덕분에 인기 있는 식사 장소로 자리잡고 ...</div>
+                        </div>
+                        
+                        
                     </div>
-                    
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 그중에서 팬팬은 어떤 곳인가요?</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">팬팬은 팬과 아티스트가 소통할 수 있는 플랫폼으로, 다양한 콘텐츠를 공유하고 팬 활동을 지원하는 서비스입니다. 팬들이 아티스트를 더 가까이에서 응원하고, 특별한 경험을 나눌 수 있는 공간입니다.</p>
+
+                    <!-- Gemini Column (Always Visible) -->
+                    <div style="background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        <div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 8px;">
+                            <h3
+                                style="font-size: 14px; margin: 0; color: #4285f4; display: flex; align-items: center; gap: 4px; font-weight: 700;">
+                                Gemini <span
+                                    style="font-size: 10px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </h3>
+                        </div>
+                        
+                        
+                        <div style="margin-bottom: 7px; text-align: left;">
+                            <p
+                                style="font-size: 12px; font-weight: 700; color: #0f1ba0; margin: 0 0 2px 0; line-height: 1.4;">
+                                Q. 서울특별시 영등포구에서 추천할 만한 식당이 있나요?</p>
+                            <div class="ai-answer"
+                                style="font-size: 12px; color: #1e293b; margin: 0; line-height: 1.5;">
+                                영등포구에는 맛집이 정말 많죠! 어떤 종류의 음식을 좋아하시는지, 어떤 분위기를 원하시는지에 따라 추천이 달라질 수 있습니다. 몇 가지 인기있는 곳들과 함께 추가 질문을 드릴게요.
+맛집 종류별 추천:
+
+*   한식:
+    *   대문집: 닭볶음탕으로 유명한 곳입니다....</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 7px; text-align: left;">
+                            <p
+                                style="font-size: 12px; font-weight: 700; color: #0f1ba0; margin: 0 0 2px 0; line-height: 1.4;">
+                                Q. 그중에서 팬팬은 어떤 곳인가요?</p>
+                            <div class="ai-answer"
+                                style="font-size: 12px; color: #1e293b; margin: 0; line-height: 1.5;">
+                                팬팬은 다양한 토핑과 혜자스러운 셀프바를 갖춘 가성비 좋은 즉석 떡볶이 전문점입니다. 특히 완도 돌김, 모자반 등 해산물을 활용한 특색 있는 메뉴가 돋보이며, 깔끔한 매장 분위기와 친절한 서비스도 인기 요인입니다. 직장인 점심이나 데이트 코스로 적합하며, SNS를 통한...</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 7px; text-align: left;">
+                            <p
+                                style="font-size: 12px; font-weight: 700; color: #0f1ba0; margin: 0 0 2px 0; line-height: 1.4;">
+                                Q. 팬팬이 이 지역에서 자주 언급되는 이유는 무엇인가요?</p>
+                            <div class="ai-answer"
+                                style="font-size: 12px; color: #1e293b; margin: 0; line-height: 1.5;">
+                                팬팬은 독특한 메뉴와 푸짐한 셀프바, 훌륭한 가성비로 인기를 얻고 있습니다. 특히 완도 돌김 떡볶이처럼 차별화된 메뉴가 소비자들의 호기심을 자극하고 재방문을 유도하는 요인으로 작용합니다. 깔끔한 매장 분위기와 친절한 서비스도 긍정적인 고객 경험에 기여하는 것으로 보입니...</div>
+                        </div>
+                        
+                        
                     </div>
-                    
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 팬팬이 이 지역에서 자주 언급되는 이유는 무엇인가요?</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">팬팬이 이 지역에서 자주 언급되는 이유는 주로 그 지역의 문화, 트렌드, 또는 특정 이벤트와 관련이 깊기 때문입니다. 팬팬과 관련된 특별한 활동이나 인기 있는 상품이 있다면 더욱 자주 언급될 수 있습니다. 지역 주민들 사이에서의 입소문이나 소셜 미디어의 영향도 큰 역할을 할 수 있습니다. 추가적인 정보가 필요하시다면 구체적인 내용을 말씀해 주시면 더 자세히 설명해 드리겠습니다.</p>
-                    </div>
-                    
-
-                    
                 </div>
-                
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Gemini</h3>
-
-                    
-
-                    
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    
-                </div>
-                
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Claude</h3>
-
-                    
-
-                    
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    
-                </div>
-                
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Perplexity</h3>
-
-                    
-
-                    
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    
-                </div>
-                
             </div>
 
             <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>

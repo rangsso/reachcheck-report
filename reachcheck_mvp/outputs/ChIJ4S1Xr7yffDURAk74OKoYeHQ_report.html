@@ -22,6 +22,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            word-break: keep-all;
         }
 
         .page {
@@ -204,9 +205,9 @@
             border: 1px solid #e2e8f0;
             padding: 6px 8px;
             text-align: left;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            overflow: visible;
+            white-space: normal;
+            word-break: keep-all;
         }
 
         .compact-table th {
@@ -237,6 +238,10 @@
             padding-top: 6px;
         }
 
+        .text-muted {
+            color: #94a3b8 !important;
+        }
+
         /* PRINT STYLES */
         @media print {
             @page {
@@ -246,29 +251,67 @@
 
             body {
                 background: white;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
             }
+        }
 
-            .print-root {
-                width: 210mm;
-                /* Allow overflow context but restrict items */
-            }
-
+        /* Mobile Responsiveness for Web Preview */
+        @media screen and (max-width: 768px) {
             .page {
-                box-shadow: none;
-                margin: 0;
-                page-break-after: always;
-                border: none;
-                width: 210mm;
-                height: 297mm;
-                /* Force strict height per page */
-                padding: 12mm 15mm;
-                overflow: hidden;
-                /* Prevent spill to next page */
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                height: auto;
+                min-height: 100vh;
+                margin-bottom: 20px;
             }
 
-            /* Flex gap polyfills typically not needed for modern print, but ensure layout holds */
+            /* Stack AI Columns on Mobile */
+            div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        body {
+            background: white;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .print-root {
+            width: 210mm;
+            /* Allow overflow context but restrict items */
+        }
+
+        .page {
+            box-shadow: none;
+            margin: 0;
+            page-break-after: always;
+            border: none;
+            width: 210mm;
+            height: 297mm;
+            /* Force strict height per page */
+            padding: 12mm 15mm;
+            overflow: hidden;
+            /* Prevent spill to next page */
+            margin-bottom: 0 !important;
+        }
+
+        /* Helper for conditional borders (avoids Jinja in style attr) */
+        .q-block-border {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        /* Strict AI Answer Alignment */
+        .ai-answer ul,
+        .ai-answer li,
+        .ai-answer p {
+            text-align: left !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+            list-style-position: inside !important;
+            white-space: pre-line !important;
+            /* Collapse runs of whitespace */
         }
     </style>
 </head>
@@ -286,13 +329,19 @@
             </div>
 
             <!-- 1. Horizontal Health Banner -->
-            <div class="health-banner">
-                <div class="health-banner-left">
-                    <span class="health-title">사장님의 매장 건강 점수</span>
-                    <span class="health-score">80점</span>
+            <div style="margin-bottom: 15px;">
+                <div class="health-banner" style="margin-bottom: 8px;">
+                    <div class="health-banner-left">
+                        <span class="health-title">사장님의 매장 건강 점수</span>
+                        <span class="health-score">80점</span>
+                    </div>
+                    <div class="health-banner-right">
+                        상위 20% 수준 (매우 건강함)
+                    </div>
                 </div>
-                <div class="health-banner-right">
-                    상위 20% 수준 (매우 건강함)
+                <!-- Health Score Rationale -->
+                <div style="text-align: right; font-size: 11px; color: #64748b; font-weight: 500;">
+                    * 낮은 AI 언급 비율 등이 점수에 영향을 주었습니다.
                 </div>
             </div>
 
@@ -303,7 +352,8 @@
                 <div>
                     <div style="font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 4px;">ReachCheck 처방전
                         (Prescription)</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5;">
+                    <div
+                        style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5; word-break: keep-all; white-space: pre-wrap;">
                         "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요."
                     </div>
                 </div>
@@ -315,9 +365,9 @@
                 <div class="flex-col-1">
                     <div class="section-title">진단 요약</div>
                     <div
-                        style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; height: 100%; font-size: 13px; line-height: 1.6; color: #475569;">
-                        <p style="margin-bottom: 8px;">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
-                        <p>AI 검색 엔진마다 우리 매장을 설명하는 내용과 비중이 제각각입니다. 정보가 불일치하면 AI는 신뢰할 수 없는 정보로 판단하여 노출을 줄이거나 잘못된 답변을 할 수 있습니다.</p>
+                        style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; height: 100%; font-size: 13px; line-height: 1.6; color: #475569; word-break: keep-all; white-space: normal;">
+                        <p style="margin-bottom: 8px; word-break: keep-all;">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
+                        <p style="word-break: keep-all;">AI에게 **'영등포구 맛집'**으로 물어봤을 때, 매장 정보가 충분히 노출되지 않거나 불명확합니다. 정보가 불일치하면 AI는 신뢰도를 낮게 평가할 수 있습니다.</p>
                     </div>
                 </div>
 
@@ -351,9 +401,6 @@
                     <div class="mini-card">
                         <h4 style="margin-bottom: 8px;">
                             Naver
-                            
-                            <span style="color: #22c55e;">✅</span>
-                            
                         </h4>
                         <span class="status-badge bg-green">
                             [정상]
@@ -363,9 +410,6 @@
                     <div class="mini-card">
                         <h4 style="margin-bottom: 8px;">
                             Kakao
-                            
-                            <span style="color: #22c55e;">✅</span>
-                            
                         </h4>
                         <span class="status-badge bg-green">
                             [정상]
@@ -375,9 +419,6 @@
                     <div class="mini-card">
                         <h4 style="margin-bottom: 8px;">
                             Google
-                            
-                            <span style="color: #22c55e;">✅</span>
-                            
                         </h4>
                         <span class="status-badge bg-green">
                             [정상]
@@ -407,11 +448,9 @@
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <td style="font-weight: 700; color: #475569; padding: 12px 10px;">Name</td>
                             <td style="padding: 12px 10px;">클래식오븐</td>
-                            <td
-                                style="padding: 12px 10px; color: inherit;">
+                            <td style="padding: 12px 10px;" class="">
                                 클래식오븐</td>
-                            <td
-                                style="padding: 12px 10px; color: inherit;">
+                            <td style="padding: 12px 10px;" class="">
                                 클래식오븐</td>
                             <td style="text-align: center; padding: 12px 10px;">
                                 
@@ -436,11 +475,9 @@
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <td style="font-weight: 700; color: #475569; padding: 12px 10px;">Address</td>
                             <td style="padding: 12px 10px;">서울특별시 영등포구 당산동3가 472 1층</td>
-                            <td
-                                style="padding: 12px 10px; color: inherit;">
+                            <td style="padding: 12px 10px;" class="">
                                 서울 영등포구 당산로27길 21-1</td>
-                            <td
-                                style="padding: 12px 10px; color: inherit;">
+                            <td style="padding: 12px 10px;" class="">
                                 서울특별시 영등포구 당산로27길 21-1</td>
                             <td style="text-align: center; padding: 12px 10px;">
                                 
@@ -465,11 +502,9 @@
                         <tr style="border-bottom: 1px solid #f1f5f9;">
                             <td style="font-weight: 700; color: #475569; padding: 12px 10px;">Phone</td>
                             <td style="padding: 12px 10px;">0507-1371-3285</td>
-                            <td
-                                style="padding: 12px 10px; color: #64748b;">
+                            <td style="padding: 12px 10px;" class="text-muted">
                                 -</td>
-                            <td
-                                style="padding: 12px 10px; color: inherit;">
+                            <td style="padding: 12px 10px;" class="">
                                 Phone not available</td>
                             <td style="text-align: center; padding: 12px 10px;">
                                 
@@ -507,257 +542,319 @@
 
         <!-- Page 2: AI Responses -->
         <div class="page">
-            <div class="header">
-                <h1>AI가 바라본 우리 가게</h1>
-                <span class="date">2026.01.15</span>
+            <div class="header-prescription">
+                <h2>AI 엔진별 상세 답변 분석</h2>
             </div>
 
             <div class="section">
-                <div class="section-title">AI 엔진별 상세 답변 분석</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                    실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
-                </p>
-
                 
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">ChatGPT</h3>
+                
+                <!-- Question Block -->
+                <div class="q-block q-block-border" style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. 서울특별시 영등포구에서 추천할 만한 식당이 있나요?</h3>
 
-                    
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 서울특별시 영등포구에서 추천할 만한 식당이 있나요?</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">영등포구에는 다양한 맛집이 있습니다. 몇 곳 추천드립니다:
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
 
-1. **영등포시장 떡볶이** - 매콤하고 맛있는 떡볶이로 유명합니다.
-2. **신길동 쭈꾸미** - 쭈꾸미 요리가 인기 있는 곳입니다.
-3. **여의도 이자카야** - 일본식 술집으로 분위기가 좋고 다양한 메뉴가 있습니다.
-4. **영등포구청 근처의 한정식집** - 신선한 재료로 만든 한정식이 일품입니다.
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">영등포구에서 추천할 만한 식당으로는 다음과 같습니다:
+백리향 - 정통 중식당으로 다양한 중화 요리를 제공합니다.
+을지로 전통육회 - 신선한 육회와 한우 요리로 유명합니다.
+여의도 샤브샤브 - 신선한 재료로 만든 샤브샤브가 인기입니다.
+마포갈매기 - 고기와 함께 다양한 반찬을 즐길 수 있는 고깃집입니다.
+영등포 순대국 - 진한 국물의 순대국으로 유명합니다.
 
-방문하셔서 맛있는 식사 즐기시길 바랍니다!</p>
+각 식당은 개성 있는 메뉴를 제공하니 참고하세요!</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">영등포구에는 다양한 종류의 맛집이 많습니다. 어떤 음식을 좋아하시는지, 어떤 분위기를 원하시는지 알려주시면 더욱 자세하게 추천해 드릴 수 있습니다. 하지만 우선 몇 가지 인기있는 식당을 추천해 드릴게요.
+
+한식:
+
+*   대문집: 50년 전통의 칼국수 맛집으로, 멸치 육수의 깊은 맛이 일품입니다. 특히 비 오는 날에 방문하면 더욱 운치 있습니다.
+*   화목순대국: 영등포에서 유명한 순대국 맛집입니다. 뽀얀 국물과 푸짐한 건더기가 특징이며, 특히 술안주로 인기가 많습니다.
+*   영등포 장군집: 돼지갈비, 돼지껍데기 등 돼지 특수부위 전문점입니다.</div>
+                        </div>
+
                     </div>
-                    
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 그중에서 클래식오븐은 어떤 곳인가요?</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">클래식오븐은 주로 빵, 케이크, 쿠키 등의 제과제빵 제품을 전문으로 하는 곳으로, 고전적인 방식과 현대적인 기술을 접목하여 다양한 디저트를 제공합니다. 또한, 고품질 재료를 사용하여 맛과 품질에 신경 쓰는 곳입니다.</p>
+                </div>
+                
+                <!-- Question Block -->
+                <div class="q-block q-block-border" style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. 그중에서 클래식오븐은 어떤 곳인가요?</h3>
+
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">클래식오븐은 서울 영등포구 당산동에 위치한 베이커리로, 고객들로부터 맛과 서비스 모두에서 높은 평가를 받고 있습니다. 빵 가격이 저렴하고 맛있는 다양한 제품을 제공하며, 특히 바질 치아바타와 휘낭시에가 추천받고 있습니다. 또한, 고객들은 빵과 커피의 조화에 만족하며 추가 주문을 할 정도로 인기가 있습니다. 이곳은 예약이 필수일 정도로 많은 사람들에게 사랑받고 있는 곳입니다.</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">클래식오븐은 서울 영등포구 당산동3가에 위치한 인기 베이커리로, 빵과 커피 맛이 훌륭하며 특히 바질 치아바타와 휘낭시에가 추천 메뉴입니다. 고객 리뷰를 통해 가격이 합리적이고 서비스 만족도가 높다는 것을 알 수 있습니다. 예약이 필수일 정도로 인기가 많으며, 영업시간은 17시까지입니다.</div>
+                        </div>
+
                     </div>
-                    
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 클래식오븐이 이 지역에서 자주 언급되는 이유는 무엇인가요?</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">클래식오븐이 이 지역에서 자주 언급되는 이유는 주로 그 독특한 요리 방식과 높은 품질의 음식 때문입니다. 또한, 전통적인 조리법을 현대적으로 재해석하여 많은 사람들에게 사랑받고 있어 인지도도 높아지고 있습니다. 지역 주민과 관광객 모두에게 인기 있는 장소로 자리 잡았기 때문입니다.</p>
+                </div>
+                
+                <!-- Question Block -->
+                <div class="q-block " style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. 클래식오븐이 이 지역에서 자주 언급되는 이유는 무엇인가요?</h3>
+
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">클래식오븐이 이 지역에서 자주 언급되는 이유는 뛰어난 맛과 합리적인 가격에 있습니다. 고객들은 특히 바질 치아바타와 휘낭시에를 추천하며, 빵과 커피의 조화가 좋다고 평가합니다. 또한, 서비스 품질이 높아 예약이 필수일 정도로 인기가 많습니다. 이러한 요소들이 클래식오븐을 지역 내 인기 있는 베이커리로 만들어주고 있습니다.</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">클래식오븐은 맛과 가격, 서비스 삼박자를 고루 갖춘 베이커리로 평가받고 있습니다. 특히 '빵 가격이 착하다'는 점은 고물가 시대에 경쟁력을 높이는 요소입니다. '바질 치아바타, 휘낭시에' 등 특정 메뉴에 대한 추천은 고객 충성도를 높이는 데 기여합니다. '예약 필수'라는 언급은 높은 인기를 방증하며, 긍정적인 고객 경험이 입소문으로 이어져 자주 언급되는 것으로 분석됩니다.</div>
+                        </div>
+
                     </div>
-                    
-
-                    
                 </div>
                 
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Gemini</h3>
-
-                    
-
-                    
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    
-                </div>
-                
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Claude</h3>
-
-                    
-
-                    
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    
-                </div>
-                
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Perplexity</h3>
-
-                    
-
-                    
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    
-                </div>
                 
             </div>
 
             <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <!-- Page 3: Review Insights (New) -->
-        <div class="page">
-            <div class="header">
-                <h1>고객 리뷰 분석 Insight</h1>
-                <span class="date">2026.01.15</span>
+        <!-- Page 3: Review Insights -->
+        <div class="page" style="page-break-before: always;">
+            <div class="header-prescription">
+                <h2>고객 리뷰 분석</h2>
+            </div>
+            
+            <div class="section-title">자주 언급된 표현 (긍정/특징)</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 12px; margin-top: -10px;">
+                고객들이 우리 매장을 경험할 때 가장 많이 사용하는 단어들입니다.
+                 <span style="color: #eab308; font-weight: bold;">
+                    (데이터
+                    부족으로 참고용)</span>
+                    
+            </p>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px;">
+                
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">이미지수</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(2)</span>
+                </div>
+                
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">빵 가격이 엄청 착하고 맛있어요</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
+                </div>
+                
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">바질 치아바타  휘낭시에 강추드려요</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
+                </div>
+                
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">빵도 커피도 맛나요</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
+                </div>
+                
             </div>
 
-            <div class="section">
+            <div class="section-title">자주 언급된 아쉬운 점 (Pain Points)</div>
+            <div
+                style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
                 
-                <div class="section-title">자주 언급된 표현 (긍정/특징)</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 12px; margin-top: -10px;">
-                    고객들이 우리 매장을 경험할 때 가장 많이 사용하는 단어들입니다.
-                     <span style="color: #eab308; font-weight: bold;">
-                        (데이터
-                        부족으로 참고용)</span>
-                        
+                <p style="color: #48bb78; font-weight: 600; text-align: center; margin: 0;">
+                    ✨ 반복되는 부정적인 피드백이 발견되지 않았습니다. 관리가 훌륭합니다!
                 </p>
+                
+            </div>
+            <!-- Pairings (New) -->
+            <div class="section-title">감성 조합 분석 (Sentiment Pairing)</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                키워드와 감정이 결합된 실제 고객 반응입니다. (파랑: 긍정, 빨강: 부정)
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;">
+                
+                <div style="color: #94a3b8; font-size: 13px;">분석된 감성 조합이 없습니다.</div>
+                
+            </div>
 
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px;">
-                    
-                    <div
-                        style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">이미지수</span>
-                        <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(2)</span>
-                    </div>
-                    
-                    <div
-                        style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">빵 가격이 엄청 착하고 맛있어요</span>
-                        <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
-                    </div>
-                    
-                    <div
-                        style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">바질 치아바타  휘낭시에 강추드려요</span>
-                        <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
-                    </div>
-                    
-                    <div
-                        style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">빵도 커피도 맛나요</span>
-                        <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
-                    </div>
-                    
-                </div>
+            
 
-                <div class="section-title">자주 언급된 아쉬운 점 (Pain Points)</div>
+            <style>
+                .card-positive {
+                    background: #f0fdf4 !important;
+                    color: #334155;
+                    line-height: 1.6;
+                }
+
+                .card-negative {
+                    background: #fff5f5 !important;
+                    color: #334155;
+                    line-height: 1.6;
+                }
+
+                .title-positive {
+                    color: #166534;
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                }
+
+                .title-negative {
+                    color: #991b1b;
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                }
+            </style>
+
+            <div class="section-title">대표 리뷰 샘플</div>
+            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+                
+                
                 <div
-                    style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-                    
-                    <p style="color: #48bb78; font-weight: 600; text-align: center; margin: 0;">
-                        ✨ 반복되는 부정적인 피드백이 발견되지 않았습니다. 관리가 훌륭합니다!
-                    </p>
-                    
-                </div>
-                <!-- Pairings (New) -->
-                <div class="section-title">감성 조합 분석 (Sentiment Pairing)</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
-                    키워드와 감정이 결합된 실제 고객 반응입니다. (파랑: 긍정, 빨강: 부정)
-                </p>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;">
-                    
-                    <div style="color: #94a3b8; font-size: 13px;">분석된 감성 조합이 없습니다.</div>
-                    
-                </div>
-
-                
-
-                <style>
-                    .card-positive {
-                        background: #f0fdf4 !important;
-                        color: #334155;
-                        line-height: 1.6;
-                    }
-
-                    .card-negative {
-                        background: #fff5f5 !important;
-                        color: #334155;
-                        line-height: 1.6;
-                    }
-
-                    .title-positive {
-                        color: #166534;
-                        font-weight: 700;
-                        margin-bottom: 6px;
-                    }
-
-                    .title-negative {
-                        color: #991b1b;
-                        font-weight: 700;
-                        margin-bottom: 6px;
-                    }
-                </style>
-
-                <div class="section-title">대표 리뷰 샘플</div>
-                <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
-                    
-                    
-                    <div
-                        style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                            
-                            <span style="font-size: 16px; margin-right: 6px;">💬</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
-                            
-                        </div>
-                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-                            "빵 가격이 엄청 착하고 맛있어요!
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
+                        
+                    </div>
+                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                        "빵 가격이 엄청 착하고 맛있어요!
 바질 치아바타, 휘낭시에 강추드려요!"
-                        </p>
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
+                        
                     </div>
-                    
-                    <div
-                        style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                            
-                            <span style="font-size: 16px; margin-right: 6px;">💬</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
-                            
-                        </div>
-                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-                            "빵도 커피도 맛나요! 빵 넘 맛있어서 먹다가 추가로 더 시켰어요 ㅋㅋㅋ"
-                        </p>
+                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                        "빵도 커피도 맛나요! 빵 넘 맛있어서 먹다가 추가로 더 시켰어요 ㅋㅋㅋ"
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        
+                        <span style="font-size: 16px; margin-right: 6px;">😊</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #16a34a;">좋은 점</span>
+                        
                     </div>
-                    
-                    <div
-                        style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                            
-                            <span style="font-size: 16px; margin-right: 6px;">😊</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #16a34a;">좋은 점</span>
-                            
-                        </div>
-                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-                            "훌륭한 베이커리. 사랑스러운 베이커리. 맛 뿐 아니라 서비스도 만점!
+                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                        "훌륭한 베이커리. 사랑스러운 베이커리. 맛 뿐 아니라 서비스도 만점!
 예약 필수!!!"
-                        </p>
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
+                        
                     </div>
-                    
-                    <div
-                        style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                            
-                            <span style="font-size: 16px; margin-right: 6px;">💬</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
-                            
-                        </div>
-                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-                            "클래식오븐베이커리
+                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                        "클래식오븐베이커리
 영업 중17:00에 영업 종료
 현재 위치에서
 8.8km
 서울 영등포구 당산동3가
 상세주소 열기"
-                        </p>
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
+                        
                     </div>
-                    
-                    <div
-                        style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                            
-                            <span style="font-size: 16px; margin-right: 6px;">💬</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
-                            
-                        </div>
-                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-                            "클래식오븐
+                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                        "클래식오븐
 베이커리
 10km
 © NAVER
@@ -765,105 +862,108 @@
 줌인
 줌아웃
 현 지도에서 검색"
-                        </p>
-                    </div>
-                    
-                    
+                    </p>
                 </div>
-
-                <!-- Always Visible Debug Info -->
-                <div
-                    style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8; border-top: 1px dotted #e2e8f0; padding-top: 10px;">
-                    * 상태 코드: N16_G3_K0
-                </div>
+                
+                
             </div>
 
-            <div class="footer">Page 3 / 5 • ReachCheck Analysis</div>
+            <!-- Always Visible Debug Info -->
+            <div
+                style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8; border-top: 1px dotted #e2e8f0; padding-top: 10px;">
+                * 상태 코드: N16_G3_K0
+            </div>
         </div>
 
-        <!-- Page 4: Improvements (Moved) -->
-        <div class="page">
-            <div class="header">
-                <h1>우선 개선 과제 (Top 3)</h1>
-                <span class="date">2026.01.15</span>
-            </div>
+        <div class="footer">Page 3 / 5 • ReachCheck Analysis</div>
+    </div>
 
-            <div class="section">
-                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
-                    가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
-                </p>
-
-                
-                <div class="priority-item">
-                    <div class="priority-rank">Priority 1</div>
-                    <div class="priority-title">매장 기본 정보 통일</div>
-                    <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">모든 지도 앱의 이름/전화번호/주소를 100% 동일하게 맞추세요.</p>
-                    <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
-                        <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
-                        <span style="color: #475569;">High</span>
-                    </div>
-                </div>
-                
-                <div class="priority-item">
-                    <div class="priority-rank">Priority 2</div>
-                    <div class="priority-title">AI가 이해하기 쉬운 소개글 추가</div>
-                    <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">소개글에 '지역명 + 업종 + 대표메뉴'를 명확한 문장으로 적으세요.</p>
-                    <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
-                        <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
-                        <span style="color: #475569;">Medium</span>
-                    </div>
-                </div>
-                
-                <div class="priority-item">
-                    <div class="priority-rank">Priority 3</div>
-                    <div class="priority-title">FAQ(자주 묻는 질문) 정리</div>
-                    <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">주차, 영업시간 등 질문과 답변을 플레이스 정보에 등록하세요.</p>
-                    <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
-                        <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
-                        <span style="color: #475569;">Medium</span>
-                    </div>
-                </div>
-                
-            </div>
-
-            <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
-                <p class="summary-text" style="color: #92400e; font-weight: 500;">
-                    <strong>💡 Insight:</strong><br>
-                    AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
-                </p>
-            </div>
-
-            <div class="footer">Page 4 / 5 • ReachCheck Analysis</div>
+    <!-- Page 4: Improvements (Moved) -->
+    <div class="page">
+        <div class="header">
+            <h1>우선 개선 과제 (Top 3)</h1>
+            <span class="date">2026.01.15</span>
         </div>
 
-        <!-- Page 5: Preview (Moved) -->
-        <div class="page">
-            <div class="header">
-                <h1>바로 사용할 수 있는 최적화 문장</h1>
-                <span class="date">2026.01.15</span>
-            </div>
+        <div class="section">
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
+            </p>
 
-            <div class="section">
-                <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
-                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
-                    네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 1</div>
+                <div class="priority-title">매장 기본 정보 통일</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">모든 지도 앱의 이름/전화번호/주소를 100% 동일하게 맞추세요.
                 </p>
-
-                <div class="quote-box">
-                    "클래식오븐은(는) 서울특별시 영등포구에서 꾸준히 언급되는 장소입니다."
-                </div>
-
-                <div style="text-align: right;">
-                    <button
-                        onclick="navigator.clipboard.writeText(`클래식오븐은(는) 서울특별시 영등포구에서 꾸준히 언급되는 장소입니다.`).then(()=>alert('복사되었습니다!'))"
-                        style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
-                        문장 복사하기
-                    </button>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">High</span>
                 </div>
             </div>
-
-            <div class="footer">Page 5 / 5 • ReachCheck Analysis</div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 2</div>
+                <div class="priority-title">AI가 이해하기 쉬운 소개글 추가</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">소개글에 '지역명 + 업종 + 대표메뉴'를 명확한 문장으로 적으세요.
+                </p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">Medium</span>
+                </div>
+            </div>
+            
+            <div class="priority-item">
+                <div class="priority-rank">Priority 3</div>
+                <div class="priority-title">FAQ(자주 묻는 질문) 정리</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">주차, 영업시간 등 질문과 답변을 플레이스 정보에 등록하세요.
+                </p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">Medium</span>
+                </div>
+            </div>
+            
         </div>
+
+        <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
+            <p class="summary-text" style="color: #92400e; font-weight: 500;">
+                <strong>💡 Insight:</strong><br>
+                AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
+            </p>
+        </div>
+
+        <div class="footer">Page 4 / 5 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 5: Preview (Moved) -->
+    <div class="page">
+        <div class="header">
+            <h1>바로 사용할 수 있는 최적화 문장</h1>
+            <span class="date">2026.01.15</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
+            </p>
+
+            <div class="quote-box">
+                "클래식오븐은(는) 서울특별시 영등포구에서 꾸준히 언급되는 장소입니다."
+            </div>
+
+            <div style="text-align: right;">
+                <button
+                    onclick="navigator.clipboard.writeText(`클래식오븐은(는) 서울특별시 영등포구에서 꾸준히 언급되는 장소입니다.`).then(()=>alert('복사되었습니다!'))"
+                    style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
+                    문장 복사하기
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">Page 5 / 5 • ReachCheck Analysis</div>
+    </div>
 
     </div> <!-- End Print Root -->
 </body>

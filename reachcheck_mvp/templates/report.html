@@ -251,29 +251,67 @@
 
             body {
                 background: white;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
             }
+        }
 
-            .print-root {
-                width: 210mm;
-                /* Allow overflow context but restrict items */
-            }
-
+        /* Mobile Responsiveness for Web Preview */
+        @media screen and (max-width: 768px) {
             .page {
-                box-shadow: none;
-                margin: 0;
-                page-break-after: always;
-                border: none;
-                width: 210mm;
-                height: 297mm;
-                /* Force strict height per page */
-                padding: 12mm 15mm;
-                overflow: hidden;
-                /* Prevent spill to next page */
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                height: auto;
+                min-height: 100vh;
+                margin-bottom: 20px;
             }
 
-            /* Flex gap polyfills typically not needed for modern print, but ensure layout holds */
+            /* Stack AI Columns on Mobile */
+            div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        body {
+            background: white;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .print-root {
+            width: 210mm;
+            /* Allow overflow context but restrict items */
+        }
+
+        .page {
+            box-shadow: none;
+            margin: 0;
+            page-break-after: always;
+            border: none;
+            width: 210mm;
+            height: 297mm;
+            /* Force strict height per page */
+            padding: 12mm 15mm;
+            overflow: hidden;
+            /* Prevent spill to next page */
+            margin-bottom: 0 !important;
+        }
+
+        /* Helper for conditional borders (avoids Jinja in style attr) */
+        .q-block-border {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        /* Strict AI Answer Alignment */
+        .ai-answer ul,
+        .ai-answer li,
+        .ai-answer p {
+            text-align: left !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+            list-style-position: inside !important;
+            white-space: pre-line !important;
+            /* Collapse runs of whitespace */
         }
     </style>
 </head>
@@ -315,7 +353,8 @@
                 <div>
                     <div style="font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 4px;">ReachCheck 처방전
                         (Prescription)</div>
-                    <div style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5;">
+                    <div
+                        style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5; word-break: keep-all; white-space: pre-wrap;">
                         "{{ data.review_insights.prescription if data.review_insights and
                         data.review_insights.prescription else '진단 데이터가 충분하지 않아 처방을 내릴 수 없습니다.' }}"
                     </div>
@@ -430,256 +469,286 @@
 
         <!-- Page 2: AI Responses -->
         <div class="page">
-            <div class="header">
-                <h1>AI가 바라본 우리 가게</h1>
-                <span class="date">{{ data.date }}</span>
+            <div class="header-prescription">
+                <h2>AI 엔진별 상세 답변 분석</h2>
             </div>
 
             <div class="section">
-                <div class="section-title">AI 엔진별 상세 답변 분석</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                    실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
-                </p>
+                {% if data.analysis.ai_responses.ChatGPT %}
+                {% for i in range(data.analysis.ai_responses.ChatGPT|length) %}
+                <!-- Question Block -->
+                <div class="q-block {% if not loop.last %}q-block-border{% endif %}" style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. {{ data.analysis.ai_responses.ChatGPT[i].question }}</h3>
 
-                {% for engine, responses in data.analysis.ai_responses.items() %}
-                <div class="card"
-                    style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">{{ engine }}</h3>
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
 
-                    {% for resp in responses %}
-                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. {{
-                            resp.question }}</div>
-                        <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                        <p style="font-size: 13px; color: #334155; margin: 0;">{{ resp.answer }}</p>
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">{{
+                                data.analysis.ai_responses.ChatGPT[i].answer }}</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">{% if
+                                data.analysis.ai_responses.Gemini and data.analysis.ai_responses.Gemini[i] %}{{
+                                data.analysis.ai_responses.Gemini[i].answer }}{% else %}<p
+                                    style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">분석 결과 없음</p>
+                                {% endif %}</div>
+                        </div>
+
                     </div>
-                    {% endfor %}
-
-                    {% if not responses %}
-                    <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                    {% endif %}
                 </div>
                 {% endfor %}
+                {% else %}
+                <div
+                    style="display: flex; align-items: center; justify-content: center; height: 300px; color: #94a3b8; font-size: 14px; text-align: center;">
+                    <p>AI 분석 결과가 없습니다.<br>(연동 상태를 확인해주세요)</p>
+                </div>
+                {% endif %}
             </div>
 
             <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <!-- Page 3: Review Insights (New) -->
-        <div class="page">
-            <div class="header">
-                <h1>고객 리뷰 분석 Insight</h1>
-                <span class="date">{{ data.date }}</span>
+        <!-- Page 3: Review Insights -->
+        <div class="page" style="page-break-before: always;">
+            <div class="header-prescription">
+                <h2>고객 리뷰 분석</h2>
             </div>
+            {% if data.review_insights and data.review_insights.review_count >= 5 %}
+            <div class="section-title">자주 언급된 표현 (긍정/특징)</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 12px; margin-top: -10px;">
+                고객들이 우리 매장을 경험할 때 가장 많이 사용하는 단어들입니다.
+                {% if data.review_insights.review_count < 20 %} <span style="color: #eab308; font-weight: bold;">
+                    (데이터
+                    부족으로 참고용)</span>
+                    {% endif %}
+            </p>
 
-            <div class="section">
-                {% if data.review_insights and data.review_insights.review_count >= 5 %}
-                <div class="section-title">자주 언급된 표현 (긍정/특징)</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 12px; margin-top: -10px;">
-                    고객들이 우리 매장을 경험할 때 가장 많이 사용하는 단어들입니다.
-                    {% if data.review_insights.review_count < 20 %} <span style="color: #eab308; font-weight: bold;">
-                        (데이터
-                        부족으로 참고용)</span>
-                        {% endif %}
-                </p>
-
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px;">
-                    {% for phrase in data.review_insights.top_phrases %}
-                    <div
-                        style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">{{ phrase.text }}</span>
-                        <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">({{ phrase.count }})</span>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="section-title">자주 언급된 아쉬운 점 (Pain Points)</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px;">
+                {% for phrase in data.review_insights.top_phrases %}
                 <div
-                    style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-                    {% if data.review_insights.pain_phrases %}
-                    {% for phrase in data.review_insights.pain_phrases %}
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #feb2b2; padding-bottom: 4px;">
-                        <span style="color: #c53030; font-weight: 600;">⚠️ {{ phrase.text }}</span>
-                        <span style="color: #e53e3e;">{{ phrase.count }}회 언급</span>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <p style="color: #48bb78; font-weight: 600; text-align: center; margin: 0;">
-                        ✨ 반복되는 부정적인 피드백이 발견되지 않았습니다. 관리가 훌륭합니다!
-                    </p>
-                    {% endif %}
-                </div>
-                <!-- Pairings (New) -->
-                <div class="section-title">감성 조합 분석 (Sentiment Pairing)</div>
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
-                    키워드와 감정이 결합된 실제 고객 반응입니다. (파랑: 긍정, 빨강: 부정)
-                </p>
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;">
-                    {% if data.review_insights.pairings %}
-                    {% for p in data.review_insights.pairings %}
-                    {% if p.sentiment == 'negative' %}
-                    <div
-                        style="background: #fef2f2; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #b91c1c; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">{{ p.text }}</span>
-                        <span style="font-size: 11px; opacity: 0.8; margin-left: 4px;">({{ p.count }})</span>
-                    </div>
-                    {% else %}
-                    <div
-                        style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
-                        <span style="font-weight: 700;">{{ p.text }}</span>
-                        <span style="font-size: 11px; opacity: 0.8; margin-left: 4px;">({{ p.count }})</span>
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                    {% else %}
-                    <div style="color: #94a3b8; font-size: 13px;">분석된 감성 조합이 없습니다.</div>
-                    {% endif %}
-                </div>
-
-                {% else %}
-                <div class="section-title" style="color: #64748b;">리뷰 분석 대기 중</div>
-                <div
-                    style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-                    <p style="font-size: 14px; color: #475569; margin-bottom: 8px; font-weight: 600;">
-                        현재 AI가 리뷰 데이터를 수집하고 분석하는 데 시간이 지연되고 있습니다.
-                    </p>
-                    <p style="font-size: 13px; color: #64748b; margin: 0;">
-                        잠시 후 다시 시도해주시거나, 데이터가 충분히 모이면 자동으로 분석 결과가 업데이트됩니다.<br>
-                        (현재 수집된 리뷰: {{ data.review_insights.review_count if data.review_insights else 0 }}개)
-                    </p>
-                    <!-- Debug info moved to footer -->
-                </div>
-                {% endif %}
-
-                <style>
-                    .card-positive {
-                        background: #f0fdf4 !important;
-                        color: #334155;
-                        line-height: 1.6;
-                    }
-
-                    .card-negative {
-                        background: #fff5f5 !important;
-                        color: #334155;
-                        line-height: 1.6;
-                    }
-
-                    .title-positive {
-                        color: #166534;
-                        font-weight: 700;
-                        margin-bottom: 6px;
-                    }
-
-                    .title-negative {
-                        color: #991b1b;
-                        font-weight: 700;
-                        margin-bottom: 6px;
-                    }
-                </style>
-
-                <div class="section-title">대표 리뷰 샘플</div>
-                <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
-                    {% if data.review_insights and data.review_insights.sample_reviews %}
-                    {% for sample in data.review_insights.sample_reviews %}
-                    <div
-                        style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                            {% if sample.type == 'positive' %}
-                            <span style="font-size: 16px; margin-right: 6px;">😊</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #16a34a;">좋은 점</span>
-                            {% elif sample.type == 'negative' %}
-                            <span style="font-size: 16px; margin-right: 6px;">😟</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #ef4444;">아쉬운 점</span>
-                            {% else %}
-                            <span style="font-size: 16px; margin-right: 6px;">💬</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
-                            {% endif %}
-                        </div>
-                        <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
-                            "{{ sample.text }}"
-                        </p>
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="card">수집된 샘플 리뷰가 없습니다.</div>
-                    {% endif %}
-                </div>
-
-                <!-- Always Visible Debug Info -->
-                <div
-                    style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8; border-top: 1px dotted #e2e8f0; padding-top: 10px;">
-                    * 상태 코드: {{ data.review_insights.debug_code if data.review_insights and
-                    data.review_insights.debug_code else 'System Init' }}
-                </div>
-            </div>
-
-            <div class="footer">Page 3 / 5 • ReachCheck Analysis</div>
-        </div>
-
-        <!-- Page 4: Improvements (Moved) -->
-        <div class="page">
-            <div class="header">
-                <h1>우선 개선 과제 (Top 3)</h1>
-                <span class="date">{{ data.date }}</span>
-            </div>
-
-            <div class="section">
-                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
-                    가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
-                </p>
-
-                {% for imp in data.analysis.improvements %}
-                <div class="priority-item">
-                    <div class="priority-rank">Priority {{ loop.index }}</div>
-                    <div class="priority-title">{{ imp.title }}</div>
-                    <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">{{ imp.description }}</p>
-                    <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
-                        <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
-                        <span style="color: #475569;">{{ imp.importance }}</span>
-                    </div>
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">{{ phrase.text }}</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">({{ phrase.count
+                        }})</span>
                 </div>
                 {% endfor %}
             </div>
 
-            <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
-                <p class="summary-text" style="color: #92400e; font-weight: 500;">
-                    <strong>💡 Insight:</strong><br>
-                    AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
+            <div class="section-title">자주 언급된 아쉬운 점 (Pain Points)</div>
+            <div
+                style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                {% if data.review_insights.pain_phrases %}
+                {% for phrase in data.review_insights.pain_phrases %}
+                <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #feb2b2; padding-bottom: 4px;">
+                    <span style="color: #c53030; font-weight: 600;">⚠️ {{ phrase.text }}</span>
+                    <span style="color: #e53e3e;">{{ phrase.count }}회 언급</span>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="color: #48bb78; font-weight: 600; text-align: center; margin: 0;">
+                    ✨ 반복되는 부정적인 피드백이 발견되지 않았습니다. 관리가 훌륭합니다!
                 </p>
+                {% endif %}
+            </div>
+            <!-- Pairings (New) -->
+            <div class="section-title">감성 조합 분석 (Sentiment Pairing)</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                키워드와 감정이 결합된 실제 고객 반응입니다. (파랑: 긍정, 빨강: 부정)
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;">
+                {% if data.review_insights.pairings %}
+                {% for p in data.review_insights.pairings %}
+                {% if p.sentiment == 'negative' %}
+                <div
+                    style="background: #fef2f2; border: 1px solid #fecaca; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #b91c1c; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">{{ p.text }}</span>
+                    <span style="font-size: 11px; opacity: 0.8; margin-left: 4px;">({{ p.count
+                        }})</span>
+                </div>
+                {% else %}
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">{{ p.text }}</span>
+                    <span style="font-size: 11px; opacity: 0.8; margin-left: 4px;">({{ p.count
+                        }})</span>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <div style="color: #94a3b8; font-size: 13px;">분석된 감성 조합이 없습니다.</div>
+                {% endif %}
             </div>
 
-            <div class="footer">Page 4 / 5 • ReachCheck Analysis</div>
+            {% else %}
+            <div class="section-title" style="color: #64748b;">리뷰 분석 대기 중</div>
+            <div
+                style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                <p style="font-size: 14px; color: #475569; margin-bottom: 8px; font-weight: 600;">
+                    현재 AI가 리뷰 데이터를 수집하고 분석하는 데 시간이 지연되고 있습니다.
+                </p>
+                <p style="font-size: 13px; color: #64748b; margin: 0;">
+                    잠시 후 다시 시도해주시거나, 데이터가 충분히 모이면 자동으로 분석 결과가 업데이트됩니다.<br>
+                    (현재 수집된 리뷰: {{ data.review_insights.review_count if data.review_insights else 0 }}개)
+                </p>
+                <!-- Debug info moved to footer -->
+            </div>
+            {% endif %}
+
+            <style>
+                .card-positive {
+                    background: #f0fdf4 !important;
+                    color: #334155;
+                    line-height: 1.6;
+                }
+
+                .card-negative {
+                    background: #fff5f5 !important;
+                    color: #334155;
+                    line-height: 1.6;
+                }
+
+                .title-positive {
+                    color: #166534;
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                }
+
+                .title-negative {
+                    color: #991b1b;
+                    font-weight: 700;
+                    margin-bottom: 6px;
+                }
+            </style>
+
+            <div class="section-title">대표 리뷰 샘플</div>
+            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+                {% if data.review_insights and data.review_insights.sample_reviews %}
+                {% for sample in data.review_insights.sample_reviews %}
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        {% if sample.type == 'positive' %}
+                        <span style="font-size: 16px; margin-right: 6px;">😊</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #16a34a;">좋은 점</span>
+                        {% elif sample.type == 'negative' %}
+                        <span style="font-size: 16px; margin-right: 6px;">😟</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #ef4444;">아쉬운 점</span>
+                        {% else %}
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
+                        {% endif %}
+                    </div>
+                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                        "{{ sample.text }}"
+                    </p>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="card">수집된 샘플 리뷰가 없습니다.</div>
+                {% endif %}
+            </div>
+
+            <!-- Always Visible Debug Info -->
+            <div
+                style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8; border-top: 1px dotted #e2e8f0; padding-top: 10px;">
+                * 상태 코드: {{ data.review_insights.debug_code if data.review_insights and
+                data.review_insights.debug_code else 'System Init' }}
+            </div>
         </div>
 
-        <!-- Page 5: Preview (Moved) -->
-        <div class="page">
-            <div class="header">
-                <h1>바로 사용할 수 있는 최적화 문장</h1>
-                <span class="date">{{ data.date }}</span>
-            </div>
+        <div class="footer">Page 3 / 5 • ReachCheck Analysis</div>
+    </div>
 
-            <div class="section">
-                <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
-                <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
-                    네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
-                </p>
-
-                <div class="quote-box">
-                    "{{ data.analysis.ai_intro_sentence }}"
-                </div>
-
-                <div style="text-align: right;">
-                    <button
-                        onclick="navigator.clipboard.writeText(`{{ data.analysis.ai_intro_sentence }}`).then(()=>alert('복사되었습니다!'))"
-                        style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
-                        문장 복사하기
-                    </button>
-                </div>
-            </div>
-
-            <div class="footer">Page 5 / 5 • ReachCheck Analysis</div>
+    <!-- Page 4: Improvements (Moved) -->
+    <div class="page">
+        <div class="header">
+            <h1>우선 개선 과제 (Top 3)</h1>
+            <span class="date">{{ data.date }}</span>
         </div>
+
+        <div class="section">
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                가장 적은 노력으로 가장 큰 효과를 볼 수 있는 개선 항목입니다.
+            </p>
+
+            {% for imp in data.analysis.improvements %}
+            <div class="priority-item">
+                <div class="priority-rank">Priority {{ loop.index }}</div>
+                <div class="priority-title">{{ imp.title }}</div>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">{{ imp.description }}
+                </p>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
+                    <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
+                    <span style="color: #475569;">{{ imp.importance }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="summary-box" style="background: #fffbeb; border-color: #fcd34d;">
+            <p class="summary-text" style="color: #92400e; font-weight: 500;">
+                <strong>💡 Insight:</strong><br>
+                AI 노출 최적화는 '기계'를 위한 것이 아니라, 결국 '고객'에게 올바른 정보를 전달하기 위한 노력입니다.
+            </p>
+        </div>
+
+        <div class="footer">Page 4 / 5 • ReachCheck Analysis</div>
+    </div>
+
+    <!-- Page 5: Preview (Moved) -->
+    <div class="page">
+        <div class="header">
+            <h1>바로 사용할 수 있는 최적화 문장</h1>
+            <span class="date">{{ data.date }}</span>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI 한 줄 소개 (One-Liner)</div>
+            <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                네이버 플레이스 상세설명이나 인스타그램 소개글에 그대로 복사해서 사용하세요.
+            </p>
+
+            <div class="quote-box">
+                "{{ data.analysis.ai_intro_sentence }}"
+            </div>
+
+            <div style="text-align: right;">
+                <button
+                    onclick="navigator.clipboard.writeText(`{{ data.analysis.ai_intro_sentence }}`).then(()=>alert('복사되었습니다!'))"
+                    style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
+                    문장 복사하기
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">Page 5 / 5 • ReachCheck Analysis</div>
+    </div>
 
     </div> <!-- End Print Root -->
 </body>

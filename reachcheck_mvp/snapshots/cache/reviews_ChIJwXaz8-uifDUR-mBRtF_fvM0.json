@@ -1,0 +1,68 @@
+{
+  "source": "consolidated",
+  "review_count": 16,
+  "top_phrases": [
+    {
+      "text": "양도 많고 맛도 엄청 맛있어요",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "아주 저렴한 가격에 한 끼 드실 수 있는 곳입니다",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "맛은 평범합니다",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "직원분들은 친절하시고  선불 결제입니다",
+      "count": 1,
+      "sentiment": "neutral"
+    }
+  ],
+  "pain_phrases": [],
+  "pairings": [],
+  "sample_reviews": [
+    {
+      "text": "처음 방문하는 국수나무\n나눔 맛집이라 그런지\n양도 많고 맛도 엄청 맛있어요\n초계국수 담백한맛 새콤달콤 돈까스 비빔국수\n우삼겹 깍두기 볶음밥 너무 맛있음 강추메뉴",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "아주 저렴한 가격에 한 끼 드실 수 있는 곳입니다. 맛은 평범합니다. 직원분들은 친절하시고, 선불 결제입니다.",
+      "type": "positive",
+      "date": null
+    },
+    {
+      "text": "맛없음",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "이미지 갯수\n+367\n국수나무 종로르메이에르점국수\n방문자 리뷰 183블로그 리뷰 16\n전화\n저장\n길찾기\n공유\n홈\n메뉴\n리뷰\n사진\n지도\n주변\n정보\n업체\n클립\n음식·음료\n돈가스\n냉국수\n비빔국수\n메뉴판\n방문자\n블로그",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "이용약관고객센터리뷰운영정책신고센터",
+      "type": "neutral",
+      "date": null
+    }
+  ],
+  "fallback_used": "none",
+  "notes": [
+    "Naver: 13, Google: 3, Kakao: 0"
+  ],
+  "debug_code": "N13_G3_K0",
+  "total_score": 0.0,
+  "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+  "marketing_copy": {
+    "instagram": "🌟 국수나무 종로르메이에르점에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+    "danggeun": "🥕 우리 동네 숨은 맛집 국수나무 종로르메이에르점! 주민 여러분 환영합니다.",
+    "hashtags": "#국수나무 종로르메이에르점 #동네맛집"
+  },
+  "collected_at": "2026-01-15T17:54:28.094204"
+}
