@@ -1,0 +1,63 @@
+{
+  "source": "consolidated",
+  "review_count": 15,
+  "top_phrases": [
+    {
+      "text": "맛있고 저렴하고 주인도 매우 친절함",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "커피보다 쥬스 추천합니다",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "싸고 맛있어요",
+      "count": 1,
+      "sentiment": "neutral"
+    }
+  ],
+  "pain_phrases": [],
+  "pairings": [],
+  "sample_reviews": [
+    {
+      "text": "맛있고 저렴하고 주인도 매우 친절함.\n커피보다 쥬스 추천합니다.",
+      "type": "positive",
+      "date": null
+    },
+    {
+      "text": "싸고 맛있어요!!",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "보통",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "전화\n저장\n길찾기\n공유",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "방문자 리뷰 865",
+      "type": "neutral",
+      "date": null
+    }
+  ],
+  "fallback_used": "none",
+  "notes": [
+    "Naver: 12, Google: 3, Kakao: 0"
+  ],
+  "debug_code": "N12_G3_K0",
+  "total_score": 0.0,
+  "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+  "marketing_copy": {
+    "instagram": "🌟 쥬씨 을지로다동점에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+    "danggeun": "🥕 우리 동네 숨은 맛집 쥬씨 을지로다동점! 주민 여러분 환영합니다.",
+    "hashtags": "#쥬씨 을지로다동점 #동네맛집"
+  },
+  "collected_at": "2026-01-15T14:11:38.390805"
+}

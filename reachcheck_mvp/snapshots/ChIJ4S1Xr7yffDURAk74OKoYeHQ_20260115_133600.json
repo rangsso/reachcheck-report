@@ -1,6 +1,6 @@
 {
     "store_id": "ChIJ4S1Xr7yffDURAk74OKoYeHQ",
-    "timestamp": "20260114_200515",
+    "timestamp": "20260115_133600",
     "standard_info": {
         "id": "ChIJ4S1Xr7yffDURAk74OKoYeHQ",
         "name": "클래식오븐",
@@ -20,7 +20,12 @@
         "phone": "Phone not available",
         "category": "Bakery",
         "lat": 0.0,
-        "lng": 0.0
+        "lng": 0.0,
+        "reviews": [
+            "빵 가격이 엄청 착하고 맛있어요!\n바질 치아바타, 휘낭시에 강추드려요!",
+            "빵도 커피도 맛나요! 빵 넘 맛있어서 먹다가 추가로 더 시켰어요 ㅋㅋㅋ",
+            "훌륭한 베이커리. 사랑스러운 베이커리. 맛 뿐 아니라 서비스도 만점!\n예약 필수!!!"
+        ]
     },
     "raw_naver": {
         "name": "클래식오븐",
@@ -40,17 +45,17 @@
         "ChatGPT": [
             {
                 "question": "서울특별시 영등포구에서 추천할 만한 식당이 있나요?",
-                "answer": "영등포구에는 다양한 맛집이 있습니다. 몇 곳 추천드리겠습니다:\n\n1. **영등포시장** - 전통시장에서 다양한 길거리 음식을 즐길 수 있습니다.\n2. **초밥집** - 신선한 초밥을 제공하는 곳으로, 특히 점심시간에 인기가 많습니다.\n3. **갈비집** - 양념 갈비가 유명한 곳으로, 고기가 부드럽고 맛있습니다.\n4. **분식집** - 떡볶이와 튀김이 인기 있는 가게로, 간단하게 한 끼 해결하기 좋습니다.\n\n원하시는 종류에 따라 선택하시면 좋을 것 같습니다!",
+                "answer": "영등포구에서 추천할 만한 식당으로는 '영등포 돼지갈비'와 '이태원 부대찌개'가 있습니다. 또한, '마포갈매기'의 고기와 '홍대돈부리'의 덮밥도 인기입니다. 다양한 메뉴가 있으니 한번 방문해보시기 바랍니다!",
                 "evaluation": "Bad"
             },
             {
                 "question": "그중에서 클래식오븐은 어떤 곳인가요?",
-                "answer": "클래식오븐은 주로 베이커리와 디저트를 전문으로 하는 카페나 레스토랑입니다. 다양한 종류의 빵과 디저트를 제공하며, 고급스러운 분위기에서 식사를 즐길 수 있는 곳입니다. 특정 지역이나 브랜드에 따라 다를 수 있으니, 자세한 정보는 해당 매장에 문의하시는 것이 좋습니다.",
+                "answer": "클래식오븐은 주로 베이커리와 카페가 결합된 공간으로, 다양한 빵과 디저트를 제공하는 곳입니다. 아늑한 분위기에서 커피와 함께 신선한 빵을 즐길 수 있는 매력적인 장소입니다. 추가 정보가 필요하시면 말씀해 주세요.",
                 "evaluation": "Good"
             },
             {
                 "question": "클래식오븐이 이 지역에서 자주 언급되는 이유는 무엇인가요?",
-                "answer": "클래식오븐이 이 지역에서 자주 언급되는 이유는 주로 그 품질과 맛, 그리고 다양한 요리를 가능하게 하는 기능 때문입니다. 또한, 많은 사람들이 가정에서 즐겨 사용하는 주방 기기이기 때문에 자연스럽게 대화에 오르기 쉽습니다. 다른 요리 기기와 비교하여 열 전달이 균일하고, 음식의 풍미를 살리는 데 효과적이기 때문입니다.",
+                "answer": "클래식오븐이 이 지역에서 자주 언급되는 이유는 주로 맛있는 빵과 디저트를 제공하기 때문입니다. 또한, 신선한 재료를 사용하고 전통적인 조리 방법을 고수하여 많은 사람들에게 사랑받고 있습니다. 그 외에도 분위기와 서비스가 좋다는 평이 많아 방문객들이 자주 찾는 곳으로 알려져 있습니다.",
                 "evaluation": "Good"
             }
         ]
@@ -99,65 +104,71 @@
         }
     },
     "review_insights": {
-        "source": "naver_playwright",
-        "review_count": 22,
+        "source": "consolidated",
+        "review_count": 19,
         "top_phrases": [
             {
-                "text": "eb****",
-                "count": 1919
+                "text": "이미지수",
+                "count": 2,
+                "sentiment": "neutral"
             },
             {
-                "text": "리뷰너굴",
-                "count": 691289395
+                "text": "빵 가격이 엄청 착하고 맛있어요",
+                "count": 1,
+                "sentiment": "neutral"
             },
             {
-                "text": "nueoes25",
-                "count": 108
+                "text": "바질 치아바타  휘낭시에 강추드려요",
+                "count": 1,
+                "sentiment": "neutral"
             },
             {
-                "text": "JiJi",
-                "count": 3023
-            },
-            {
-                "text": "wndus05031",
-                "count": 921341
+                "text": "빵도 커피도 맛나요",
+                "count": 1,
+                "sentiment": "neutral"
             }
         ],
         "pain_phrases": [],
         "sample_reviews": [
             {
-                "text": "이 키워드를 선택한 인원\n258",
+                "text": "빵 가격이 엄청 착하고 맛있어요!\n바질 치아바타, 휘낭시에 강추드려요!",
                 "type": "neutral",
-                "date": ""
+                "date": null
             },
             {
-                "text": "방문일\n25.12.25.목\n2025년 12월 25일 목요일",
+                "text": "빵도 커피도 맛나요! 빵 넘 맛있어서 먹다가 추가로 더 시켰어요 ㅋㅋㅋ",
                 "type": "neutral",
-                "date": ""
+                "date": null
             },
             {
-                "text": "2025년 11월 10일 월요일",
-                "type": "neutral",
-                "date": ""
+                "text": "훌륭한 베이커리. 사랑스러운 베이커리. 맛 뿐 아니라 서비스도 만점!\n예약 필수!!!",
+                "type": "positive",
+                "date": null
             },
             {
-                "text": "방문일\n25.11.21.금\n2025년 11월 21일 금요일",
+                "text": "클래식오븐베이커리\n영업 중17:00에 영업 종료\n현재 위치에서\n8.8km\n서울 영등포구 당산동3가\n상세주소 열기",
                 "type": "neutral",
-                "date": ""
+                "date": null
             },
             {
-                "text": "2025년 12월 25일 목요일",
+                "text": "클래식오븐\n베이커리\n10km\n© NAVER\n내 위치\n줌인\n줌아웃\n현 지도에서 검색",
                 "type": "neutral",
-                "date": ""
+                "date": null
             }
         ],
-        "fallback_used": "playwright",
+        "fallback_used": "none",
         "notes": [
-            "Playwright collected 22",
-            "PW Keywords: 10",
-            "Final count: 22"
+            "Naver: 16, Google: 3, Kakao: 0"
         ],
-        "debug_code": "t0:search_fail_200_pw:ok"
+        "debug_code": "N16_G3_K0",
+        "pairings": [],
+        "total_score": 0.0,
+        "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+        "marketing_copy": {
+            "instagram": "🌟 클래식오븐에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+            "danggeun": "🥕 우리 동네 숨은 맛집 클래식오븐! 주민 여러분 환영합니다.",
+            "hashtags": "#클래식오븐 #동네맛집"
+        }
     },
     "search_candidates": {
         "Kakao": [

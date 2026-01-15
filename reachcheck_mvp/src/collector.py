@@ -767,10 +767,15 @@ class DataCollector:
         
         for text in texts:
             # 1. Cleanup
-            # User request: "Minimize emoji removal, focus on trim"
-            # We remove only control chars and Korean Jamo (ㅋㅋ, ㅠㅠ) which are noise for phrase extraction
             clean_text = re.sub(r'[ㄱ-ㅎ]+', '', text) 
             
+            # POSITIVE GUARD: Skip phrases that are clearly positive
+            # This prevents "진짜 예술이에요" from being flagged as a pain point
+            POSITIVE_KEYWORDS = ["예술", "대박", "최고", "JMT", "존맛", "사랑", "감동", "훌륭", "완벽", "굿", "친절", "맛있", "좋아"]
+            if any(pos in clean_text for pos in POSITIVE_KEYWORDS):
+                phrases.append(clean_text)
+                continue
+
             # 2. Split (keep punctuation for splitting)
             sentences = re.split(r'[\.\!\?\n]', clean_text)
             
@@ -1500,33 +1505,57 @@ class DataCollector:
         notes.append(f"Naver: {len(naver_texts)}, Google: {g_count}, Kakao: {k_count}")
         
         # Analyze
-        top_phrases, pain_phrases = self._analyze_reviews(collected_texts)
+        top_phrases, pain_phrases, top_pairings = self._analyze_reviews(collected_texts)
         
-        # Override Top Phrases if we have Naver Keywords (they are high quality)
-        # (Optional refinement to mix data)
+        # Override Top Phrases if we have Naver Keywords
         if pw_keywords:
             official_phrases = [ReviewPhrase(text=k['text'], count=k['count']) for k in pw_keywords]
-            
-            # Combine: Official first, then text-mined
-            # Remove duplicates based on text
             seen_texts = {p.text for p in official_phrases}
             for p in top_phrases:
                 if p.text not in seen_texts:
                     official_phrases.append(p)
-            
-            top_phrases = official_phrases[:5] # Top 5
+            top_phrases = official_phrases[:5]
         
-        sample_reviews = [ReviewSample(text=t, type="neutral") for t in collected_texts[:5]]
+        # Calculate Prescription (Simple Logic)
+        prescription = "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요."
+        if pain_phrases:
+            top_pain = pain_phrases[0]
+            if "불친절" in top_pain.text:
+                prescription = "고객 서비스 응대 매뉴얼을 점검하고, 직원 교육을 강화하여 친절도를 높이세요."
+            elif any(x in top_pain.text for x in ["짜다", "싱겁다", "맛없다"]):
+                prescription = "음식의 간이나 조리 상태에 대한 주방 점검이 필요합니다."
+            elif "비싸" in top_pain.text:
+                prescription = "가격 대비 만족도를 높일 수 있는 사이드 제공이나 세트 구성을 고민해보세요."
+            elif any(x in top_pain.text for x in ["더럽다", "지저분", "청결"]):
+                prescription = "매장 청결 상태를 즉시 점검하고, 위생 관리에 집중하세요."
+            else:
+                 prescription = f"'{top_pain.text}'에 대한 불만이 감지되었습니다. 관련 부분을 점검해보세요."
+        
+        # Generator Marketing Copy
+        marketing_copy = self._generate_marketing_copy(store_name, top_pairings)
+        
+        # Classify Sample Reviews
+        sample_reviews = []
+        for t in collected_texts[:5]:
+            rtype = "neutral"
+            if any(pk in t for pk in ["예술", "대박", "최고", "짱", "존맛", "굿", "사랑", "감동", "친절", "추천", "훌륭", "완벽"]):
+                rtype = "positive"
+            elif any(nk in t for nk in ["별로", "아쉽", "불친절", "느리", "짜다", "비싸", "더럽", "지저분"]):
+                rtype = "negative"
+            sample_reviews.append(ReviewSample(text=t, type=rtype))
         
         stats = ReviewStats(
             source=source_used,
             review_count=len(collected_texts),
             top_phrases=top_phrases,
             pain_phrases=pain_phrases,
+            pairings=top_pairings,
             sample_reviews=sample_reviews,
             fallback_used="none",
             notes=notes,
-            debug_code=f"N{len(naver_texts)}_G{g_count}_K{k_count}"
+            debug_code=f"N{len(naver_texts)}_G{g_count}_K{k_count}",
+            prescription=prescription,
+            marketing_copy=marketing_copy
         )
         
         self._save_review_cache(cache_key, stats)
@@ -1572,10 +1601,14 @@ class DataCollector:
                 review_count=data["review_count"],
                 top_phrases=[ReviewPhrase(**p) for p in data["top_phrases"]],
                 pain_phrases=[ReviewPhrase(**p) for p in data["pain_phrases"]],
+                pairings=[ReviewPhrase(**p) for p in data.get("pairings", [])],
                 sample_reviews=[ReviewSample(**s) for s in data["sample_reviews"]],
                 fallback_used=data["fallback_used"],
                 notes=data.get("notes", []),
-                debug_code=data.get("debug_code")
+                debug_code=data.get("debug_code"),
+                total_score=data.get("total_score", 0.0),
+                prescription=data.get("prescription", ""),
+                marketing_copy=data.get("marketing_copy", {})
             )
         except Exception as e:
             print(f"[CACHE] Read failed: {e}")
@@ -1589,10 +1622,14 @@ class DataCollector:
                 "review_count": stats.review_count,
                 "top_phrases": [vars(p) for p in stats.top_phrases],
                 "pain_phrases": [vars(p) for p in stats.pain_phrases],
+                "pairings": [vars(p) for p in stats.pairings],
                 "sample_reviews": [vars(s) for s in stats.sample_reviews],
                 "fallback_used": stats.fallback_used,
                 "notes": stats.notes,
                 "debug_code": stats.debug_code,
+                "total_score": stats.total_score,
+                "prescription": stats.prescription,
+                "marketing_copy": stats.marketing_copy,
                 "collected_at": datetime.now().isoformat()
             }
             with open(path, "w", encoding="utf-8") as f:
@@ -1602,55 +1639,248 @@ class DataCollector:
 
     def _analyze_reviews(self, texts: List[str]) -> tuple[List[ReviewPhrase], List[ReviewPhrase]]:
         """
-        Rule-based phrase extraction.
-        1. Split by .!?
-        2. Filter by length (6-30) & Blacklist & Suffix
-        3. Simple normalization
-        4. Count & Pain point extraction
+        Morphological Analysis based phrase extraction (Kiwi).
+        1. Tokenize (Noun, Adjective)
+        2. Normalize (Lemma)
+        3. Filter Stopwords
+        4. Detect Pain Points via Negative Adjectives
         """
+        try:
+            from kiwipiepy import Kiwi
+            from kiwipiepy import Kiwi
+            kiwi = Kiwi() # Use default model (knlm) for stability
+        except ImportError:
+            print("[WARN] Kiwi not installed. Fallback to simple logic.")
+            return self._analyze_reviews_fallback(texts)
+            
         # Constants
+        STOPWORDS = {"이벤트", "협찬", "쿠폰", "블로그", "체험단", "방문", "리뷰", "사장님", "작성", "문의", 
+                     "예약", "서비스", "주차", "위치", "건물", "층", "역", "출구", "사람", "정도", 
+                     "하나", "정말", "진짜", "너무", "많이", "완전", "최고", "가게", "매장"}
+        
+        # System Keywords to Blacklist (Sentences containing these are skipped)
+        SYSTEM_KEYWORDS = {"이용약관", "개인정보처리방침", "신고하기", "닫기", "이미지", "접기", "지도", "복사", "확대", "축소", "플레이스", "MY", "공유"}
+
+        # Negative Sentiment Adjectives for Pain Points
+        NEGATIVE_ADJ = {"별로다", "아쉽다", "불친절하다", "느리다", "짜다", "싱겁다", "비싸다", 
+                        "좁다", "시끄럽다", "불편하다", "더럽다", "지저분하다", "나쁘다", "적다"}
+        
+        # Synonym Map for Semantic Aggregation
+        SYNONYM_MAP = {
+            "예술": "최고", "대박": "최고", "짱": "최고", "존맛": "맛있다", "굿": "최고", 
+            "사랑": "최고", "감동": "최고", "친절": "친절", "추천": "추천", "훌륭": "최고", 
+            "완벽": "최고", "JMT": "맛있다"
+        }
+
+        # Super Blacklist for Noise Filtering (ToS, System Messages)
+        SUPER_BLACKLIST = ["이용약관", "개인정보", "처리방침", "책임", "부적절", "신고", "권리", "침해", "게시물", "제재", "운영정책", "시스템", "오류", "문의"]
+        # Positive Keywords that should NEVER be negative
+        POSITIVE_KEYWORDS = ["예술", "대박", "최고", "짱", "존맛", "굿", "사랑", "감동", "친절", "추천", "훌륭", "완벽", "좋", "맛있", "빠르", "청결"]
+        
+        phrases = []
+        pain_candidates = []
+        pairings = [] # Noun-Adj Pairs
+        
+        print(f"[-] [Analysis] Analyzing {len(texts)} reviews with Kiwi...")
+        
+        for text in texts:
+            if not text: continue
+            
+            # 1. System Keyword Filter
+            if any(sys_k in text for sys_k in SYSTEM_KEYWORDS):
+                continue
+                
+            # 1-1. Super Blacklist & Length Check (New)
+            if len(text) > 30 and any(x in text for x in SUPER_BLACKLIST):
+                continue
+            
+            # Normalize text slightly before kiwi
+            clean_text = re.sub(r'[^\w\s\.\,\!]', ' ', text)
+            
+            # Split sentences for pairing context
+            # Use strict splitting including connectives to avoid cross-clause pairing and fix parsing issues
+            sentences = re.split(r'[\.\!\?\n]|는데|지만|하고|며 ', clean_text)
+
+            try:
+                for sent in sentences:
+                    if not sent.strip(): continue
+                    
+                    if not sent.strip(): continue
+                    
+                    tokens = kiwi.tokenize(sent)
+                    
+                    # Check Positive Context using Tokens (Handles contractions like '최곤데' -> '최고'+'ㄴ데')
+                    is_positive_context = False
+                    for t in tokens:
+                        if t.form in POSITIVE_KEYWORDS or t.form in SYNONYM_MAP:
+                            is_positive_context = True
+                            break
+
+                    # 1. Extract Keywords (Nouns/Adj) with Index
+                    nouns = [] # list of (word, index)
+                    adjectives = [] # list of (word, index)
+                    
+                    for i, t in enumerate(tokens):
+                        word = t.form
+                        if len(word) > 15: word = word[:15]
+                        
+                        if t.tag in ['NNG', 'NNP']:
+                            if len(word) >= 2 and word not in STOPWORDS:
+                                nouns.append((word, i)) # Store index for distance
+                                phrases.append(word)
+                                
+                                # Special Case: Treat Strong Positive Nouns as Adjectives for Pairing
+                                # e.g. "예술"(NNG) -> acts as "최고"(VA)
+                                if word in POSITIVE_KEYWORDS or word in SYNONYM_MAP:
+                                    adjectives.append((word, i)) # Add to adjectives too!
+                                
+                        elif t.tag == 'VA':
+                            # Normalize Adj
+                            norm_word = word + '다' if not word.endswith('다') else word
+                            if len(norm_word) >= 2 and norm_word not in STOPWORDS:
+                                adjectives.append((norm_word, i)) # Store index
+                                phrases.append(norm_word)
+                                
+                                # Pain Check
+                                # Use token-based positive context logic
+                                if norm_word in NEGATIVE_ADJ and not is_positive_context:
+                                    pain_candidates.append(norm_word)
+
+                    
+                    # 2. Distance-based Pairing (New)
+                    # Instead of Cartesian Product, find NEAREST adjective for each noun.
+                    # Limit distance to <= 3 words (tokens)
+                    for n_token in nouns:
+                        n_word, n_idx = n_token
+                        
+                        best_adj = None
+                        min_dist = 999
+                        
+                        for a_token in adjectives:
+                            a_word, a_idx = a_token
+                            dist = abs(n_idx - a_idx)
+                            
+                            if dist < min_dist:
+                                min_dist = dist
+                                best_adj = a_word
+                        
+                        # Threshold: Only if distance <= 5
+                        if best_adj and min_dist <= 5:
+                            # 3. Sentiment Determination
+                            sentiment = "positive" # Default
+                            
+                            # Hard Rule: If sentence has strong positive, forced positive
+                            sentence_has_positive = False
+                            for pk in POSITIVE_KEYWORDS:
+                                if pk in sent:
+                                    sentence_has_positive = True
+                                    break
+                            
+                            is_strong_positive = False
+                            
+                            # Map Synonym
+                            display_adj = best_adj
+                            # Remove '다' for shorter display
+                            if display_adj.endswith("다"): display_adj = display_adj[:-1] 
+                            
+                            for k, v in SYNONYM_MAP.items():
+                                if k in best_adj or k in n_word: # Check if noun or adj is synonym
+                                    display_adj = v
+                                    if v == "최고" or v == "맛있다": is_strong_positive = True
+                            
+                            if sentence_has_positive:
+                                is_strong_positive = True
+                                sentiment = "positive"
+                            
+                            # Only negative if in NEGATIVE_ADJ and NOT strong positive
+                            if not is_strong_positive and best_adj in NEGATIVE_ADJ:
+                                sentiment = "negative"
+                                display_adj = best_adj # Keep original negative word
+                            
+                            # Shorten Phrase: "Noun Adj"
+                            pair_text = f"{n_word} {display_adj}"
+                            pairings.append((pair_text, sentiment))
+
+            except Exception as e:
+                pass
+
+            except Exception as e:
+                pass
+
+        # Count frequencies
+        top_counter = Counter(phrases)
+        pain_counter = Counter(pain_candidates)
+        pair_counter = Counter(pairings)
+        
+        top_phrases = [ReviewPhrase(text=k, count=v) for k, v in top_counter.most_common(5)]
+        pain_phrases = [ReviewPhrase(text=k, count=v) for k, v in pain_counter.most_common(5)]
+        
+        # Pairings: Show Noun-Adj pairs. Filter count < 2
+        top_pairings_raw = pair_counter.most_common(12)
+        top_pairings = []
+        for (p_text, p_sent), p_count in top_pairings_raw:
+            if p_count < 2: continue # Semantic Aggregation Filter
+            top_pairings.append(ReviewPhrase(text=p_text, count=p_count, sentiment=p_sent))
+            
+        if not top_phrases and not pain_phrases:
+            return self._analyze_reviews_fallback(texts)
+            
+        return top_phrases, pain_phrases, top_pairings
+        # Let's attach pairings to a thread-local or modify return signature?
+        # Only caller is `collect_reviews`. Let's modify return to include pairings.
+        # NOTE: Python doesn't support changing Tuple size easily if typed.
+        # Let's return (top, pain, pairings). Update `collect_reviews` to unpack 3.
+        return top_phrases, pain_phrases, top_pairings
+
+    def _analyze_reviews_fallback(self, texts: List[str]) -> tuple[List[ReviewPhrase], List[ReviewPhrase], List[ReviewPhrase]]:
+        """
+        Original Rule-based phrase extraction (Backup).
+        """
+        # (Original Code Moved Here)
+        # We should return a struct or dict, or update caller.
+        # Caller expects: top_phrases, pain_phrases
+        # We need to pass pairings out.
+        # Let's attach pairings to a thread-local or modify return signature?
+        # Only caller is `collect_reviews`. Let's modify return to include pairings.
+        # NOTE: Python doesn't support changing Tuple size easily if typed.
+        # Let's return (top, pain, pairings). Update `collect_reviews` to unpack 3.
+        return top_phrases, pain_phrases, top_pairings
+
+    def _analyze_reviews_fallback(self, texts: List[str]) -> tuple[List[ReviewPhrase], List[ReviewPhrase], List[ReviewPhrase]]:
+        """
+        Original Rule-based phrase extraction (Backup).
+        """
+        # (Original Code Moved Here)
         BLACKLIST = ["이벤트", "협찬", "쿠폰", "블로그", "체험단", "방문", "리뷰", "사장님", "작성", "문의", "예약", "서비스", "주차", "위치", "건물", "층", "역", "출구"]
-        VALID_SUFFIXES = ["요", "니다", "음", "함", "임", "다", "거", "게", "죠", "네"] # Relaxed but prioritized
+        VALID_SUFFIXES = ["요", "니다", "음", "함", "임", "다", "거", "게", "죠", "네"]
         PAIN_KEYWORDS = ["별로", "아쉽", "불친절", "느리", "오래", "웨이팅", "대기", "비싸", "짜", "싱거", "좁", "시끄", "불편", "실망", "더러", "지저분", "냄새"]
         
         phrases = []
         pain_candidates = []
         
         for text in texts:
-            # 1. Cleanup
-            clean_text = re.sub(r'[^\w\s\.\!\?]', ' ', text) # Remove special chars except punctuation
-            
-            # 2. Split
+            clean_text = re.sub(r'[^\w\s\.\!\?]', ' ', text)
             sentences = re.split(r'[\.\!\?\n]', clean_text)
             
             for s in sentences:
                 s = s.strip()
                 if not s: continue
-                
-                # Length Filter
                 if len(s) < 6 or len(s) > 30: continue
-                
-                # Blacklist Filter
                 if any(bad in s for bad in BLACKLIST): continue
-                
-                # Suffix Filter (Must end with 'complete' Korean verb form approx)
                 if not any(s.endswith(suffix) for suffix in VALID_SUFFIXES): continue
                 
-                # Pain Point Check (Before Normalize)
                 if any(pk in s for pk in PAIN_KEYWORDS):
                     pain_candidates.append(s)
                 else:
                     phrases.append(s)
 
-        # Count
         top_counter = Counter(phrases)
         pain_counter = Counter(pain_candidates)
         
-        # Convert to objects
         top_phrases = [ReviewPhrase(text=k, count=v) for k, v in top_counter.most_common(5)]
         pain_phrases = [ReviewPhrase(text=k, count=v) for k, v in pain_counter.most_common(3)]
         
-        return top_phrases, pain_phrases
+        return top_phrases, pain_phrases, []
 
 
     def _log_source_data(self, source_name: str, data: dict):
@@ -2074,10 +2304,39 @@ class DataCollector:
 
         # Page 4 Sentence
         ai_intro_sentence = f"{store_info.name}은(는) {area}에서 꾸준히 언급되는 장소입니다."
+        
+        # Calculate ReachCheck Score (0-100)
+        # 1. Map Consistency (30%)
+        # map_accuracy is 0-100.
+        score_map = map_accuracy * 0.3
+        
+        # 2. Ratings (30%) - NOT COLLECTED YET in snapshot.raw
+        # We need rating. Assuming 4.0 if not present for MVP to avoid punishment.
+        # Ideally fetch from Google/Naver.
+        avg_rating = 4.0
+        score_rating = (avg_rating / 5.0) * 100 * 0.3
+        
+        # 3. AI Sentiment/Recognition (40%)
+        # ai_mention_rate is 0-100.
+        score_ai = ai_mention_rate * 0.4
+        
+        reachcheck_score = int(score_map + score_rating + score_ai)
+
+        # Generate Score Rationale
+        deductions = []
+        if score_map < 25: deductions.append("지도 정보 불일치")
+        if score_ai < 30: deductions.append("낮은 AI 언급 비율")
+        
+        if not deductions:
+            score_rationale = "지도 등록 상태와 AI 인지도 모두 매우 우수합니다."
+        else:
+            score_rationale = f"{', '.join(deductions)} 등이 점수에 영향을 주었습니다."
 
         return AnalysisResult(
             map_accuracy=map_accuracy,
             ai_mention_rate=ai_mention_rate,
+            reachcheck_score=reachcheck_score,
+            score_rationale=score_rationale,
             map_summary=map_summary,
             ai_summary=ai_summary,
             map_statuses=map_statuses,
@@ -2090,3 +2349,52 @@ class DataCollector:
             ai_responses=ai_responses,
             field_provenance=snapshot.field_provenance
         )
+
+    def _generate_marketing_copy(self, store_name: str, pairings: List[ReviewPhrase]) -> Dict[str, str]:
+        """
+        Generate marketing copies based on positive pairings.
+        """
+        positive_pairs = [p for p in pairings if p.sentiment != 'negative']
+        if not positive_pairs:
+            return {
+                "instagram": f"🌟 {store_name}에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+                "danggeun": f"🥕 우리 동네 숨은 맛집 {store_name}! 주민 여러분 환영합니다.",
+                "hashtags": f"#{store_name} #동네맛집"
+            }
+            
+        best_pair = positive_pairs[0]
+        # "김밥 - 맛있다" -> n="김밥", adj="맛있다"
+        parts = best_pair.text.split(" - ")
+        if len(parts) == 2:
+            menu, adj = parts
+        else:
+            menu, adj = parts[0], "좋다"
+            
+        # Instagram
+        insta_copy = f"""🌟 {store_name} 고객 리얼 후기!
+"여기 {menu} 진짜 {adj}네요!" 😍
+
+많은 분들이 사랑해주시는 {menu},
+아직 안 드셔보셨나요?
+오늘 {store_name}에서 특별한 맛을 즐겨보세요!
+
+📍 {store_name}
+✅ {menu} 맛집으로 소문 자자함!"""
+
+        # Danggeun
+        danggeun_copy = f"""🥕 동네 주민들이 인정한 찐맛집!
+안녕하세요, {store_name}입니다.
+
+저희 가게 {menu}가 정말 {adj}다는 칭찬을 많이 듣고 있어요. 😊
+이웃 여러분께 정성 가득한 한 끼를 대접합니다.
+
+단골손님이 추천하는 {menu}, 꼭 한번 드셔보세요!"""
+
+        # Hashtags
+        tags = f"#{store_name} #{menu} #리얼후기 #{menu}{adj}"
+        
+        return {
+            "instagram": insta_copy,
+            "danggeun": danggeun_copy,
+            "hashtags": tags
+        }

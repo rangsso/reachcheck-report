@@ -42,6 +42,7 @@ class ReviewAnalysis:
 class ReviewPhrase:
     text: str
     count: int
+    sentiment: str = "neutral" # positive, negative, neutral
 
 @dataclass
 class ReviewSample:
@@ -59,6 +60,11 @@ class ReviewStats:
     fallback_used: str = "none" # "none", "search_snippets", "playwright"
     notes: List[str] = field(default_factory=list)
     debug_code: Optional[str] = None # e.g. "t1:captcha", "pw:ok"
+    # New Fields for Advanced Analysis
+    pairings: List[ReviewPhrase] = field(default_factory=list)
+    total_score: float = 0.0
+    prescription: str = ""
+    marketing_copy: Dict[str, str] = field(default_factory=dict) # instagram, danggeun, hashtags
 
 @dataclass
 class StoreInfo:
@@ -143,6 +149,9 @@ class AnalysisResult:
     risks: List[str]
     opportunities: List[str]
     improvements: List[Dict[str, str]]  # {title, description, importance}
+    # New Score Field
+    reachcheck_score: int
+    score_rationale: str # New field for score explanation
     ai_intro_sentence: str
     
     # Page 2 Details

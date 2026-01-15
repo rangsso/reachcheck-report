@@ -4,31 +4,38 @@
   "top_phrases": [
     {
       "text": "종종 시켜먹거나 포장해옵니다",
-      "count": 1
+      "count": 1,
+      "sentiment": "neutral"
     },
     {
       "text": "매장에는 자리가 없어요",
-      "count": 1
+      "count": 1,
+      "sentiment": "neutral"
     },
     {
       "text": "매장은 깨끗하고 음식도 포장도 깨끗합니다",
-      "count": 1
+      "count": 1,
+      "sentiment": "neutral"
     },
     {
       "text": "김밥이 자꾸 생각나서 먹게 됩니다",
-      "count": 1
+      "count": 1,
+      "sentiment": "neutral"
     },
     {
       "text": "김밥 외 음식들도 맛있어요",
-      "count": 1
+      "count": 1,
+      "sentiment": "neutral"
     }
   ],
   "pain_phrases": [
     {
       "text": "제일 기대됐던 크래미김밥을 집어 맛을 보니 바로 실망함",
-      "count": 1
+      "count": 1,
+      "sentiment": "neutral"
     }
   ],
+  "pairings": [],
   "sample_reviews": [
     {
       "text": "종종 시켜먹거나 포장해옵니다.\n매장에는 자리가 없어요.\n매장은 깨끗하고 음식도 포장도 깨끗합니다.\n김밥이 자꾸 생각나서 먹게 됩니다.\n김밥 외 음식들도 맛있어요.\n파스타 떡볶이는 종류에 따라 호불호가 있어요. 떡볶이 말고 파스타만 먹고 싶은데 파스타만 판매하지는 않아요. 떡 제외 옵션 추가하면 좋을 것 같은데..",
@@ -61,5 +68,12 @@
     "Naver: 17, Google: 5, Kakao: 0"
   ],
   "debug_code": "N17_G5_K0",
-  "collected_at": "2026-01-15T10:45:38.906533"
+  "total_score": 0.0,
+  "prescription": "'제일 기대됐던 크래미김밥을 집어 맛을 보니 바로 실망함'에 대한 불만이 감지되었습니다. 관련 부분을 점검해보세요.",
+  "marketing_copy": {
+    "instagram": "🌟 유미분김밥 소정담 당산 본점에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+    "danggeun": "🥕 우리 동네 숨은 맛집 유미분김밥 소정담 당산 본점! 주민 여러분 환영합니다.",
+    "hashtags": "#유미분김밥 소정담 당산 본점 #동네맛집"
+  },
+  "collected_at": "2026-01-15T13:24:06.162509"
 }
