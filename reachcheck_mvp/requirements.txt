@@ -8,3 +8,5 @@ python-dotenv
 openai
 beautifulsoup4
 playwright
+supabase
+pgvector

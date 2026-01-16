@@ -647,24 +647,17 @@
             </style>
 
             <div class="section-title">대표 리뷰 샘플</div>
-            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+            <div class="grid-3" style="display: grid !important; grid-template-columns: 1fr 1fr; gap: 12px;">
                 {% if data.review_insights and data.review_insights.sample_reviews %}
                 {% for sample in data.review_insights.sample_reviews %}
                 <div
-                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                        {% if sample.type == 'positive' %}
-                        <span style="font-size: 16px; margin-right: 6px;">😊</span>
-                        <span style="font-size: 13px; font-weight: 700; color: #16a34a;">좋은 점</span>
-                        {% elif sample.type == 'negative' %}
-                        <span style="font-size: 16px; margin-right: 6px;">😟</span>
-                        <span style="font-size: 13px; font-weight: 700; color: #ef4444;">아쉬운 점</span>
-                        {% else %}
-                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
-                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">리뷰 내용</span>
-                        {% endif %}
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03); height: 110px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 14px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 12px; font-weight: 700; color: #1e293b;">리뷰 내용</span>
                     </div>
-                    <p style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5;">
+                    <p
+                        style="font-size: 12px; color: #334155; margin: 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
                         "{{ sample.text }}"
                     </p>
                 </div>

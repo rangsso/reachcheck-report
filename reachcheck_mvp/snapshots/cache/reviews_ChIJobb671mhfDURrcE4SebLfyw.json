@@ -1,0 +1,84 @@
+{
+  "source": "consolidated",
+  "review_count": 5,
+  "top_phrases": [
+    {
+      "text": "좋다",
+      "count": 9,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "스타벅스",
+      "count": 7,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "커피",
+      "count": 7,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "많다",
+      "count": 5,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "강남역",
+      "count": 4,
+      "sentiment": "neutral"
+    }
+  ],
+  "pain_phrases": [],
+  "pairings": [
+    {
+      "text": "자리 좋",
+      "count": 2,
+      "sentiment": "positive"
+    },
+    {
+      "text": "커피 좋",
+      "count": 2,
+      "sentiment": "positive"
+    }
+  ],
+  "sample_reviews": [
+    {
+      "text": "강남역 인근에서 가장 쾌적한 카페 중 한 곳인, 스타벅스 강남R점 !! 풍미 훌륭한 마이크로 블렌딩 원두와 다양한 디저트, 케이크 등을 마음껏 즐길 수 있는 멋진 카페 !!",
+      "type": "positive",
+      "date": null
+    },
+    {
+      "text": "강남역 카페 스타벅스 리저브\n강남역에서 가장 가까운 스타벅스 리저브 매장. 점포가 크고 자리 간격이 좁은데도 별로 여유가 없을 정도로 사람이 많은 편. 주말이면 크리스마스 시즌 한정 메뉴들은 저녁 시간 전에 솔드아웃 되는 듯. 리저브 음료들은 확실히 보기에도 좋고 풍미도 괜찮은 것 같다.",
+      "type": "negative",
+      "date": null
+    },
+    {
+      "text": "🌝장점\n-R 점이라 확실히 메뉴 선택권이 넓다\n-강남역에 바로 앞이라 엄청 가깝다\n\n🌚불편한점\n-화장실은 건물 안화장실을 써야해서 스타벅스를 나가야함\n-항상 사람이많음\n\n친구 기다리느라 스타벅스 R점에서 기다리는데 항상 사람이 많은곳이었는데 운좋게 자리가 나서 앉아서 기다렸어요~ 안쪽에는 1인이 노트북하기좋은자리도 있고 아무래도 학원가도 많아서 그런지 넓은책상에 각자 공부하시는 분들이 많으시더라구요!\n시설이 깔끔해서 좋아요~~",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "넓고 좌석배치도 좋음. 스타벅스 중에 좋은 환경을 가진 매장임. 단점은 화장실이 건물과 공동으로 쓰는데 더럽고 작고, 충전가능한 자리가 별로 없음.",
+      "type": "negative",
+      "date": null
+    },
+    {
+      "text": "맛점하고 친구 와 스타벅스 리저브 방문을 하였습니다  내가 원하는 원두와 커피추출방법을 직접 선택하는 재미가 있어요. 눈앞에서 직접 커피를 내려주는 모습을 보며 마시니 보통 카페에서 커피주문할 때 단순히 \"아이스아메리카노요\" 하며 마시는 커피와는 사뭇 다른 고급스럽고 분위기를 느끼며 좋은 커피를 마신다는 느낌이였습니다. 커피를 좋아하시는 분이라면 꼭 한번쯤은 경험해보시면 좋겠네요. 커피향도 정말 너무 좋고 직원분들도 정말 친절하셔서 즐거운 시간을 보냈어요.",
+      "type": "positive",
+      "date": null
+    }
+  ],
+  "fallback_used": "none",
+  "notes": [
+    "Naver: 0, Google: 5, Kakao: 0"
+  ],
+  "debug_code": "N0_G5_K0",
+  "total_score": 0.0,
+  "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+  "marketing_copy": {
+    "instagram": "🌟 StoreInfo(name='스타벅스 강남R점', address='서울 강남구 강남대로 396', phone='1522-3232', category='Cafe', place_id='ChIJobb671mhfDURrcE4SebLfyw') 고객 리얼 후기!\n\"여기 자리 좋 진짜 좋다네요!\" 😍\n\n많은 분들이 사랑해주시는 자리 좋,\n아직 안 드셔보셨나요?\n오늘 StoreInfo(name='스타벅스 강남R점', address='서울 강남구 강남대로 396', phone='1522-3232', category='Cafe', place_id='ChIJobb671mhfDURrcE4SebLfyw')에서 특별한 맛을 즐겨보세요!\n\n📍 StoreInfo(name='스타벅스 강남R점', address='서울 강남구 강남대로 396', phone='1522-3232', category='Cafe', place_id='ChIJobb671mhfDURrcE4SebLfyw')\n✅ 자리 좋 맛집으로 소문 자자함!",
+    "danggeun": "🥕 동네 주민들이 인정한 찐맛집!\n안녕하세요, StoreInfo(name='스타벅스 강남R점', address='서울 강남구 강남대로 396', phone='1522-3232', category='Cafe', place_id='ChIJobb671mhfDURrcE4SebLfyw')입니다.\n\n저희 가게 자리 좋가 정말 좋다다는 칭찬을 많이 듣고 있어요. 😊\n이웃 여러분께 정성 가득한 한 끼를 대접합니다.\n\n단골손님이 추천하는 자리 좋, 꼭 한번 드셔보세요!",
+    "hashtags": "#StoreInfo(name='스타벅스 강남R점', address='서울 강남구 강남대로 396', phone='1522-3232', category='Cafe', place_id='ChIJobb671mhfDURrcE4SebLfyw') #자리 좋 #리얼후기 #자리 좋좋다"
+  },
+  "collected_at": "2026-01-16T10:43:58.263547"
+}

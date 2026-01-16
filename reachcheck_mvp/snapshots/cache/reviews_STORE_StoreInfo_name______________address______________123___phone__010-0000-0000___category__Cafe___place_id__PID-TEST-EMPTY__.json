@@ -1,0 +1,21 @@
+{
+  "source": "consolidated",
+  "review_count": 0,
+  "top_phrases": [],
+  "pain_phrases": [],
+  "pairings": [],
+  "sample_reviews": [],
+  "fallback_used": "none",
+  "notes": [
+    "Naver: 0, Google: 0, Kakao: 0"
+  ],
+  "debug_code": "N0_G0_K0",
+  "total_score": 0.0,
+  "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+  "marketing_copy": {
+    "instagram": "🌟 StoreInfo(name='테스트용 빈 가게', address='서울 강남구 테헤란로 123', phone='010-0000-0000', category='Cafe', place_id='PID-TEST-EMPTY')에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+    "danggeun": "🥕 우리 동네 숨은 맛집 StoreInfo(name='테스트용 빈 가게', address='서울 강남구 테헤란로 123', phone='010-0000-0000', category='Cafe', place_id='PID-TEST-EMPTY')! 주민 여러분 환영합니다.",
+    "hashtags": "#StoreInfo(name='테스트용 빈 가게', address='서울 강남구 테헤란로 123', phone='010-0000-0000', category='Cafe', place_id='PID-TEST-EMPTY') #동네맛집"
+  },
+  "collected_at": "2026-01-16T10:45:11.988567"
+}

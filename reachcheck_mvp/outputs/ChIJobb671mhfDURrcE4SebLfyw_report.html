@@ -16,356 +16,302 @@
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 0;
-            background: #f5f5f5;
+            background: #525659;
             color: #333;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            word-break: keep-all;
         }
 
         .page {
             width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
+            height: 297mm;
+            padding: 20mm 15mm;
             box-sizing: border-box;
             background: white;
-            margin: 0 auto;
             position: relative;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
         }
 
         h1,
         h2,
         h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             word-break: keep-all;
         }
 
         p {
-            margin: 0 0 10px 0;
-            line-height: 1.6;
-            word-break: break-word;
-            /* Prevent overflow */
+            margin: 0 0 4px 0;
+            line-height: 1.4;
+            word-break: keep-all;
             white-space: pre-wrap;
-            /* Visualize \n */
         }
 
         .header {
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            flex-shrink: 0;
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #1a1a1a;
-            max-width: 80%;
+            margin: 0;
         }
 
         .header .date {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 700;
-            border-left: 5px solid #0052cc;
-            padding-left: 10px;
-            margin-bottom: 15px;
+            border-left: 4px solid #0052cc;
+            padding-left: 8px;
+            margin-bottom: 8px;
             color: #2c3e50;
         }
 
-        /* Summary Box */
-        .summary-box {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            padding: 20px;
-            border-radius: 8px;
+        /* Slim Health Banner */
+        .health-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .health-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .health-title {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .health-score {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .health-banner-right {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.95;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        /* Flex Row used for side-by-side blocks */
+        .flex-row-2 {
+            display: flex;
+            gap: 15px;
             margin-bottom: 20px;
+            /* Increased margin for better separation */
         }
 
-        .summary-text {
-            font-size: 15px;
-            line-height: 1.7;
-            color: #495057;
+        .flex-col-1 {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Status Badges */
+        /* Status Grid */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .mini-card {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .mini-card h4 {
+            font-size: 13px;
+            margin: 0 0 4px 0;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 12px;
+            /* Pill shape */
+            font-weight: 700;
             font-size: 11px;
             color: white;
-            vertical-align: middle;
         }
 
         .bg-green {
-            background-color: #28a745;
+            background: #22c55e;
         }
 
         .bg-yellow {
-            background-color: #ffc107;
-            color: #333;
+            background: #eab308;
+            color: #fff;
         }
 
         .bg-red {
-            background-color: #dc3545;
+            background: #ef4444;
+        }
+
+        /* Compact Table */
+        .compact-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            table-layout: fixed;
+        }
+
+        .compact-table th,
+        .compact-table td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 8px;
+            text-align: left;
+            overflow: visible;
+            white-space: normal;
+            word-break: keep-all;
+        }
+
+        .compact-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #475569;
         }
 
         .text-match {
             color: #16a34a;
+            font-weight: 700;
         }
 
         .text-mismatch {
             color: #dc2626;
-        }
-
-        /* Grid */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
-
-        .card {
-            border: 1px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            background: #fff;
-        }
-
-        .card h4 {
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: #1e293b;
-            font-weight: 600;
-        }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th,
-        td {
-            border: 1px solid #e2e8f0;
-            padding: 12px;
-            text-align: left;
-        }
-
-        /* STRICT PRINT STYLES - DO NOT MODIFY WITHOUT A4 VERIFICATION */
-        @media print {
-            @page {
-                size: A4;
-                margin: 12mm;
-                /* User requested 12mm */
-            }
-
-            /* 3) Reset HTML/Body for overflow handling */
-            html,
-            body {
-                width: auto !important;
-                height: auto !important;
-                overflow: visible !important;
-                background: white;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                margin: 0;
-                padding: 0;
-            }
-
-            /* 2) Constrain the wrapper */
-            .print-root {
-                width: 180mm;
-                max-width: 180mm;
-                margin: 0 auto;
-                padding: 0;
-                /* Fail-safe: Scale down slightly to ensure 180mm fits in any margin variance */
-                transform: scale(0.95);
-                transform-origin: top center;
-            }
-
-            /* 3) Force full width on children */
-            .page,
-            .container,
-            .card,
-            .section,
-            .summary-box,
-            table {
-                width: 100% !important;
-                max-width: 100% !important;
-                box-shadow: none !important;
-                border: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-sizing: border-box !important;
-            }
-
-            /* 3.1) Safety for Tables: Force fixed layout to prevent blowout */
-            table {
-                table-layout: fixed !important;
-            }
-
-            /* Re-establish logical page separation */
-            .page {
-                padding-bottom: 20px !important;
-                page-break-after: always;
-                break-after: page;
-                /* Keep internal padding for readability if needed, but safe to reset if margins handle it */
-                padding: 0 !important;
-            }
-
-            .page:last-child {
-                page-break-after: auto;
-            }
-
-            /* 3) Maximize images/tables */
-            img,
-            table,
-            pre,
-            code,
-            blockquote {
-                max-width: 100% !important;
-            }
-
-            /* 4) Force word breaks */
-            .card,
-            .section,
-            td,
-            p,
-            li,
-            h1,
-            h2,
-            h3,
-            h4,
-            span,
-            div,
-            th {
-                overflow-wrap: anywhere !important;
-                word-break: break-word !important;
-                white-space: normal !important;
-                /* Force wrap for badges too */
-            }
-
-            /* Specific workaround for badges to allow wrapping */
-            .status-badge,
-            .badge,
-            .pill {
-                white-space: normal !important;
-                max-width: 100% !important;
-                display: inline-block;
-            }
-
-            /* 5) Break rules */
-            .card,
-            .summary-box,
-            table,
-            tr,
-            .priority-item {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-
-            /* 6) Hide UI */
-            button,
-            .no-print {
-                display: none !important;
-            }
-        }
-
-
-        .priority-rank {
-            font-size: 11px;
-            color: #0052cc;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .priority-title {
-            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 8px;
-            color: #1e293b;
-        }
-
-        /* Quote */
-        .quote-box {
-            background: #f1f5f9;
-            border-left: 4px solid #334155;
-            padding: 25px;
-            font-style: italic;
-            font-size: 16px;
-            line-height: 1.8;
-            margin: 30px 0;
-            color: #334155;
-            font-family: 'Georgia', serif;
         }
 
         .footer {
             position: absolute;
-            bottom: 15mm;
-            left: 20mm;
-            right: 20mm;
+            bottom: 10mm;
+            left: 15mm;
+            right: 15mm;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #94a3b8;
             border-top: 1px solid #f1f5f9;
-            padding-top: 10px;
+            padding-top: 6px;
         }
 
-        /* Action Summary */
-        .action-summary-container {
-            background: #fff5f5;
-            border: 1px solid #feb2b2;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 30px;
+        .text-muted {
+            color: #94a3b8 !important;
         }
 
-        .warning-text {
-            color: #c53030;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 4px;
+        /* PRINT STYLES */
+        @media print {
+            @page {
+                margin: 0;
+                size: A4;
+            }
+
+            body {
+                background: white;
+            }
         }
 
-        .sub-text {
-            font-size: 14px;
-            color: #4a5568;
+        /* Mobile Responsiveness for Web Preview */
+        @media screen and (max-width: 768px) {
+            .page {
+                width: 100%;
+                padding: 10px;
+                box-sizing: border-box;
+                height: auto;
+                min-height: 100vh;
+                margin-bottom: 20px;
+            }
+
+            /* Stack AI Columns on Mobile */
+            div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
         }
 
-        .solution-box {
+        body {
             background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
-        .solution-tag {
-            background: #ebf8ff;
-            color: #2b6cb0;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
+        .print-root {
+            width: 210mm;
+            /* Allow overflow context but restrict items */
+        }
+
+        .page {
+            box-shadow: none;
+            margin: 0;
+            page-break-after: always;
+            border: none;
+            width: 210mm;
+            height: 297mm;
+            /* Force strict height per page */
+            padding: 12mm 15mm;
+            overflow: hidden;
+            /* Prevent spill to next page */
+            margin-bottom: 0 !important;
+        }
+
+        /* Helper for conditional borders (avoids Jinja in style attr) */
+        .q-block-border {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        /* Strict AI Answer Alignment */
+        .ai-answer ul,
+        .ai-answer li,
+        .ai-answer p {
+            text-align: left !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+            list-style-position: inside !important;
+            white-space: pre-line !important;
+            /* Collapse runs of whitespace */
         }
     </style>
 </head>
@@ -375,111 +321,138 @@
     <!-- Print Root Wrapper for Strict A4 Layout -->
     <div class="print-root">
 
-        <!-- Page 1: Summary -->
+        <!-- Page 1: Consolidated Summary -->
         <div class="page">
             <div class="header">
-                <h1>[스타벅스 강남R점] AI·검색 노출 진단 보고서</h1>
-                <span class="date">2026.01.14</span>
+                <h1>[스타벅스 강남R점] AI·검색 노출 진단 리포트</h1>
+                <span class="date">2026.01.16</span>
             </div>
 
-            <div class="section">
-                <div class="section-title">진단 요약</div>
-
-                
-                <div class="action-summary-container">
-                    <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-                        <div style="font-size: 24px;">🚨</div>
-                        <div>
-                            <div class="warning-text">현재 검색 결과에서 매장 정보가 불안정하게 노출되고 있습니다.</div>
-                            <div class="sub-text">이 문제를 방치하면 잠재 고객을 놓칠 수 있습니다.</div>
-                        </div>
+            <!-- 1. Horizontal Health Banner -->
+            <div style="margin-bottom: 15px;">
+                <div class="health-banner" style="margin-bottom: 8px;">
+                    <div class="health-banner-left">
+                        <span class="health-title">사장님의 매장 건강 점수</span>
+                        <span class="health-score">74점</span>
                     </div>
-
-                    <div class="solution-box">
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; color: #2d3748; margin-bottom: 4px;">🚀 오늘 바로 해결하기</div>
-                            <div style="font-size: 14px; color: #4a5568;">매장 기본 정보를 점검하세요.</div>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 12px; font-size: 13px; color: #718096; padding-left: 8px;">
-                        💡 <strong>예상 효과:</strong> 고객이 정확한 정보를 찾고 방문할 확률이 높아집니다.
+                    <div class="health-banner-right">
+                        상위 26% 수준 (매우 건강함)
                     </div>
                 </div>
-                
-
-                <div class="summary-box">
-                    <p class="summary-text">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
-                    <div style="height: 10px;"></div>
-                    <p class="summary-text">AI 검색 엔진마다 우리 매장을 설명하는 내용과 비중이 제각각입니다. 정보가 불일치하면 AI는 신뢰할 수 없는 정보로 판단하여 노출을 줄이거나 잘못된 답변을 할 수 있습니다.</p>
+                <!-- Health Score Rationale -->
+                <div style="text-align: right; font-size: 11px; color: #64748b; font-weight: 500;">
+                    * 지도 정보 불일치 등이 점수에 영향을 주었습니다.
                 </div>
             </div>
 
+            <!-- 2. Prescription Box (Full Width, Compact) -->
+            <div
+                style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 15px 20px; display: flex; align-items: flex-start; gap: 15px;">
+                <span style="font-size: 32px;">💊</span>
+                <div>
+                    <div style="font-size: 13px; color: #64748b; font-weight: 700; margin-bottom: 4px;">ReachCheck 처방전
+                        (Prescription)</div>
+                    <div
+                        style="font-size: 15px; color: #1e293b; font-weight: 500; line-height: 1.5; word-break: keep-all; white-space: pre-wrap;">
+                        "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요."
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Side-by-Side: Summary & Action Plan -->
+            <div class="flex-row-2">
+                <!-- Left: Diagnostic Summary -->
+                <div class="flex-col-1">
+                    <div class="section-title">진단 요약</div>
+                    <div
+                        style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; height: 100%; font-size: 13px; line-height: 1.6; color: #475569; word-break: keep-all; white-space: normal;">
+                        <p style="margin-bottom: 8px; word-break: keep-all;">고객이 가장 먼저 접하는 지도(기본 정보) 영역에서 정보가 서로 다르게 노출되고 있습니다.</p>
+                        <p style="word-break: keep-all;">AI에게 **'서울특별시 맛집'**으로 물어봤을 때, 우리 매장을 인식하고 있으나 정보 불일치가 우려됩니다. 정보가 불일치하면 AI는 신뢰도를 낮게 평가할 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <!-- Right: Action Plan -->
+                
+                <div class="flex-col-1">
+                    <div class="section-title">🚨 오늘 바로 해결하기</div>
+                    <div
+                        style="background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; padding: 15px; height: 100%;">
+                        <div style="color: #c53030; font-weight: 700; font-size: 14px; margin-bottom: 8px;">
+                            지도 앱마다 주소가 다릅니다. 내비게이션으로 찾아오는 고객이 길을 잃을 수 있습니다.
+                        </div>
+                        <div
+                            style="background: #fff; border: 1px solid #fed7d7; padding: 8px 12px; border-radius: 6px; display: inline-block; margin-bottom: 8px;">
+                            <span style="font-weight: 700; color: #2d3748; font-size: 13px;">🚀 Solution:</span>
+                            <span style="font-size: 13px; color: #4a5568;">각 지도 앱의 '주소'와 '도로명 주소'를 통일하세요.</span>
+                        </div>
+                        <div style="font-size: 11px; color: #718096;">
+                            * 예상 효과: 고객이 혼란 없이 매장 앞까지 정확하게 도착합니다.
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- 4. Map Channel Status (Simplified) -->
             <div class="section">
                 <div class="section-title">지도 채널 등록 현황</div>
                 <div class="grid-3">
                     
-                    <div class="card">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <h4>Naver</h4>
-                            <span class="status-badge bg-green">
-                                등록됨
-                            </span>
-                        </div>
-                        <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                    <div class="mini-card">
+                        <h4 style="margin-bottom: 8px;">
+                            Naver
+                        </h4>
+                        <span class="status-badge bg-red">
+                            [미등록]
+                        </span>
                     </div>
                     
-                    <div class="card">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <h4>Kakao</h4>
-                            <span class="status-badge bg-green">
-                                등록됨
-                            </span>
-                        </div>
-                        <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                    <div class="mini-card">
+                        <h4 style="margin-bottom: 8px;">
+                            Kakao
+                        </h4>
+                        <span class="status-badge bg-red">
+                            [미등록]
+                        </span>
                     </div>
                     
-                    <div class="card">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <h4>Google</h4>
-                            <span class="status-badge bg-green">
-                                등록됨
-                            </span>
-                        </div>
-                        <p style="font-size: 12px; color: #64748b;">Information found.</p>
+                    <div class="mini-card">
+                        <h4 style="margin-bottom: 8px;">
+                            Google
+                        </h4>
+                        <span class="status-badge bg-green">
+                            [정상]
+                        </span>
                     </div>
                     
                 </div>
             </div>
 
-            <div class="section">
-                <div class="section-title">데이터 출처 및 정합성 (Data Provenance)</div>
-                <table style="font-size: 11px; table-layout: fixed; width: 100%;">
+            <!-- 5. Consistency Table (Icons + Caption) -->
+            <div class="section" style="flex-grow: 1;">
+                <div class="section-title">데이터 출처 및 정합성 (Consistency Check)</div>
+                <table class="compact-table" style="font-size: 12px; margin-bottom: 8px;"> <!-- Slightly larger text -->
                     <thead>
-                        <tr style="background-color: #f8f9fa;">
-                            <th style="width: 15%">Field</th>
-                            <th style="width: 25%">Standard (Naver)</th>
-                            <th style="width: 20%">Kakao</th>
-                            <th style="width: 20%">Google</th>
-                            <th style="width: 20%">Status</th>
+                        <tr style="background-color: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
+                            <th style="width: 15%; padding: 10px;">항목</th>
+                            <th style="width: 25%; padding: 10px;">Naver (기준)</th>
+                            <th style="width: 20%; padding: 10px;">Kakao</th>
+                            <th style="width: 20%; padding: 10px;">Google</th>
+                            <th style="width: 10%; padding: 10px; text-align: center;">상태</th>
                         </tr>
                     </thead>
                     <tbody>
                         
                         
                         
-                        <tr>
-                            <td style="font-weight: 600; color: #475569;">Name</td>
-                            <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
-                            <td style="word-break: break-all;">스타벅스 강남R점</td>
-                            <td style="word-break: break-all;">스타벅스 강남R점</td>
-                            <td style="word-break: break-all;">스타벅스 강남R점</td>
-                            <td>
-                                <!-- Match Status Logic -->
-                                
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="font-weight: 700; color: #475569; padding: 12px 10px;">Name</td>
+                            <td style="padding: 12px 10px;">스타벅스 강남R점</td>
+                            <td style="padding: 12px 10px;" class="text-muted">
+                                -</td>
+                            <td style="padding: 12px 10px;" class="">
+                                스타벅스 강남R점</td>
+                            <td style="text-align: center; padding: 12px 10px;">
                                 
                                 
                                 
@@ -491,21 +464,22 @@
                                 
                                 
 
-                                <span class="text-match" style="font-weight: 700;">Match</span>
+                                
+                                <span style="font-size: 16px;">⚠️</span>
+                                
                             </td>
                         </tr>
                         
                         
                         
-                        <tr>
-                            <td style="font-weight: 600; color: #475569;">Address</td>
-                            <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
-                            <td style="word-break: break-all;">서울특별시 강남구 역삼동 825</td>
-                            <td style="word-break: break-all;">서울 강남구 강남대로 390</td>
-                            <td style="word-break: break-all;">서울특별시 강남구 강남대로 390</td>
-                            <td>
-                                <!-- Match Status Logic -->
-                                
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="font-weight: 700; color: #475569; padding: 12px 10px;">Address</td>
+                            <td style="padding: 12px 10px;">대한민국 서울특별시 강남구 강남대로 390</td>
+                            <td style="padding: 12px 10px;" class="text-muted">
+                                -</td>
+                            <td style="padding: 12px 10px;" class="">
+                                서울특별시 강남구 강남대로 390</td>
+                            <td style="text-align: center; padding: 12px 10px;">
                                 
                                 
                                 
@@ -517,21 +491,22 @@
                                 
                                 
 
-                                <span class="text-match" style="font-weight: 700;">Match</span>
+                                
+                                <span style="font-size: 16px;">⚠️</span>
+                                
                             </td>
                         </tr>
                         
                         
                         
-                        <tr>
-                            <td style="font-weight: 600; color: #475569;">Phone</td>
-                            <!-- Standard is Naver usually, but field_provenance has 'standard' key -->
-                            <td style="word-break: break-all;">02-561-3478</td>
-                            <td style="word-break: break-all;">1522-3232</td>
-                            <td style="word-break: break-all;">1522-3232</td>
-                            <td>
-                                <!-- Match Status Logic -->
-                                
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="font-weight: 700; color: #475569; padding: 12px 10px;">Phone</td>
+                            <td style="padding: 12px 10px;">1522-3232</td>
+                            <td style="padding: 12px 10px;" class="text-muted">
+                                -</td>
+                            <td style="padding: 12px 10px;" class="">
+                                1522-3232</td>
+                            <td style="text-align: center; padding: 12px 10px;">
                                 
                                 
                                 
@@ -543,7 +518,9 @@
                                 
                                 
 
-                                <span class="text-mismatch" style="font-weight: 700;">Mismatch</span>
+                                
+                                <span style="font-size: 16px;">⚠️</span>
+                                
                             </td>
                         </tr>
                         
@@ -553,122 +530,220 @@
                         
                     </tbody>
                 </table>
-                <div
-                    style="background: #f1f5f9; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 11px; color: #334155;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <span><strong>Standard Source:</strong> naver_seed</span>
-                        <span><strong>Phone Acquired By:</strong> search</span>
+                
+                <div style="font-size: 10px; color: #94a3b8; text-align: right; margin-top: 4px;">
+                    * Data Standard: discovered | Phone Source: search
+                </div>
+                
+            </div>
+
+            <div class="footer">Page 1 / 4 • ReachCheck Analysis</div>
+        </div>
+
+        <!-- Page 2: AI Responses -->
+        <div class="page">
+            <div class="header-prescription">
+                <h2>AI 엔진별 상세 답변 분석</h2>
+            </div>
+
+            <div class="section">
+                
+                
+                <!-- Question Block -->
+                <div class="q-block q-block-border" style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. 대한민국 서울특별시에서 추천할 만한 식당이 있나요?</h3>
+
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">네, 대한민국 서울특별시 지역에서 스타벅스 강남R점은(는) 방문객들에게 긍정적인 평가를 받고 있는 곳입니다. 특히 깔끔한 매장 분위기와 친절한 서비스로 인지도가 높아지고 있습니다.</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">네, 스타벅스 강남R점은(는) 대한민국 서울특별시 내에서 주목받는 식당입니다. 2026년 기준, 블로그와 SNS상에서 '숨은 맛집', '서비스 좋은 곳'이라는 키워드로 자주 공유되고 있습니다.</div>
+                        </div>
+
                     </div>
                 </div>
+                
+                <!-- Question Block -->
+                <div class="q-block q-block-border" style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. 그중에서 스타벅스 강남R점은 어떤 곳인가요?</h3>
+
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">스타벅스 강남R점은(는) 이 지역의 대표적인 식당 명소입니다. 최신 리뷰에 따르면, 재료의 신선함과 맛의 일관성이 뛰어나다는 평이 많아 재방문율이 높습니다.</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">스타벅스 강남R점은(는) 고객 소통이 활발하고 피드백 반영이 빠른 매장으로 인식됩니다. 편안한 분위기와 맛있는 음식 덕분에 긍정적인 입소문이 꾸준히 확산되고 있습니다.</div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- Question Block -->
+                <div class="q-block " style="margin-bottom: 12px;">
+                    <!-- Common Question Header -->
+                    <h3 style="font-size: 14px; font-weight: 700; color: #0f1ba0; margin: 0 0 8px 0; text-align: left;">
+                        Q. 스타벅스 강남R점이 이 지역에서 자주 언급되는 이유는 무엇인가요?</h3>
+
+                    <!-- Side-by-Side Grid (Equal Height) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch;">
+
+                        <!-- ChatGPT Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #10a37f; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                ChatGPT
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">GPT-4o
+                                    mini</span>
+                            </div>
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">고객들은 스타벅스 강남R점의 '가성비'와 '접근성'을 주요 장점으로 꼽습니다. 또한, 트렌디한 인테리어 덕분에 데이트 코스나 모임 장소로 자주 언급되고 있습니다.</div>
+                        </div>
+
+                        <!-- Gemini Column -->
+                        <div
+                            style="background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; text-align: left; display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+                            <div
+                                style="font-size: 11px; font-weight: 700; color: #4285f4; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                                Gemini
+                                <span
+                                    style="font-size: 9px; color: #64748b; background: #fff; padding: 1px 4px; border: 1px solid #cbd5e1; border-radius: 3px;">Gemini
+                                    2.0 Flash</span>
+                            </div>
+                            <!-- Single lined to prevent whitespace -->
+                            <div class="ai-answer"
+                                style="font-size: 13px; color: #1e293b; line-height: 1.45; flex-grow: 1;">주목할 점은 스타벅스 강남R점의 시그니처 메뉴에 대한 높은 만족도입니다. '사진 찍기 좋은 곳', '친절한 사장님' 같은 표현이 자주 등장하며, 지역 커뮤니티 추천 리스트에도 포함됩니다.</div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                
             </div>
+
+            <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
         </div>
 
-        <div class="footer">Page 1 / 4 • ReachCheck Analysis</div>
-    </div>
-
-    <!-- Page 2: AI Responses -->
-    <div class="page">
-        <div class="header">
-            <h1>AI가 바라본 우리 가게</h1>
-            <span class="date">2026.01.14</span>
-        </div>
-
-        <div class="section">
-            <div class="section-title">AI 엔진별 상세 답변 분석</div>
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                실제 AI에게 우리 매장에 대해 물어봤을 때의 답변입니다. (실제 데이터 기반)
+        <!-- Page 3: Review Insights -->
+        <div class="page" style="page-break-before: always;">
+            <div class="header-prescription">
+                <h2>고객 리뷰 분석</h2>
+            </div>
+            
+            <div class="section-title">자주 언급된 표현 (긍정/특징)</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 12px; margin-top: -10px;">
+                고객들이 우리 매장을 경험할 때 가장 많이 사용하는 단어들입니다.
+                
             </p>
 
-            
-            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">ChatGPT</h3>
-
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px;">
                 
-                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 서울특별시 강남구에서 추천할 만한 식당이 있나요?</div>
-                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                    <p style="font-size: 13px; color: #334155; margin: 0;">서울특별시 강남구에는 다양한 맛집이 있습니다. 몇 곳 추천드리자면:
-
-1. **삼원가든** - 한우와 갈비로 유명한 고기집입니다.
-2. **이태리식당 파올로** - 정통 이탈리안 요리를 즐길 수 있는 곳입니다.
-3. **마포갈매기** - 고기와 함께 다양한 반찬을 제공하는 갈비집입니다.
-4. **청담동 해물탕** - 신선한 해산물을 즐길 수 있는 해물탕 전문점입니다.
-
-각 식당마다 특징이 있으니, 취향에 맞춰 선택해 보세요!</p>
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">송자매맘</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(114)</span>
                 </div>
                 
-                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 그중에서 스타벅스 강남R점은 어떤 곳인가요?</div>
-                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                    <p style="font-size: 13px; color: #334155; margin: 0;">스타벅스 강남R점은 서울 강남구에 위치한 매장으로, 현대적이고 세련된 인테리어가 특징입니다. 다양한 커피와 음료, 디저트를 제공하며, 편안한 분위기에서 휴식을 취할 수 있는 공간입니다. 또한, Wi-Fi와 전원 공급이 잘 되어 있어 작업이나 공부를 하기에 적합한 장소입니다.</p>
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">이미지는 연출된 사진이므로 실제와 다를 수 있습니다</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(5)</span>
                 </div>
                 
-                <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
-                    <div style="font-size: 13px; font-weight: 700; color: #0052cc; margin-bottom: 6px;">Q. 스타벅스 강남R점이 이 지역에서 자주 언급되는 이유는 무엇인가요?</div>
-                    <!-- Using pre-wrap logic via CSS on <p> to handle newlines -->
-                    <p style="font-size: 13px; color: #334155; margin: 0;">스타벅스 강남R점은 강남역 근처에 위치해 있어 유동인구가 많고, 현대적인 인테리어와 편안한 분위기로 많은 사람들이 방문합니다. 또한, 다양한 음료와 디저트를 제공하여 인기가 높습니다. 이러한 이유들로 인해 이 지역에서 자주 언급되고 있습니다.</p>
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">2km 반경 내에 주문 가능한 매장이 없습니다</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(2)</span>
                 </div>
                 
-
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">R 점이라 확실히 메뉴 선택권이 넓다</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
+                </div>
+                
+                <div
+                    style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 16px; font-size: 13px; color: #1e40af; display: flex; align-items: center;">
+                    <span style="font-weight: 700;">항상 사람이많음</span>
+                    <span style="font-size: 11px; color: #60a5fa; margin-left: 4px;">(1)</span>
+                </div>
                 
             </div>
-            
-            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Gemini</h3>
 
-                
-
-                
-                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                
-            </div>
-            
-            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Claude</h3>
-
-                
-
-                
-                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                
-            </div>
-            
-            <div class="card" style="margin-bottom: 20px; page-break-inside: avoid; border-left: 4px solid #cbd5e1;">
-                <h3 style="font-size: 16px; margin-bottom: 12px; color: #334155;">Perplexity</h3>
-
-                
-
-                
-                <p style="font-size: 13px; color: #ef4444; font-style: italic;">응답이 없거나 서비스를 사용할 수 없습니다.</p>
-                
-            </div>
-            
-        </div>
-
-        <div class="footer">Page 2 / 4 • ReachCheck Analysis</div>
-    </div>
-
-    <!-- Page 3: Review Insights (New) -->
-    <div class="page">
-        <div class="header">
-            <h1>고객 리뷰 분석 Insight</h1>
-            <span class="date">2026.01.14</span>
-        </div>
-
-        <div class="section">
-            
-            <div class="section-title" style="color: #64748b;">리뷰 분석 대기 중</div>
+            <div class="section-title">자주 언급된 아쉬운 점 (Pain Points)</div>
             <div
-                style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-                <p style="font-size: 14px; color: #475569; margin-bottom: 8px; font-weight: 600;">
-                    현재 AI가 리뷰 데이터를 수집하고 분석하는 데 시간이 지연되고 있습니다.
+                style="background: #fff5f5; border: 1px solid #fed7d7; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                
+                <p style="color: #48bb78; font-weight: 600; text-align: center; margin: 0;">
+                    ✨ 반복되는 부정적인 피드백이 발견되지 않았습니다. 관리가 훌륭합니다!
                 </p>
-                <p style="font-size: 13px; color: #64748b; margin: 0;">
-                    잠시 후 다시 시도해주시거나, 데이터가 충분히 모이면 자동으로 분석 결과가 업데이트됩니다.<br>
-                    (현재 수집된 리뷰: 0개)
-                </p>
-                <!-- Debug info moved to footer -->
+                
             </div>
+            <!-- Pairings (New) -->
+            <div class="section-title">감성 조합 분석 (Sentiment Pairing)</div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">
+                키워드와 감정이 결합된 실제 고객 반응입니다. (파랑: 긍정, 빨강: 부정)
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;">
+                
+                <div style="color: #94a3b8; font-size: 13px;">분석된 감성 조합이 없습니다.</div>
+                
+            </div>
+
             
 
             <style>
@@ -698,16 +773,86 @@
             </style>
 
             <div class="section-title">대표 리뷰 샘플</div>
-            <div class="grid-3" style="grid-template-columns: 1fr 1fr;">
+            <div class="grid-3" style="grid-template-columns: 1fr 1fr; gap: 12px;">
                 
-                <div class="card">수집된 샘플 리뷰가 없습니다.</div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03); height: 140px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e293b;">리뷰 내용</span>
+                    </div>
+                    <p
+                        style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        "강남역 인근에서 가장 쾌적한 카페 중 한 곳인, 스타벅스 강남R점 !! 풍미 훌륭한 마이크로 블렌딩 원두와 다양한 디저트, 케이크 등을 마음껏 즐길 수 있는 멋진 카페 !!"
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03); height: 140px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e293b;">리뷰 내용</span>
+                    </div>
+                    <p
+                        style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        "강남역 카페 스타벅스 리저브
+강남역에서 가장 가까운 스타벅스 리저브 매장. 점포가 크고 자리 간격이 좁은데도 별로 여유가 없을 정도로 사람이 많은 편. 주말이면 크리스마스 시즌 한정 메뉴들은 저녁 시간 전에 솔드아웃 되는 듯. 리저브 음료들은 확실히 보기에도 좋고 풍미도 괜찮은 것 같다."
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03); height: 140px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e293b;">리뷰 내용</span>
+                    </div>
+                    <p
+                        style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        "🌝장점
+-R 점이라 확실히 메뉴 선택권이 넓다
+-강남역에 바로 앞이라 엄청 가깝다
+
+🌚불편한점
+-화장실은 건물 안화장실을 써야해서 스타벅스를 나가야함
+-항상 사람이많음
+
+친구 기다리느라 스타벅스 R점에서 기다리는데 항상 사람이 많은곳이었는데 운좋게 자리가 나서 앉아서 기다렸어요~ 안쪽에는 1인이 노트북하기좋은자리도 있고 아무래도 학원가도 많아서 그런지 넓은책상에 각자 공부하시는 분들이 많으시더라구요!
+시설이 깔끔해서 좋아요~~"
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03); height: 140px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e293b;">리뷰 내용</span>
+                    </div>
+                    <p
+                        style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        "넓고 좌석배치도 좋음. 스타벅스 중에 좋은 환경을 가진 매장임. 단점은 화장실이 건물과 공동으로 쓰는데 더럽고 작고, 충전가능한 자리가 별로 없음."
+                    </p>
+                </div>
+                
+                <div
+                    style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03); height: 140px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 16px; margin-right: 6px;">💬</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e293b;">리뷰 내용</span>
+                    </div>
+                    <p
+                        style="font-size: 13px; color: #334155; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                        "맛점하고 친구 와 스타벅스 리저브 방문을 하였습니다  내가 원하는 원두와 커피추출방법을 직접 선택하는 재미가 있어요. 눈앞에서 직접 커피를 내려주는 모습을 보며 마시니 보통 카페에서 커피주문할 때 단순히 "아이스아메리카노요" 하며 마시는 커피와는 사뭇 다른 고급스럽고 분위기를 느끼며 좋은 커피를 마신다는 느낌이였습니다. 커피를 좋아하시는 분이라면 꼭 한번쯤은 경험해보시면 좋겠네요. 커피향도 정말 너무 좋고 직원분들도 정말 친절하셔서 즐거운 시간을 보냈어요."
+                    </p>
+                </div>
+                
                 
             </div>
 
             <!-- Always Visible Debug Info -->
             <div
                 style="margin-top: 20px; text-align: right; font-size: 11px; color: #94a3b8; border-top: 1px dotted #e2e8f0; padding-top: 10px;">
-                * 상태 코드: t0:search_fail_200_pw:empty_no_reviews
+                * 상태 코드: N173_G5_K0
             </div>
         </div>
 
@@ -718,7 +863,7 @@
     <div class="page">
         <div class="header">
             <h1>우선 개선 과제 (Top 3)</h1>
-            <span class="date">2026.01.14</span>
+            <span class="date">2026.01.16</span>
         </div>
 
         <div class="section">
@@ -730,7 +875,8 @@
             <div class="priority-item">
                 <div class="priority-rank">Priority 1</div>
                 <div class="priority-title">매장 기본 정보 통일</div>
-                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">모든 지도 앱의 이름/전화번호/주소를 100% 동일하게 맞추세요.</p>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">모든 지도 앱의 이름/전화번호/주소를 100% 동일하게 맞추세요.
+                </p>
                 <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
                     <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
                     <span style="color: #475569;">High</span>
@@ -740,7 +886,8 @@
             <div class="priority-item">
                 <div class="priority-rank">Priority 2</div>
                 <div class="priority-title">AI가 이해하기 쉬운 소개글 추가</div>
-                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">소개글에 '지역명 + 업종 + 대표메뉴'를 명확한 문장으로 적으세요.</p>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">소개글에 '지역명 + 업종 + 대표메뉴'를 명확한 문장으로 적으세요.
+                </p>
                 <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
                     <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
                     <span style="color: #475569;">Medium</span>
@@ -750,7 +897,8 @@
             <div class="priority-item">
                 <div class="priority-rank">Priority 3</div>
                 <div class="priority-title">FAQ(자주 묻는 질문) 정리</div>
-                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">주차, 영업시간 등 질문과 답변을 플레이스 정보에 등록하세요.</p>
+                <p style="font-size: 14px; color: #334155; margin-bottom: 12px;">주차, 영업시간 등 질문과 답변을 플레이스 정보에 등록하세요.
+                </p>
                 <div style="background: #f8fafc; padding: 10px; border-radius: 4px; font-size: 12px;">
                     <span style="font-weight: 700; color: #0f172a;">Why it matters:</span>
                     <span style="color: #475569;">Medium</span>
@@ -773,7 +921,7 @@
     <div class="page">
         <div class="header">
             <h1>바로 사용할 수 있는 최적화 문장</h1>
-            <span class="date">2026.01.14</span>
+            <span class="date">2026.01.16</span>
         </div>
 
         <div class="section">
@@ -783,12 +931,12 @@
             </p>
 
             <div class="quote-box">
-                "스타벅스 강남R점은(는) 서울특별시 강남구에서 꾸준히 언급되는 장소입니다."
+                "스타벅스 강남R점은(는) 대한민국 서울특별시에서 꾸준히 언급되는 장소입니다."
             </div>
 
             <div style="text-align: right;">
                 <button
-                    onclick="navigator.clipboard.writeText(`스타벅스 강남R점은(는) 서울특별시 강남구에서 꾸준히 언급되는 장소입니다.`).then(()=>alert('복사되었습니다!'))"
+                    onclick="navigator.clipboard.writeText(`스타벅스 강남R점은(는) 대한민국 서울특별시에서 꾸준히 언급되는 장소입니다.`).then(()=>alert('복사되었습니다!'))"
                     style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: inline-block;">
                     문장 복사하기
                 </button>

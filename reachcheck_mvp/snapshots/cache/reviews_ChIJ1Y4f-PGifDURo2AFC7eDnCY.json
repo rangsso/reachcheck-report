@@ -1,0 +1,74 @@
+{
+  "source": "consolidated",
+  "review_count": 23,
+  "top_phrases": [
+    {
+      "text": "롯데리아 소공2호점햄버거",
+      "count": 6,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "올만에 롯데리아의 라이스버거를 먹었다",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "회포를  풀고 왔다",
+      "count": 1,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "와규버거는 맛있었습니다",
+      "count": 1,
+      "sentiment": "neutral"
+    }
+  ],
+  "pain_phrases": [
+    {
+      "text": "하지만 소공2소점은 사람이 너무 많아서 대기가 꽤 길다",
+      "count": 1,
+      "sentiment": "neutral"
+    }
+  ],
+  "pairings": [],
+  "sample_reviews": [
+    {
+      "text": "롯데백화점 지하철에서 바로 진입가능한 후문쪽에 존재합니다.\n롯데백화점에서 일하시는 직원분들도 출근시간 즐길수 있고 이른시간 아침해결을 위해서 많은 관광객들이 들리는곳입니다.\n장점은 롯데백화점 본점에 있어서 롯데계열의 햄버거 점포이니 음식에 신경을 많이 쓰는듯 합니다.\n다른곳과 맛이 차이날정도로 양상추나 다른 재료들이 신선함.",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "올만에 롯데리아의 라이스버거를 먹었다.\n내가 롯데리아에서 유일하게 먹는 버거가 라이스버거인데, 한동안 단종 되었다가 최근에 다시 출시했다.\n라이스버거의 맛은 인정\n하지만 소공2소점은 사람이 너무 많아서 대기가 꽤 길다.\n그래서 별이 하나 감소....",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "오랜만에   칭구들과  맛나는 즐찬  먹고,\n회포를  풀고 왔다\n즐겁고   행복한  하루을  보냄.\n삶의   멋진  추억의  한장🥳",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "서비스가 나쁘고 직원이 불친절 합니다. 와규버거는 맛있었습니다.",
+      "type": "positive",
+      "date": null
+    },
+    {
+      "text": "솔직히 롯데리아 중에선 여기가 전국 원탑",
+      "type": "neutral",
+      "date": null
+    }
+  ],
+  "fallback_used": "none",
+  "notes": [
+    "Naver: 18, Google: 5, Kakao: 0"
+  ],
+  "debug_code": "N18_G5_K0",
+  "total_score": 0.0,
+  "prescription": "'하지만 소공2소점은 사람이 너무 많아서 대기가 꽤 길다'에 대한 불만이 감지되었습니다. 관련 부분을 점검해보세요.",
+  "marketing_copy": {
+    "instagram": "🌟 롯데리아 소공2호점에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+    "danggeun": "🥕 우리 동네 숨은 맛집 롯데리아 소공2호점! 주민 여러분 환영합니다.",
+    "hashtags": "#롯데리아 소공2호점 #동네맛집"
+  },
+  "collected_at": "2026-01-16T10:50:45.179979"
+}

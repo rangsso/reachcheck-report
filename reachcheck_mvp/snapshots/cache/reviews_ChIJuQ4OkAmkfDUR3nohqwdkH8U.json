@@ -1,0 +1,68 @@
+{
+  "source": "consolidated",
+  "review_count": 35,
+  "top_phrases": [
+    {
+      "text": "이미지수",
+      "count": 19,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "이미지수",
+      "count": 7,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "이미지수",
+      "count": 20,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "서울",
+      "count": 18,
+      "sentiment": "neutral"
+    },
+    {
+      "text": "라멘",
+      "count": 15,
+      "sentiment": "neutral"
+    }
+  ],
+  "pain_phrases": [],
+  "pairings": [],
+  "sample_reviews": [
+    {
+      "text": "서울 중구 을지로3가",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "많은 블로거들과  에서 소유라멘을 칭찬해서 소유라멘 하나 그리고 근처테이블에서 시킨것을 보고 냉라멘 하나를 시켰다",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "츠케멘 먹었습니다. 검색하고 갔거든요. 츠케멘 맛집이라고요... 면은 그냥 일반 라멘면을 그대로 쓰는 것 같네요. 상당히 얇고요. 츠케지루는 뭔가 맛이 없지 않은데 있지도 않다? 기본 베이스가 돼지뼈 같은데 무겁진 않고 가벼운 맛 입니다. 면도 그렇고 츠케지루도 그렇고 그냥 딱 먹을만 하네 하는 정도였네요. 딱 별점 만큼이었습니다.\n양이 많지 않으니 대자로 시켜드셔도 될 거 같은데 츠케멘은 굳이 안드셔도 될 듯 해요.",
+      "type": "neutral",
+      "date": null
+    },
+    {
+      "text": "맛4 가격5 양3 친절4 (총점5)\n\n이래저래 리뷰에서 시시비비가 많은가게\n츠케맨밖에 안먹어봤지만 확실히 맛있다\n츠케맨을 한국식으로 소화해도 맛있는맛\n\n[츠케맨(소) 9500원]",
+      "type": "positive",
+      "date": null
+    }
+  ],
+  "fallback_used": "none",
+  "notes": [
+    "Naver: 30, Google: 5, Kakao: 0"
+  ],
+  "debug_code": "N30_G5_K0",
+  "total_score": 0.0,
+  "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+  "marketing_copy": {
+    "instagram": "🌟 참프루에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+    "danggeun": "🥕 우리 동네 숨은 맛집 참프루! 주민 여러분 환영합니다.",
+    "hashtags": "#참프루 #동네맛집"
+  },
+  "collected_at": "2026-01-16T11:16:58.909773"
+}

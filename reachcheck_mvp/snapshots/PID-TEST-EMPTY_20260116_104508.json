@@ -1,0 +1,91 @@
+{
+    "store_id": "PID-TEST-EMPTY",
+    "timestamp": "20260116_104508",
+    "standard_info": {
+        "id": "PID-TEST-EMPTY",
+        "name": "Unknown Store",
+        "address": "",
+        "phone": "",
+        "category": "업종 정보 없음",
+        "lat": 0.0,
+        "lng": 0.0,
+        "hours": "",
+        "description": "",
+        "photos": [],
+        "source_url": ""
+    },
+    "raw_google": {},
+    "raw_naver": {},
+    "raw_kakao": {},
+    "llm_responses": {},
+    "missing_fields": [
+        "address",
+        "phone",
+        "category"
+    ],
+    "mismatch_fields": [],
+    "field_provenance": {
+        "standard_source": "discovered",
+        "phone_source": "search",
+        "category_source": "none",
+        "fields": {
+            "name": {
+                "standard": "Unknown Store",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": null
+                }
+            },
+            "address": {
+                "standard": "",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": ""
+                }
+            },
+            "phone": {
+                "standard": "",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": null
+                }
+            },
+            "category": {
+                "standard": "업종 정보 없음",
+                "sources": {
+                    "naver": null,
+                    "kakao": null,
+                    "google": null
+                }
+            }
+        }
+    },
+    "review_insights": {
+        "source": "consolidated",
+        "review_count": 0,
+        "top_phrases": [],
+        "pain_phrases": [],
+        "sample_reviews": [],
+        "fallback_used": "none",
+        "notes": [
+            "Naver: 0, Google: 0, Kakao: 0"
+        ],
+        "debug_code": "N0_G0_K0",
+        "pairings": [],
+        "total_score": 0.0,
+        "prescription": "매장 상태가 양호합니다. 현재의 긍정적인 평판을 유지하세요.",
+        "marketing_copy": {
+            "instagram": "🌟 StoreInfo(name='테스트용 빈 가게', address='서울 강남구 테헤란로 123', phone='010-0000-0000', category='Cafe', place_id='PID-TEST-EMPTY')에 방문해보세요! 여러분의 소중한 리뷰를 기다립니다. #맛집 #소통",
+            "danggeun": "🥕 우리 동네 숨은 맛집 StoreInfo(name='테스트용 빈 가게', address='서울 강남구 테헤란로 123', phone='010-0000-0000', category='Cafe', place_id='PID-TEST-EMPTY')! 주민 여러분 환영합니다.",
+            "hashtags": "#StoreInfo(name='테스트용 빈 가게', address='서울 강남구 테헤란로 123', phone='010-0000-0000', category='Cafe', place_id='PID-TEST-EMPTY') #동네맛집"
+        }
+    },
+    "search_candidates": {},
+    "errors": {
+        "Kakao": "SEARCH_NO_RESULT",
+        "Google": "SEARCH_NO_RESULT"
+    }
+}
